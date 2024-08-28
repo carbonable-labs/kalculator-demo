@@ -12,7 +12,7 @@ import {
     dacExPostMedium, 
     dacExPostHigh,
     deltaExAnte
-  } from '@/app/constants/forecasts';
+  } from '@/constants/forecasts';
 
 const validateForecastObject = (forecastObject: Record<number, number>) => {
     expect(Object.keys(forecastObject)).toHaveLength(29);
