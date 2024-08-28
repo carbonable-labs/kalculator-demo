@@ -1,11 +1,27 @@
 import { RegionAllocation, Typology, Financing, TimeConstraints } from '@/types';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
-import { nbsRemovalRegion, nbsAvoidanceRegion, biocharRegion, dacRegion } from '@/constants/regions';
-import { nbsRemovalExPostMedium, nbsAvoidanceExPostMedium, biocharExPostMedium, dacExPostMedium, deltaExAnte } from '@/constants/forecasts';
+import {
+  nbsRemovalRegion,
+  nbsAvoidanceRegion,
+  biocharRegion,
+  dacRegion,
+} from '@/constants/regions';
+import {
+  nbsRemovalExPostMedium,
+  nbsAvoidanceExPostMedium,
+  biocharExPostMedium,
+  dacExPostMedium,
+  deltaExAnte,
+} from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
 
-export const runAlgorithm = (input: { regionAllocation: RegionAllocation, typology: Typology, financing: Financing, timeConstraints: TimeConstraints }) => {
+export const runAlgorithm = (input: {
+  regionAllocation: RegionAllocation;
+  typology: Typology;
+  financing: Financing;
+  timeConstraints: TimeConstraints;
+}) => {
   const { regionAllocation, typology, financing, timeConstraints } = input;
 
   let { nbsRemoval, nbsAvoidance, biochar, dac } = typology;
@@ -17,16 +33,17 @@ export const runAlgorithm = (input: { regionAllocation: RegionAllocation, typolo
 
   if (timeConstraints.timeConstraints === 1) {
     return yearlyAlgo(
-      timeConstraints.timeConstraints, 
+      timeConstraints.timeConstraints,
       carbonToOffset,
       regionAllocation,
       { nbsRemoval, nbsAvoidance, biochar, dac },
-      financing
-    );  } else if (timeConstraints.timeConstraints === 5) {
-      console.error("TODO: Implement five year algo");
+      financing,
+    );
+  } else if (timeConstraints.timeConstraints === 5) {
+    console.error('TODO: Implement five year algo');
     // return fiveAlgo(regionAllocation, { nbsRemoval, nbsAvoidance, biochar, dac }, financing);
   } else {
-    console.error("TODO: Implement no year algo");
+    console.error('TODO: Implement no year algo');
     // return noAlgo(regionAllocation, { nbsRemoval, nbsAvoidance, biochar, dac }, financing);
   }
 };
@@ -39,7 +56,7 @@ export const yearlyAlgo = (
   carbonToOffset: number,
   regionAllocation: RegionAllocation,
   typology: Typology,
-  financing: Financing
+  financing: Financing,
 ): [string, number] => {
   const percentageToOffset = timeConstraints / duration;
   let quantityToOffset = percentageToOffset * carbonToOffset;
@@ -53,9 +70,14 @@ export const yearlyAlgo = (
       quantityToOffset = remainingCarbonToOffset;
     }
 
-    const [quantityUsed, cost, typesPurchased] = checkPriceExPost(i, quantityToOffset, typology, regionAllocation);
+    const [quantityUsed, cost, typesPurchased] = checkPriceExPost(
+      i,
+      quantityToOffset,
+      typology,
+      regionAllocation,
+    );
 
-    if (typesPurchased.includes("All sources are depleted")) {
+    if (typesPurchased.includes('All sources are depleted')) {
       console.log(`Year ${i}: All sources are depleted. No purchases made.`);
       break;
     }
@@ -65,8 +87,8 @@ export const yearlyAlgo = (
       totalBudget += yearlyCost;
       currentStrategy.push(
         `Year ${i}: Buying ${remainingCarbonToOffset.toFixed(2)} units of ${typesPurchased.join(
-          ', '
-        )}. Total cost: $${yearlyCost.toFixed(2)}`
+          ', ',
+        )}. Total cost: $${yearlyCost.toFixed(2)}`,
       );
       remainingCarbonToOffset = 0;
       break;
@@ -75,8 +97,8 @@ export const yearlyAlgo = (
       remainingCarbonToOffset -= quantityUsed;
       currentStrategy.push(
         `Year ${i}: Buying ${quantityUsed.toFixed(2)} units of ${typesPurchased.join(
-          ', '
-        )}. Total cost: $${cost.toFixed(2)}`
+          ', ',
+        )}. Total cost: $${cost.toFixed(2)}`,
       );
     }
 
@@ -88,5 +110,5 @@ export const yearlyAlgo = (
     console.log(step);
   }
 
-  return ["Final budget", totalBudget];
+  return ['Final budget', totalBudget];
 };
