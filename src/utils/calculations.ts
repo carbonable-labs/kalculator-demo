@@ -1,24 +1,42 @@
-import { nbsRemovalExPostMedium, nbsAvoidanceExPostMedium, biocharExPostMedium, dacExPostMedium } from '@/constants/forecasts';
-import { nbsRemovalRegion, nbsAvoidanceRegion, biocharRegion, dacRegion } from '@/constants/regions';
+import {
+  nbsRemovalExPostMedium,
+  nbsAvoidanceExPostMedium,
+  biocharExPostMedium,
+  dacExPostMedium,
+} from '@/constants/forecasts';
+import {
+  nbsRemovalRegion,
+  nbsAvoidanceRegion,
+  biocharRegion,
+  dacRegion,
+} from '@/constants/regions';
 import { RegionAllocation, Typology } from '@/types';
 
 export const checkPriceExPost = (
   year: number,
   quantityToOffset: number,
   typology: Typology,
-  regionAllocation: RegionAllocation
+  regionAllocation: RegionAllocation,
 ): [number, number, string[]] => {
   const options = {
-    nbsRemoval: [typology.nbsRemoval, nbsRemovalExPostMedium[year as keyof typeof nbsRemovalExPostMedium]],
-    nbsAvoidance: [typology.nbsAvoidance, nbsAvoidanceExPostMedium[year as keyof typeof nbsAvoidanceExPostMedium]],
+    nbsRemoval: [
+      typology.nbsRemoval,
+      nbsRemovalExPostMedium[year as keyof typeof nbsRemovalExPostMedium],
+    ],
+    nbsAvoidance: [
+      typology.nbsAvoidance,
+      nbsAvoidanceExPostMedium[year as keyof typeof nbsAvoidanceExPostMedium],
+    ],
     biochar: [typology.biochar, biocharExPostMedium[year as keyof typeof biocharExPostMedium]],
     dac: [typology.dac, dacExPostMedium[year as keyof typeof dacExPostMedium]],
   };
 
-  const validOptions = Object.entries(options).filter(([_, [availableQuantity]]) => availableQuantity > 0);
+  const validOptions = Object.entries(options).filter(
+    ([_, [availableQuantity]]) => availableQuantity > 0,
+  );
 
   if (validOptions.length === 0) {
-    return [0.0, 0.0, ["All sources are depleted"]];
+    return [0.0, 0.0, ['All sources are depleted']];
   }
 
   const sortedOptions = validOptions.sort(([, [, priceA]], [, [, priceB]]) => priceA - priceB);
@@ -42,7 +60,7 @@ export const checkPriceExPost = (
         totalCost += costForTypology;
 
         typesPurchased.push(
-          `${typologyKey} in ${region}: ${regionalQuantity.toFixed(2)} units at $${price.toFixed(2)} per unit (coefficient: ${getRegionFactor(typologyKey, region)})`
+          `${typologyKey} in ${region}: ${regionalQuantity.toFixed(2)} units at $${price.toFixed(2)} per unit (coefficient: ${getRegionFactor(typologyKey, region)})`,
         );
 
         typology[typologyKey as keyof Typology] -= regionalQuantity;
