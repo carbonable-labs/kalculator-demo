@@ -1,4 +1,4 @@
-import { targetYear, currentYear, duration } from '@/app/constants/time';
+import { targetYear, currentYear, duration } from '@/constants/time';
 
 test('Time constants', () => {
   expect(currentYear).toBe(new Date().getFullYear());

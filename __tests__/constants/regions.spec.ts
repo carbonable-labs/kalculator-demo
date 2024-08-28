@@ -1,4 +1,4 @@
-import { biocharRegion, nbsRemovalRegion, nbsAvoidanceRegion, dacRegion } from '@/app/constants/regions';
+import { biocharRegion, nbsRemovalRegion, nbsAvoidanceRegion, dacRegion } from '@/constants/regions';
 
 test('Continental Factor constants', () => {
   expect(Object.keys(biocharRegion)).toHaveLength(6);

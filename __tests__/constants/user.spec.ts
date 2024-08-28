@@ -1,4 +1,4 @@
-import { carbonBaseline, existingSupply, carbonToOffset } from '@/app/constants/user';
+import { carbonBaseline, existingSupply, carbonToOffset } from '@/constants/user';
 
 test('User Information constants', () => {
   expect(carbonBaseline).toBeGreaterThan(0);
