@@ -16,7 +16,6 @@ export function checkTotal(currentTotal: number, newValue: number): boolean {
   return true;
 }
 
-
 export const loadInputData = async (filePath: string): Promise<AlgorithmInput> => {
   const fullPath = path.join(process.cwd(), filePath);
   const fileContents = fs.readFileSync(fullPath, 'utf8');

@@ -31,17 +31,16 @@ export const runAlgorithm = (input: {
   biochar *= carbonToOffset;
   dac *= carbonToOffset;
 
-  console.log('timeConstraints', timeConstraints);
-  console.log('timeConstraints.timeConstraints', timeConstraints);
-
   if (timeConstraints === 1) {
-    return yearlyAlgo(
+    const [totalBudget, adjustedBudget] = yearlyAlgo(
       timeConstraints,
       carbonToOffset,
       regionAllocation,
       { nbsRemoval, nbsAvoidance, biochar, dac },
       financing,
     );
+
+    return { totalBudget, adjustedBudget };
   } else if (timeConstraints === 5) {
     console.error('TODO: Implement five year algo');
     // return fiveAlgo(regionAllocation, { nbsRemoval, nbsAvoidance, biochar, dac }, financing);
@@ -51,16 +50,13 @@ export const runAlgorithm = (input: {
   }
 };
 
-// const yearlyAlgo = (regionAllocation: RegionAllocation, typology: Typology, financing: Financing) => {
-//     // TODO
-// };
 export const yearlyAlgo = (
   timeConstraints: number,
   carbonToOffset: number,
   regionAllocation: RegionAllocation,
   typology: Typology,
   financing: Financing,
-): [string, number] => {
+): [number, number] => {
   const percentageToOffset = timeConstraints / duration;
   let quantityToOffset = percentageToOffset * carbonToOffset;
   let totalBudget = 0.0;
@@ -113,5 +109,12 @@ export const yearlyAlgo = (
     console.log(step);
   }
 
-  return ['Final budget', totalBudget];
+  // Calculate adjusted budget based on ex-ante financing
+  let adjustedBudget = totalBudget;
+  if (financing.financingExAnte > 0) {
+    const exAnteCost = totalBudget * financing.financingExAnte * deltaExAnte;
+    adjustedBudget = exAnteCost + totalBudget * financing.financingExPost;
+  }
+
+  return [totalBudget, adjustedBudget]; // Returning both
 };
