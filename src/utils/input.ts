@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { AlgorithmInput } from '@/types';
 export function getFloatInput(prompt: string): number {
   const value = parseFloat(prompt);
@@ -14,8 +16,9 @@ export function checkTotal(currentTotal: number, newValue: number): boolean {
   return true;
 }
 
+
 export const loadInputData = async (filePath: string): Promise<AlgorithmInput> => {
-  const response = await fetch(filePath);
-  const data: AlgorithmInput = await response.json();
-  return data;
+  const fullPath = path.join(process.cwd(), filePath);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+  return JSON.parse(fileContents);
 };
