@@ -1,0 +1,22 @@
+{
+    "timeConstraints": 1,
+    "financing": {
+      "financingExPost": 0.5,
+      "financingExAnte": 0.5
+    },
+    "typology": {
+      "nbsRemoval": 0.4,
+      "nbsAvoidance": 0.3,
+      "biochar": 0.2,
+      "dac": 0.1
+    },
+    "regionAllocation": {
+      "northAmerica": 0.2,
+      "southAmerica": 0.2,
+      "europe": 0.2,
+      "africa": 0.2,
+      "asia": 0.1,
+      "oceania": 0.1
+    }
+  }
+  

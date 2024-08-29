@@ -1,4 +1,4 @@
-import { RegionAllocation, Typology, Financing, TimeConstraints } from '@/types';
+import { RegionAllocation, Typology, Financing } from '@/types';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import {
@@ -20,7 +20,7 @@ export const runAlgorithm = (input: {
   regionAllocation: RegionAllocation;
   typology: Typology;
   financing: Financing;
-  timeConstraints: TimeConstraints;
+  timeConstraints: number;
 }) => {
   const { regionAllocation, typology, financing, timeConstraints } = input;
 
@@ -31,15 +31,18 @@ export const runAlgorithm = (input: {
   biochar *= carbonToOffset;
   dac *= carbonToOffset;
 
-  if (timeConstraints.timeConstraints === 1) {
+  console.log('timeConstraints', timeConstraints);
+  console.log('timeConstraints.timeConstraints', timeConstraints);
+
+  if (timeConstraints === 1) {
     return yearlyAlgo(
-      timeConstraints.timeConstraints,
+      timeConstraints,
       carbonToOffset,
       regionAllocation,
       { nbsRemoval, nbsAvoidance, biochar, dac },
       financing,
     );
-  } else if (timeConstraints.timeConstraints === 5) {
+  } else if (timeConstraints === 5) {
     console.error('TODO: Implement five year algo');
     // return fiveAlgo(regionAllocation, { nbsRemoval, nbsAvoidance, biochar, dac }, financing);
   } else {

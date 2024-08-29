@@ -19,13 +19,9 @@ export interface Financing {
   financingExAnte: number;
 }
 
-export interface TimeConstraints {
-  timeConstraints: number;
-}
-
 export interface AlgorithmInput {
-  regionAllocation: RegionAllocation;
-  typology: Typology;
+  timeConstraints: number;
   financing: Financing;
-  timeConstraints: TimeConstraints;
+  typology: Typology;
+  regionAllocation: RegionAllocation;
 }
