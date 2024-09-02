@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { runAlgorithm } from '@/algorithms/algoBudget';
+import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -7,7 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const input = req.body;
 
       // Run the algorithm with the provided input
-      const algoRes = runAlgorithm({
+      console.log('\n\n\n\n');
+      console.log('\x1b[36m%s\x1b[0m', '#############################');
+      console.log('Running algorithm with input:', input);
+      const algoRes = runBudgetAlgorithm({
         regionAllocation: input.regionAllocation,
         typology: input.typology,
         financing: input.financing,
