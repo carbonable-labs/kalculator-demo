@@ -2,7 +2,7 @@ import QuestionTooltip from './Tooltip';
 
 interface TitleProps {
   title: string;
-  tooltip?: string;
+  tooltip?: React.ReactNode;
   subtitle?: string;
 }
 

@@ -16,6 +16,11 @@ const config: Config = {
           dark: '#087353',
           light: '#A9FCE4',
         },
+        secondary: {
+          DEFAULT: '#4463B3',
+          dark: '#4463B3',
+          light: '#4463B3',
+        },
         neutral: {
           100: '#D0D1D6',
           200: '#A8ABB3',
