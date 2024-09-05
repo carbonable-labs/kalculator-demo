@@ -219,8 +219,31 @@ export const noAlgo = (
   let totalBudget = 0.0;
   let quantityToOffset = carbonToOffset;
 
-  // Try to buy all in 2050
+  // Try to buy all for first year
   let [quantityUsed, cost, typesPurchased] = checkPriceExPost(
+    n,
+    quantityToOffset,
+    typology,
+    regionAllocation,
+  );
+
+  typology = structuredClone(initialTypology); // Reset typology
+
+  if (!typesPurchased.includes('All sources are depleted')) {
+    totalBudget = cost;
+    const currentStrategy = [
+      `Year ${targetYear}: Buying ${quantityUsed.toFixed(
+        2,
+      )} units of ${typesPurchased.join(', ')}. Total cost: $${totalBudget.toFixed(2)}`,
+    ];
+    if (totalBudget < optimalBudget) {
+      optimalBudget = totalBudget;
+      bestStrategy = currentStrategy;
+    }
+  }
+
+  // Try to buy all in 2050
+  [quantityUsed, cost, typesPurchased] = checkPriceExPost(
     targetYear,
     quantityToOffset,
     typology,
