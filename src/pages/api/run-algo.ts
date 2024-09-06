@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
+import { runStratAlgorithm } from '@/algorithms/algoStrat';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -17,13 +18,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         timeConstraints: input.timeConstraints,
       });
       if (!algoRes) {
-        throw new Error('An error occurred while running the algorithm.');
+        throw new Error('An error occurred while running the budget algorithm.');
       }
 
       const { totalBudget, adjustedBudget } = algoRes;
 
+      const stratRes = runStratAlgorithm({
+        timeConstraints: input.timeConstraints,
+        budget: input.budget,
+        regionAllocation: input.regionAllocation,
+        typology: input.typology,
+        financing: input.financing,
+      });
+      if (!stratRes) {
+        throw new Error('An error occurred while running the strat algorithm.');
+      }
+
+      const { nbsRemoval, nbsAvoidance, biochar, dac, stratAdjustedBudget, carbonToOffset } = stratRes;
+
       // Respond with the result
-      res.status(200).json({ totalBudget, adjustedBudget });
+      res.status(200).json({
+        budget: { totalBudget, adjustedBudget },
+        strat: { nbsRemoval, nbsAvoidance, biochar, dac, stratAdjustedBudget, carbonToOffset }
+      });
     } catch (error) {
       console.error('Error running algorithm:', error);
       res.status(500).json({ error: 'An error occurred while running the algorithm.' });
