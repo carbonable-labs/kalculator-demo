@@ -6,13 +6,13 @@ interface SliderProps {
   minValue: number;
   maxValue: number;
   label: string;
-  defaultValue: number;
+  value: number;
   className?: string;
   isDisabled?: boolean;
   onChange: (value: number | number[]) => void;
 }
 
-type Size = 'sm' | 'md' | 'lg' | undefined;
+export type Size = 'sm' | 'md' | 'lg' | undefined;
 
 export default function SliderComponent({
   size = 'sm',
@@ -20,7 +20,7 @@ export default function SliderComponent({
   minValue,
   maxValue,
   label,
-  defaultValue,
+  value,
   className,
   isDisabled,
   onChange,
@@ -33,7 +33,7 @@ export default function SliderComponent({
       maxValue={maxValue}
       minValue={minValue}
       aria-label={label}
-      defaultValue={defaultValue}
+      value={value}
       className={`w-full ${className}`}
       onChange={onChange}
       classNames={{

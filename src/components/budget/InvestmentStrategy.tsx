@@ -5,9 +5,7 @@ import SliderComponent from '../form/Slider';
 import Title from '../form/Title';
 import DontKnowCheckbox from '../form/DontKnowCheckbox';
 import { useBudget } from '@/context/BudgetContext';
-
-const DEFAULT_EX_ANTE = 0.67;
-const DEFAULT_EX_POST = 0.33;
+import { DEFAULT_FINANCING } from '@/utils/configuaration';
 
 export default function InvestmentStrategy() {
   const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(50);
@@ -21,7 +19,8 @@ export default function InvestmentStrategy() {
 
   useEffect(() => {
     if (isDontKnowSelected) {
-      setFinancing({ financingExAnte: DEFAULT_EX_ANTE, financingExPost: DEFAULT_EX_POST });
+      setFinancing(DEFAULT_FINANCING);
+      setFormattedInvestmentStrategy(DEFAULT_FINANCING.financingExAnte * 100);
     } else {
       setFinancing({
         financingExAnte: formattedInvestmentStrategy / 100,
@@ -39,12 +38,12 @@ export default function InvestmentStrategy() {
       />
       <div className="mt-8 w-full">
         <SliderComponent
-          defaultValue={50}
+          value={formattedInvestmentStrategy}
           label="Investment Strategy"
           maxValue={100}
           minValue={0}
           onChange={setInvestmentStrategy}
-          size="sm"
+          size="md"
           step={1}
           isDisabled={isDontKnowSelected}
         />
@@ -56,11 +55,13 @@ export default function InvestmentStrategy() {
             {100 - formattedInvestmentStrategy}% Spot
           </div>
         </div>
-        <div className="mt-12 flex items-center">
+        <div className="mt-8 flex items-center">
           <DontKnowCheckbox isSelected={isDontKnowSelected} setIsSelected={setIsDontKnowSelected} />
-          <div className="ml-8 text-sm font-light italic">
-            Let Carbonable Offer Smart Recommendations
-          </div>
+          {isDontKnowSelected && (
+            <div className="ml-8 text-sm font-light italic">
+              Let Carbonable offer smart recommendations
+            </div>
+          )}
         </div>
       </div>
     </>
