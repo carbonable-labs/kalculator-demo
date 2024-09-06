@@ -35,7 +35,9 @@ interface TypePurchased {
 interface YearlyStrategy {
   year: number;
   quantity_purchased: number;
-  total_cost: number;
+  total_cost_low: number;
+  total_cost_medium: number;
+  total_cost_high: number;
   types_purchased: TypePurchased[];
 }
 

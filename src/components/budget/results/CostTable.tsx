@@ -18,10 +18,10 @@ export default function CostTable() {
         <div className="font-bold text-green-500">
           $ {formatLargeNumber(budgetResults?.total_cost_low)}
         </div>
-        <div className="font-bold text-blue-600">
+        <div className="font-bold text-blue-500">
           $ {formatLargeNumber(budgetResults?.total_cost_medium)}
         </div>
-        <div className="font-bold text-orange-600">
+        <div className="font-bold text-orange-500">
           $ {formatLargeNumber(budgetResults?.total_cost_high)}
         </div>
         <div className="pl-4 text-left font-light text-neutral-300">Average yearly cost</div>

@@ -48,7 +48,9 @@
       {
         "year": 2024,
         "quantity_purchased": 800,
-        "total_cost": 40000,
+        "total_cost_low": 30000,
+        "total_cost_medium": 40000,
+        "total_cost_high": 50000,
         "types_purchased": [
           {
             "typology": "nbs_removal",
@@ -109,7 +111,9 @@
       {
         "year": 2028,
         "quantity_purchased": 1000,
-        "total_cost": 48000,
+        "total_cost_low": 38000,
+        "total_cost_medium": 48000,
+        "total_cost_high": 58000,
         "types_purchased": [
           {
             "typology": "nbs_removal",
@@ -164,7 +168,9 @@
       {
         "year": 2032,
         "quantity_purchased": 1120,
-        "total_cost": 54000,
+        "total_cost_low": 44000,
+        "total_cost_medium": 54000,
+        "total_cost_high": 64000,
         "types_purchased": [
           {
             "typology": "nbs_removal",
@@ -219,7 +225,9 @@
       {
         "year": 2036,
         "quantity_purchased": 1140,
-        "total_cost": 56000,
+        "total_cost_low": 46000,
+        "total_cost_medium": 56000,
+        "total_cost_high": 66000,
         "types_purchased": [
           {
             "typology": "nbs_removal",
@@ -274,7 +282,9 @@
       {
         "year": 2040,
         "quantity_purchased": 1160,
-        "total_cost": 57000,
+        "total_cost_low": 47000,
+        "total_cost_medium": 57000,
+        "total_cost_high": 67000,
         "types_purchased": [
           {
             "typology": "nbs_removal",
@@ -329,7 +339,9 @@
       {
         "year": 2044,
         "quantity_purchased": 1180,
-        "total_cost": 58000,
+        "total_cost_low": 48000,
+        "total_cost_medium": 58000,
+        "total_cost_high": 68000,
         "types_purchased": [
           {
             "typology": "nbs_removal",
@@ -384,7 +396,9 @@
       {
         "year": 2048,
         "quantity_purchased": 1190,
-        "total_cost": 59000,
+        "total_cost_low": 49000,
+        "total_cost_medium": 59000,
+        "total_cost_high": 69000,
         "types_purchased": [
           {
             "typology": "nbs_removal",
@@ -439,7 +453,9 @@
       {
         "year": 2050,
         "quantity_purchased": 1200,
-        "total_cost": 60000,
+        "total_cost_low": 50000,
+        "total_cost_medium": 60000,
+        "total_cost_high": 70000,
         "types_purchased": [
           {
             "typology": "nbs_removal",
