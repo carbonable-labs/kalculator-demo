@@ -1,12 +1,14 @@
 'use client';
 
-import SliderWithInput from "@/components/form/SliderWithInput";
-import { useBudget } from "@/context/BudgetContext";
-import { DEFAULT_GEOGRAPHICAL_AREA } from "@/utils/configuration";
-import { useEffect, useState } from "react";
+import SliderWithInput from '@/components/form/SliderWithInput';
+import { useBudget } from '@/context/BudgetContext';
+import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
+import { useEffect, useState } from 'react';
 
 export default function LatinAmerica() {
-  const [latinAmerica, setLatinAmerica] = useState<number | number[]>(DEFAULT_GEOGRAPHICAL_AREA.southAmerica * 100);
+  const [latinAmerica, setLatinAmerica] = useState<number | number[]>(
+    DEFAULT_GEOGRAPHICAL_AREA.southAmerica * 100,
+  );
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
@@ -32,5 +34,5 @@ export default function LatinAmerica() {
       onChange={setLatinAmerica}
       displayedValue={latinAmerica as number}
     />
-  )
+  );
 }

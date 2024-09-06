@@ -1,7 +1,7 @@
 'use client';
 
-import { Select, SelectItem } from "@nextui-org/react";
-import { use, useState } from "react";
+import { Select, SelectItem } from '@nextui-org/react';
+import { use, useState } from 'react';
 
 interface SelectComponentProps {
   question: string;
@@ -28,23 +28,19 @@ export default function SelectComponent({
   };
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <div className="text-sm font-light w-8/12">
-        {question}
-      </div>
+    <div className="flex w-full items-center justify-between">
+      <div className="w-8/12 text-sm font-light">{question}</div>
       <div className="w-4/12">
         <Select
           variant="bordered"
           label={label}
-          className="w-full" 
+          className="w-full"
           isRequired={isRequired}
           selectedKeys={[value]}
           onChange={handleSelectionChange}
         >
           {options.map((option) => (
-            <SelectItem key={option.key}>
-              {option.value}
-            </SelectItem>
+            <SelectItem key={option.key}>{option.value}</SelectItem>
           ))}
         </Select>
       </div>

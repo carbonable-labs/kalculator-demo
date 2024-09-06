@@ -1,12 +1,14 @@
 'use client';
 
-import SliderWithInput from "@/components/form/SliderWithInput";
-import { useBudget } from "@/context/BudgetContext";
-import { DEFAULT_GEOGRAPHICAL_AREA } from "@/utils/configuration";
-import { useEffect, useState } from "react";
+import SliderWithInput from '@/components/form/SliderWithInput';
+import { useBudget } from '@/context/BudgetContext';
+import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
+import { useEffect, useState } from 'react';
 
 export default function Oceania() {
-  const [oceania, setOceania] = useState<number | number[]>(DEFAULT_GEOGRAPHICAL_AREA.oceania * 100);
+  const [oceania, setOceania] = useState<number | number[]>(
+    DEFAULT_GEOGRAPHICAL_AREA.oceania * 100,
+  );
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
@@ -32,5 +34,5 @@ export default function Oceania() {
       onChange={setOceania}
       displayedValue={oceania as number}
     />
-  )
+  );
 }

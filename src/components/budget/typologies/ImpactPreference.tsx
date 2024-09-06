@@ -1,5 +1,5 @@
-import SelectComponent from "@/components/form/Select";
-import { TYPOLOGY_PREFERENCE } from "@/utils/configuration";
+import SelectComponent from '@/components/form/Select';
+import { TYPOLOGY_PREFERENCE } from '@/utils/configuration';
 
 interface ImpactPreferenceProps {
   setImpactPreference: (value: string) => void;
@@ -8,9 +8,9 @@ interface ImpactPreferenceProps {
 export default function ImpactPreference({ setImpactPreference }: ImpactPreferenceProps) {
   return (
     <SelectComponent
-      question='Do you prefer climate Impact or biodiversity impact?'
+      question="Do you prefer climate Impact or biodiversity impact?"
       isRequired={true}
-      label='Select your preference'
+      label="Select your preference"
       options={[
         { key: TYPOLOGY_PREFERENCE.CLIMATE_IMPACT, value: 'Impact' },
         { key: TYPOLOGY_PREFERENCE.BIODIVERSITY_IMPACT, value: 'Biodiversity' },

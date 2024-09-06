@@ -1,12 +1,12 @@
-import { Financing, Typology } from "@/types";
+import { Financing, Typology } from '@/types';
 
 export enum TYPOLOGY_PREFERENCE {
-  NBS_REMOVAL = "removal",
-  NBS_AVOIDANCE = "avoidance",
-  BIODIVERSITY_IMPACT = "biodiversity",
-  CLIMATE_IMPACT = "climate",
-  NO_IDEA = "noidea",
-};
+  NBS_REMOVAL = 'removal',
+  NBS_AVOIDANCE = 'avoidance',
+  BIODIVERSITY_IMPACT = 'biodiversity',
+  CLIMATE_IMPACT = 'climate',
+  NO_IDEA = 'noidea',
+}
 
 export const DEFAULT_FINANCING: Financing = {
   financingExAnte: 0.5,
@@ -15,7 +15,7 @@ export const DEFAULT_FINANCING: Financing = {
 
 export const DEFAULT_TYPOLGY: Typology = {
   nbsRemoval: 0.85,
-  nbsAvoidance: 0.10,
+  nbsAvoidance: 0.1,
   biochar: 0,
   dac: 0.05,
 };
@@ -25,7 +25,7 @@ export const DEFAULT_GEOGRAPHICAL_AREA = {
   southAmerica: 0,
   europe: 0.05,
   africa: 0.85,
-  asia: 0.10,
+  asia: 0.1,
   oceania: 0,
 };
 

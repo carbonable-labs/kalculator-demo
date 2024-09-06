@@ -27,7 +27,6 @@ export default function SliderComponent({
   displayType = 'gradient',
   onChange,
 }: SliderProps) {
-  
   const gradientClassNames = {
     filler: 'bg-gradient-to-r from-primary to-secondary',
     thumb: ['bg-white border-white before:bg-white, after:bg-white'],
@@ -50,7 +49,7 @@ export default function SliderComponent({
       value={value}
       className={`w-full ${className}`}
       onChange={onChange}
-      classNames={displayType === 'gradient' ? gradientClassNames: plainClassNames}
+      classNames={displayType === 'gradient' ? gradientClassNames : plainClassNames}
     />
   );
 }

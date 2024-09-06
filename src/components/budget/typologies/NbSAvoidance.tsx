@@ -1,16 +1,18 @@
 'use client';
 
-import SliderWithInput from "@/components/form/SliderWithInput";
-import { useBudget } from "@/context/BudgetContext";
-import { DEFAULT_TYPOLGY } from "@/utils/configuration";
-import { useEffect, useState } from "react";
+import SliderWithInput from '@/components/form/SliderWithInput';
+import { useBudget } from '@/context/BudgetContext';
+import { DEFAULT_TYPOLGY } from '@/utils/configuration';
+import { useEffect, useState } from 'react';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
 }
 
 export default function NbSAvoidance({ isDontKnowSelected }: NbSProps) {
-  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(DEFAULT_TYPOLGY.nbsAvoidance * 100);
+  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(
+    DEFAULT_TYPOLGY.nbsAvoidance * 100,
+  );
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {
@@ -37,5 +39,5 @@ export default function NbSAvoidance({ isDontKnowSelected }: NbSProps) {
       displayedValue={renewableEnergy as number}
       isDisabled={isDontKnowSelected}
     />
-  )
+  );
 }

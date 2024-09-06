@@ -1,9 +1,9 @@
 'use client';
 
-import SliderWithInput from "@/components/form/SliderWithInput";
-import { useBudget } from "@/context/BudgetContext";
-import { DEFAULT_TYPOLGY } from "@/utils/configuration";
-import { useEffect, useState } from "react";
+import SliderWithInput from '@/components/form/SliderWithInput';
+import { useBudget } from '@/context/BudgetContext';
+import { DEFAULT_TYPOLGY } from '@/utils/configuration';
+import { useEffect, useState } from 'react';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
@@ -37,5 +37,5 @@ export default function DAC({ isDontKnowSelected }: NbSProps) {
       displayedValue={dac as number}
       isDisabled={isDontKnowSelected}
     />
-  )
+  );
 }

@@ -17,8 +17,8 @@ export default function GeographicalArea() {
 
   const reset = () => {
     setRegionAllocation(DEFAULT_GEOGRAPHICAL_AREA);
-  }
-  
+  };
+
   useEffect(() => {
     const regionAllocationValues = Object.values(regionAllocation);
     const sum = regionAllocationValues.reduce((acc, value) => acc + value, 0);
@@ -27,9 +27,7 @@ export default function GeographicalArea() {
 
   return (
     <>
-      <Title
-        title="4. Preferred Geographical Area"
-      />
+      <Title title="4. Preferred Geographical Area" />
       <div className="mt-8 w-full">
         <Africa />
       </div>
@@ -48,10 +46,15 @@ export default function GeographicalArea() {
       <div className="mt-8 w-full">
         <NorthAmerica />
       </div>
-      { !isFullGeographicalArea && (
-        <div className="mt-6 bg-red-800 text-sm px-4 py-2 rounded-lg">
+      {!isFullGeographicalArea && (
+        <div className="mt-6 rounded-lg bg-red-800 px-4 py-2 text-sm">
           The sum of the geographical areas values must be equal to 100%
-          <span onClick={reset} className="ml-4 border border-opacityLight-30 rounded-lg px-2 py-1 uppercase cursor-pointer hover:bg-opacityLight-10">Reset</span>
+          <span
+            onClick={reset}
+            className="ml-4 cursor-pointer rounded-lg border border-opacityLight-30 px-2 py-1 uppercase hover:bg-opacityLight-10"
+          >
+            Reset
+          </span>
         </div>
       )}
     </>

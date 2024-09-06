@@ -10,7 +10,16 @@ import DAC from './typologies/DAC';
 import Biochar from './typologies/Biochar';
 import ImpactPreference from './typologies/ImpactPreference';
 import NbSPreference from './typologies/NbSPreference';
-import { BIODIVERSITY_AVOIDANCE_TYPOLGY, BIODIVERSITY_NO_IDEA_TYPOLGY, BIODIVERSITY_REMOVAL_TYPOLGY, CLIMATE_AVOIDANCE_TYPOLGY, CLIMATE_NO_IDEA_TYPOLGY, CLIMATE_REMOVAL_TYPOLGY, DEFAULT_TYPOLGY, TYPOLOGY_PREFERENCE } from '@/utils/configuration';
+import {
+  BIODIVERSITY_AVOIDANCE_TYPOLGY,
+  BIODIVERSITY_NO_IDEA_TYPOLGY,
+  BIODIVERSITY_REMOVAL_TYPOLGY,
+  CLIMATE_AVOIDANCE_TYPOLGY,
+  CLIMATE_NO_IDEA_TYPOLGY,
+  CLIMATE_REMOVAL_TYPOLGY,
+  DEFAULT_TYPOLGY,
+  TYPOLOGY_PREFERENCE,
+} from '@/utils/configuration';
 import { Typology } from '@/types';
 
 export default function ProjectTypology() {
@@ -22,7 +31,7 @@ export default function ProjectTypology() {
 
   const reset = () => {
     setTypology(DEFAULT_TYPOLGY);
-  }
+  };
 
   useEffect(() => {
     const typologyValues = Object.values(typology);
@@ -33,7 +42,7 @@ export default function ProjectTypology() {
   useEffect(() => {
     if (!isDontKnowSelected || !impactPreference || !nbSPreference) return;
 
-    const typologyMap: Record<string, Record<string, Typology>>= {
+    const typologyMap: Record<string, Record<string, Typology>> = {
       [TYPOLOGY_PREFERENCE.CLIMATE_IMPACT]: {
         [TYPOLOGY_PREFERENCE.NBS_AVOIDANCE]: CLIMATE_AVOIDANCE_TYPOLGY,
         [TYPOLOGY_PREFERENCE.NBS_REMOVAL]: CLIMATE_REMOVAL_TYPOLGY,
@@ -70,22 +79,25 @@ export default function ProjectTypology() {
       <div className="mt-8 w-full">
         <Biochar isDontKnowSelected={isDontKnowSelected} />
       </div>
-      { !isTypologyFull && (
-        <div className="mt-6 bg-red-800 text-sm px-4 py-2 rounded-lg">
+      {!isTypologyFull && (
+        <div className="mt-6 rounded-lg bg-red-800 px-4 py-2 text-sm">
           The sum of the typology values must be equal to 100%
-          <span onClick={reset} className="ml-4 border border-opacityLight-30 rounded-lg px-2 py-1 uppercase cursor-pointer hover:bg-opacityLight-10">Reset</span>
+          <span
+            onClick={reset}
+            className="ml-4 cursor-pointer rounded-lg border border-opacityLight-30 px-2 py-1 uppercase hover:bg-opacityLight-10"
+          >
+            Reset
+          </span>
         </div>
       )}
-      <div className="mt-12 flex items-center ml-2">
+      <div className="ml-2 mt-12 flex items-center">
         <DontKnowCheckbox isSelected={isDontKnowSelected} setIsSelected={setIsDontKnowSelected} />
         {isDontKnowSelected && (
-          <div className="ml-8 text-sm font-light italic">
-            Let Carbonable guide you
-          </div>
+          <div className="ml-8 text-sm font-light italic">Let Carbonable guide you</div>
         )}
       </div>
-      { isDontKnowSelected && (
-        <div className="border-2 border-opacityLight-10 mt-8 px-8 py-6 rounded-lg">
+      {isDontKnowSelected && (
+        <div className="mt-8 rounded-lg border-2 border-opacityLight-10 px-8 py-6">
           <div>
             <ImpactPreference setImpactPreference={setImpactPreference} />
           </div>

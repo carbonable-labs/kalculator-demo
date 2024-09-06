@@ -1,7 +1,7 @@
 'use server';
 
-import { runBudgetAlgorithm } from "@/algorithms/algoBudget";
-import { Financing, RegionAllocation, Typology } from "@/types";
+import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
+import { Financing, RegionAllocation, Typology } from '@/types';
 
 interface BudgetInput {
   regionAllocation: RegionAllocation;
