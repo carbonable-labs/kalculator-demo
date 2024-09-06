@@ -2,6 +2,7 @@
 
 import SliderWithInput from "@/components/form/SliderWithInput";
 import { useBudget } from "@/context/BudgetContext";
+import { DEFAULT_TYPOLGY } from "@/utils/configuration";
 import { useEffect, useState } from "react";
 
 interface NbSProps {
@@ -9,7 +10,7 @@ interface NbSProps {
 }
 
 export default function DAC({ isDontKnowSelected }: NbSProps) {
-  const [dac, setDac] = useState<number | number[]>(5);
+  const [dac, setDac] = useState<number | number[]>(DEFAULT_TYPOLGY.dac * 100);
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {

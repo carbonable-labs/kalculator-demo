@@ -2,6 +2,7 @@
 
 import SliderWithInput from "@/components/form/SliderWithInput";
 import { useBudget } from "@/context/BudgetContext";
+import { DEFAULT_TYPOLGY } from "@/utils/configuration";
 import { useEffect, useState } from "react";
 
 interface NbSProps {
@@ -9,7 +10,7 @@ interface NbSProps {
 }
 
 export default function NbSRemoval({ isDontKnowSelected }: NbSProps) {
-  const [nbs, setNbs] = useState<number | number[]>(85);
+  const [nbs, setNbs] = useState<number | number[]>(DEFAULT_TYPOLGY.nbsRemoval * 100);
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {

@@ -2,6 +2,7 @@
 
 import SliderWithInput from "@/components/form/SliderWithInput";
 import { useBudget } from "@/context/BudgetContext";
+import { DEFAULT_TYPOLGY } from "@/utils/configuration";
 import { useEffect, useState } from "react";
 
 interface NbSProps {
@@ -9,7 +10,7 @@ interface NbSProps {
 }
 
 export default function Biochar({ isDontKnowSelected }: NbSProps) {
-  const [biochar, setBiochar] = useState<number | number[]>(0);
+  const [biochar, setBiochar] = useState<number | number[]>(DEFAULT_TYPOLGY.biochar * 100);
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {

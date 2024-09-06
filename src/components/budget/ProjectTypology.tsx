@@ -10,7 +10,7 @@ import DAC from './typologies/DAC';
 import Biochar from './typologies/Biochar';
 import ImpactPreference from './typologies/ImpactPreference';
 import NbSPreference from './typologies/NbSPreference';
-import { BIODIVERSITY_AVOIDANCE_TYPOLGY, BIODIVERSITY_NO_IDEA_TYPOLGY, BIODIVERSITY_REMOVAL_TYPOLGY, CLIMATE_AVOIDANCE_TYPOLGY, CLIMATE_NO_IDEA_TYPOLGY, CLIMATE_REMOVAL_TYPOLGY, TYPOLOGY_PREFERENCE } from '@/utils/configuration';
+import { BIODIVERSITY_AVOIDANCE_TYPOLGY, BIODIVERSITY_NO_IDEA_TYPOLGY, BIODIVERSITY_REMOVAL_TYPOLGY, CLIMATE_AVOIDANCE_TYPOLGY, CLIMATE_NO_IDEA_TYPOLGY, CLIMATE_REMOVAL_TYPOLGY, DEFAULT_TYPOLGY, TYPOLOGY_PREFERENCE } from '@/utils/configuration';
 import { Typology } from '@/types';
 
 export default function ProjectTypology() {
@@ -19,6 +19,10 @@ export default function ProjectTypology() {
   const [impactPreference, setImpactPreference] = useState<string>('');
   const [nbSPreference, setNbSPreference] = useState<string>('');
   const { typology, setTypology } = useBudget();
+
+  const reset = () => {
+    setTypology(DEFAULT_TYPOLGY);
+  }
 
   useEffect(() => {
     const typologyValues = Object.values(typology);
@@ -69,6 +73,7 @@ export default function ProjectTypology() {
       { !isTypologyFull && (
         <div className="mt-6 bg-red-800 text-sm px-4 py-2 rounded-lg">
           The sum of the typology values must be equal to 100%
+          <span onClick={reset} className="ml-4 border border-opacityLight-30 rounded-lg px-2 py-1 uppercase cursor-pointer hover:bg-opacityLight-10">Reset</span>
         </div>
       )}
       <div className="mt-12 flex items-center ml-2">
@@ -80,7 +85,7 @@ export default function ProjectTypology() {
         )}
       </div>
       { isDontKnowSelected && (
-        <div className="border-2 border-opacityLight-5 mt-8 px-8 py-6 rounded-lg">
+        <div className="border-2 border-opacityLight-10 mt-8 px-8 py-6 rounded-lg">
           <div>
             <ImpactPreference setImpactPreference={setImpactPreference} />
           </div>

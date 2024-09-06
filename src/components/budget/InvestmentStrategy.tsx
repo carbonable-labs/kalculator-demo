@@ -46,6 +46,7 @@ export default function InvestmentStrategy() {
           size="md"
           step={1}
           isDisabled={isDontKnowSelected}
+          displayType='plain'
         />
         <div className="flex justify-between text-sm uppercase">
           <div className={`text-primary ${isDontKnowSelected ? 'opacity-50' : ''}`}>

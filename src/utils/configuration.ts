@@ -13,6 +13,22 @@ export const DEFAULT_FINANCING: Financing = {
   financingExPost: 0.5,
 };
 
+export const DEFAULT_TYPOLGY: Typology = {
+  nbsRemoval: 0.85,
+  nbsAvoidance: 0.10,
+  biochar: 0,
+  dac: 0.05,
+};
+
+export const DEFAULT_GEOGRAPHICAL_AREA = {
+  northAmerica: 0,
+  southAmerica: 0,
+  europe: 0.05,
+  africa: 0.85,
+  asia: 0.10,
+  oceania: 0,
+};
+
 export const CLIMATE_AVOIDANCE_TYPOLGY: Typology = {
   nbsRemoval: 0.1,
   nbsAvoidance: 0.2,

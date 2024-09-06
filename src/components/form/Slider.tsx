@@ -9,6 +9,7 @@ interface SliderProps {
   value: number;
   className?: string;
   isDisabled?: boolean;
+  displayType?: 'plain' | 'gradient';
   onChange: (value: number | number[]) => void;
 }
 
@@ -23,8 +24,21 @@ export default function SliderComponent({
   value,
   className,
   isDisabled,
+  displayType = 'gradient',
   onChange,
 }: SliderProps) {
+  
+  const gradientClassNames = {
+    filler: 'bg-gradient-to-r from-primary to-secondary',
+    thumb: ['bg-white border-white before:bg-white, after:bg-white'],
+    track: 'bg-neutral-300',
+  };
+
+  const plainClassNames = {
+    filler: 'bg-primary',
+    thumb: 'bg-white border-white before:bg-white, after:bg-white',
+    track: 'bg-secondary',
+  };
   return (
     <Slider
       isDisabled={isDisabled}
@@ -36,11 +50,7 @@ export default function SliderComponent({
       value={value}
       className={`w-full ${className}`}
       onChange={onChange}
-      classNames={{
-        filler: 'bg-primary',
-        thumb: ['bg-white border-white before:bg-white, after:bg-white'],
-        track: 'bg-secondary',
-      }}
+      classNames={displayType === 'gradient' ? gradientClassNames: plainClassNames}
     />
   );
 }
