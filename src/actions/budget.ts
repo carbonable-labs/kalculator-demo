@@ -2,6 +2,7 @@
 
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
 import { Financing, RegionAllocation, Typology } from '@/types/inputTypes';
+import results from '@/data/budget-output.json';
 
 interface BudgetInput {
   regionAllocation: RegionAllocation;
@@ -10,7 +11,7 @@ interface BudgetInput {
   timeConstraints: number;
 }
 
-export async function runBudgetAlgo(input: BudgetInput) {
+export async function runBudgetAlgo(input: BudgetInput): Promise<BudgetOutputData> {
   const algoRes = runBudgetAlgorithm({
     regionAllocation: input.regionAllocation,
     typology: input.typology,
@@ -24,5 +25,7 @@ export async function runBudgetAlgo(input: BudgetInput) {
 
   const { totalBudget, adjustedBudget } = algoRes;
 
-  return { totalBudget, adjustedBudget };
+  // return { totalBudget, adjustedBudget };
+
+  return results as BudgetOutputData;
 }

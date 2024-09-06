@@ -8,7 +8,7 @@ import { useBudget } from '@/context/BudgetContext';
 export default function CalculateBudget() {
   const [isLoading, setIsLoading] = useState(false);
   const [canCalculate, setCanCalculate] = useState(false);
-  const { financing, regionAllocation, timeConstraints, typology } = useBudget();
+  const { financing, regionAllocation, timeConstraints, typology, setBudgetResults } = useBudget();
 
   useEffect(() => {
     if (financing && regionAllocation && timeConstraints && typology) {
@@ -26,12 +26,14 @@ export default function CalculateBudget() {
       return;
     }
 
-    const { adjustedBudget, totalBudget } = await runBudgetAlgo({
+    const BudgetResults = await runBudgetAlgo({
       financing,
       regionAllocation,
       timeConstraints,
       typology,
     });
+
+    setBudgetResults(BudgetResults);
 
     setIsLoading(false);
   };
