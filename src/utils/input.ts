@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { AlgorithmInput } from '@/types';
+import { AlgorithmInput } from '@/types/inputTypes';
 export function getFloatInput(prompt: string): number {
   const value = parseFloat(prompt);
   if (isNaN(value) || value < 0 || value > 100) {

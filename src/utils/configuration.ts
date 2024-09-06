@@ -1,4 +1,4 @@
-import { Financing, Typology } from '@/types';
+import { Financing, Typology } from '@/types/inputTypes';
 
 export enum TYPOLOGY_PREFERENCE {
   NBS_REMOVAL = 'removal',

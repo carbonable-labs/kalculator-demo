@@ -1,4 +1,4 @@
-import { RegionAllocation, Typology, Financing } from '@/types';
+import { RegionAllocation, Typology, Financing } from '@/types/inputTypes';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import {

@@ -20,7 +20,7 @@ import {
   DEFAULT_TYPOLGY,
   TYPOLOGY_PREFERENCE,
 } from '@/utils/configuration';
-import { Typology } from '@/types';
+import { Typology } from '@/types/inputTypes';
 
 export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);

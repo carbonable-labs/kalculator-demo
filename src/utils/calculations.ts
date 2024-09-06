@@ -10,7 +10,7 @@ import {
   biocharRegion,
   dacRegion,
 } from '@/constants/regions';
-import { RegionAllocation, Typology } from '@/types';
+import { RegionAllocation, Typology } from '@/types/inputTypes';
 
 export const checkPriceExPost = (
   year: number,
