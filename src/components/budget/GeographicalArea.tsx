@@ -6,10 +6,10 @@ import Africa from './geographical-area/Africa';
 import Asia from './geographical-area/Asia';
 import Europe from './geographical-area/Europe';
 import LatinAmerica from './geographical-area/LatinAmerica';
-import MiddleEast from './geographical-area/MiddleEast';
 import NorthAmerica from './geographical-area/NorthAmerica';
 import { useBudget } from '@/context/BudgetContext';
 import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
+import Oceania from './geographical-area/Oceania';
 
 export default function GeographicalArea() {
   const [isFullGeographicalArea, setIsFullGeographicalArea] = useState(true);
@@ -43,7 +43,7 @@ export default function GeographicalArea() {
         <LatinAmerica />
       </div>
       <div className="mt-8 w-full">
-        <MiddleEast />
+        <Oceania />
       </div>
       <div className="mt-8 w-full">
         <NorthAmerica />
