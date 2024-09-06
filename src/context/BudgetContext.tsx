@@ -23,7 +23,6 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLGY);
   const [regionAllocation, setRegionAllocation] = useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
 
-  console.log('typology', typology);
   return (
     <BudgetContext.Provider
       value={{
