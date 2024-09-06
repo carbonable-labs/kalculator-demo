@@ -10,7 +10,7 @@ import DAC from './typologies/DAC';
 import Biochar from './typologies/Biochar';
 import ImpactPreference from './typologies/ImpactPreference';
 import NbSPreference from './typologies/NbSPreference';
-import { BIODIVERSITY_AVOIDANCE_TYPOLGY, BIODIVERSITY_NO_IDEA_TYPOLGY, BIODIVERSITY_REMOVAL_TYPOLGY, CLIMATE_AVOIDANCE_TYPOLGY, CLIMATE_NO_IDEA_TYPOLGY, CLIMATE_REMOVAL_TYPOLGY, TYPOLOGY_PREFERENCE } from '@/utils/configuaration';
+import { BIODIVERSITY_AVOIDANCE_TYPOLGY, BIODIVERSITY_NO_IDEA_TYPOLGY, BIODIVERSITY_REMOVAL_TYPOLGY, CLIMATE_AVOIDANCE_TYPOLGY, CLIMATE_NO_IDEA_TYPOLGY, CLIMATE_REMOVAL_TYPOLGY, TYPOLOGY_PREFERENCE } from '@/utils/configuration';
 import { Typology } from '@/types';
 
 export default function ProjectTypology() {

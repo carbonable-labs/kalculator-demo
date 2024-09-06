@@ -5,7 +5,7 @@ import SliderComponent from '../form/Slider';
 import Title from '../form/Title';
 import DontKnowCheckbox from '../form/DontKnowCheckbox';
 import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_FINANCING } from '@/utils/configuaration';
+import { DEFAULT_FINANCING } from '@/utils/configuration';
 
 export default function InvestmentStrategy() {
   const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(50);

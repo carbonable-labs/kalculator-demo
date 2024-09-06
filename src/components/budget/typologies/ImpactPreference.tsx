@@ -1,5 +1,5 @@
 import SelectComponent from "@/components/form/Select";
-import { TYPOLOGY_PREFERENCE } from "@/utils/configuaration";
+import { TYPOLOGY_PREFERENCE } from "@/utils/configuration";
 
 interface ImpactPreferenceProps {
   setImpactPreference: (value: string) => void;
