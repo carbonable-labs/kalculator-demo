@@ -12,7 +12,7 @@ export default function LatinAmerica() {
   useEffect(() => {
     setRegionAllocation({
       ...regionAllocation,
-      southAmerica: (latinAmerica as number) / 100,
+      southAmerica: Math.floor(latinAmerica as number) / 100,
     });
   }, [latinAmerica]);
 
@@ -30,7 +30,7 @@ export default function LatinAmerica() {
       label="Latin America"
       value={latinAmerica as number}
       onChange={setLatinAmerica}
-      displayedValue={latinAmerica}
+      displayedValue={latinAmerica as number}
     />
   )
 }

@@ -12,7 +12,7 @@ export default function Africa() {
   useEffect(() => {
     setRegionAllocation({
       ...regionAllocation,
-      africa: (africa as number) / 100,
+      africa: Math.floor(africa as number) / 100,
     });
   }, [africa]);
 
@@ -30,7 +30,7 @@ export default function Africa() {
       label="Africa"
       value={africa as number}
       onChange={setAfrica}
-      displayedValue={africa}
+      displayedValue={africa as number}
     />
   )
 }

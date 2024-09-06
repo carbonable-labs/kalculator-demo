@@ -12,7 +12,7 @@ export default function Europe() {
   useEffect(() => {
     setRegionAllocation({
       ...regionAllocation,
-      europe: (europe as number) / 100,
+      europe: Math.floor(europe as number) / 100,
     });
   }, [europe]);
 
@@ -30,7 +30,7 @@ export default function Europe() {
       label="Europe"
       value={europe as number}
       onChange={setEurope}
-      displayedValue={europe}
+      displayedValue={europe as number}
     />
   )
 }

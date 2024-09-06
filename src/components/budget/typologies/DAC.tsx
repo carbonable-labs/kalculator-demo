@@ -16,7 +16,7 @@ export default function DAC({ isDontKnowSelected }: NbSProps) {
   useEffect(() => {
     setTypology({
       ...typology,
-      dac: (dac as number) / 100,
+      dac: Math.floor(dac as number) / 100,
     });
   }, [dac]);
 
@@ -34,7 +34,7 @@ export default function DAC({ isDontKnowSelected }: NbSProps) {
       label="DAC"
       value={dac as number}
       onChange={setDac}
-      displayedValue={dac}
+      displayedValue={dac as number}
       isDisabled={isDontKnowSelected}
     />
   )

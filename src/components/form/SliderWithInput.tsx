@@ -10,7 +10,7 @@ interface SliderWithInputProps {
   value: number;
   className?: string;
   isDisabled?: boolean;
-  displayedValue: number | number[];
+  displayedValue: number;
   onChange: (value: number | number[]) => void;
 }
 
@@ -46,7 +46,7 @@ export default function SliderWithInput({
         />
       </div>
       <div className={`flex w-1/12 items-center rounded-lg border border-opacityLight-5 text-sm ${isDisabled ? "opacity-50" : ""}`}>
-        <div className="w-7/12 px-4 py-2">{displayedValue as number}</div>
+        <div className="w-7/12 px-4 py-2">{Math.floor(displayedValue)}</div>
         <div className="w-5/12 rounded-r-md border-l border-l-opacityLight-5 bg-opacityLight-10 py-2 text-center">
           %
         </div>

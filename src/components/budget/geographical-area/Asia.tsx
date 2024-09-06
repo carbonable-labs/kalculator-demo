@@ -12,7 +12,7 @@ export default function Asia() {
   useEffect(() => {
     setRegionAllocation({
       ...regionAllocation,
-      asia: (asia as number) / 100,
+      asia: Math.floor(asia as number) / 100,
     });
   }, [asia]);
 
@@ -30,7 +30,7 @@ export default function Asia() {
       label="Asia"
       value={asia as number}
       onChange={setAsia}
-      displayedValue={asia}
+      displayedValue={asia as number}
     />
   )
 }

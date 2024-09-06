@@ -16,7 +16,7 @@ export default function Biochar({ isDontKnowSelected }: NbSProps) {
   useEffect(() => {
     setTypology({
       ...typology,
-      biochar: (biochar as number) / 100,
+      biochar: Math.floor(biochar as number) / 100,
     });
   }, [biochar]);
 
@@ -34,7 +34,7 @@ export default function Biochar({ isDontKnowSelected }: NbSProps) {
       label="Biochar"
       value={biochar as number}
       onChange={setBiochar}
-      displayedValue={biochar}
+      displayedValue={biochar as number}
       isDisabled={isDontKnowSelected}
     />
   )

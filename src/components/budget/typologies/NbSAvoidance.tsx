@@ -16,7 +16,7 @@ export default function NbSAvoidance({ isDontKnowSelected }: NbSProps) {
   useEffect(() => {
     setTypology({
       ...typology,
-      nbsAvoidance: (renewableEnergy as number) / 100,
+      nbsAvoidance: Math.floor(renewableEnergy as number) / 100,
     });
   }, [renewableEnergy]);
 
@@ -34,7 +34,7 @@ export default function NbSAvoidance({ isDontKnowSelected }: NbSProps) {
       label="RE"
       value={renewableEnergy as number}
       onChange={setRenewableEnergy}
-      displayedValue={renewableEnergy}
+      displayedValue={renewableEnergy as number}
       isDisabled={isDontKnowSelected}
     />
   )

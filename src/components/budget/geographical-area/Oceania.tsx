@@ -12,7 +12,7 @@ export default function Oceania() {
   useEffect(() => {
     setRegionAllocation({
       ...regionAllocation,
-      oceania: (oceania as number) / 100,
+      oceania: Math.floor(oceania as number) / 100,
     });
   }, [oceania]);
 
@@ -30,7 +30,7 @@ export default function Oceania() {
       label="Oceania"
       value={oceania as number}
       onChange={setOceania}
-      displayedValue={oceania}
+      displayedValue={oceania as number}
     />
   )
 }

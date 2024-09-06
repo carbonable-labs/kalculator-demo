@@ -16,7 +16,7 @@ export default function NbSRemoval({ isDontKnowSelected }: NbSProps) {
   useEffect(() => {
     setTypology({
       ...typology,
-      nbsRemoval: (nbs as number) / 100,
+      nbsRemoval: Math.floor(nbs as number) / 100,
     });
   }, [nbs]);
 
@@ -34,7 +34,7 @@ export default function NbSRemoval({ isDontKnowSelected }: NbSProps) {
       label="NbS"
       value={nbs as number}
       onChange={setNbs}
-      displayedValue={nbs}
+      displayedValue={nbs as number}
       isDisabled={isDontKnowSelected}
     />
   )
