@@ -5,32 +5,32 @@ import { useBudget } from "@/context/BudgetContext";
 import { DEFAULT_GEOGRAPHICAL_AREA } from "@/utils/configuration";
 import { useEffect, useState } from "react";
 
-export default function MiddleEast() {
-  const [middleEast, setMiddleEast] = useState<number | number[]>(DEFAULT_GEOGRAPHICAL_AREA.oceania * 100);
+export default function Oceania() {
+  const [oceania, setOceania] = useState<number | number[]>(DEFAULT_GEOGRAPHICAL_AREA.oceania * 100);
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
     setRegionAllocation({
       ...regionAllocation,
-      oceania: (middleEast as number) / 100,
+      oceania: (oceania as number) / 100,
     });
-  }, [middleEast]);
+  }, [oceania]);
 
   useEffect(() => {
-    setMiddleEast(regionAllocation.oceania * 100);
+    setOceania(regionAllocation.oceania * 100);
   }, [regionAllocation.oceania]);
 
   return (
     <SliderWithInput
-      inputLabel="Middle East"
+      inputLabel="Oceania"
       size="sm"
       step={1}
       minValue={0}
       maxValue={100}
-      label="Middle East"
-      value={middleEast as number}
-      onChange={setMiddleEast}
-      displayedValue={middleEast}
+      label="Oceania"
+      value={oceania as number}
+      onChange={setOceania}
+      displayedValue={oceania}
     />
   )
 }
