@@ -1,6 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
+<<<<<<< HEAD
 import { runStratAlgorithm } from '@/algorithms/algoStrat';
+=======
+import { configMap } from '@/constants/configs';
+import { ConfigType } from '../input-form-typo';
+import { runTypoAlgorithm } from '@/algorithms/algoType';
+import { AlgorithmInput, ProjectConfig, RegionAllocation, TimeConstraint } from '@/types';
+>>>>>>> main
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -18,29 +25,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         timeConstraints: input.timeConstraints,
       });
       if (!algoRes) {
-        throw new Error('An error occurred while running the budget algorithm.');
+        throw new Error('An error occurred while running the algorithm.');
       }
 
-      const { totalBudget, adjustedBudget } = algoRes;
-
-      const stratRes = runStratAlgorithm({
-        timeConstraints: input.timeConstraints,
-        budget: input.budget,
-        regionAllocation: input.regionAllocation,
-        typology: input.typology,
-        financing: input.financing,
-      });
-      if (!stratRes) {
-        throw new Error('An error occurred while running the strat algorithm.');
-      }
-
-      const { nbsRemoval, nbsAvoidance, biochar, dac, stratAdjustedBudget, carbonToOffset } = stratRes;
+      const totalBudget = algoRes;
 
       // Respond with the result
+<<<<<<< HEAD
       res.status(200).json({
         budget: { totalBudget, adjustedBudget },
         strat: { nbsRemoval, nbsAvoidance, biochar, dac, stratAdjustedBudget, carbonToOffset }
       });
+=======
+      res.status(200).json(totalBudget);
+>>>>>>> main
     } catch (error) {
       console.error('Error running algorithm:', error);
       res.status(500).json({ error: 'An error occurred while running the algorithm.' });
