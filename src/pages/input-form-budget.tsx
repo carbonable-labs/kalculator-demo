@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 
 const InputForm = () => {
-  const [budget, setBudget] = useState<number>(0);
   const [timeConstraints, setTimeConstraints] = useState<number>(1);
   const [financingExPost, setFinancingExPost] = useState<number>(0.5);
   const [financingExAnte, setFinancingExAnte] = useState<number>(0.5);
@@ -27,7 +26,6 @@ const InputForm = () => {
 
     const inputData = {
       timeConstraints,
-      budget,
       financing: {
         financingExPost,
         financingExAnte,
@@ -60,15 +58,6 @@ const InputForm = () => {
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Input Form</h1>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Budget</label>
-          <input
-            type="number"
-            value={budget}
-            onChange={(e) => setBudget(Number(e.target.value))}
-            className="mt-1 w-full rounded border p-2"
-          />
-        </div>
 
         <div className="mb-4">
           <label className="block text-sm font-medium">Time Constraints</label>

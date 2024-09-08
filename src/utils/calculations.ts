@@ -10,14 +10,21 @@ import {
   biocharRegion,
   dacRegion,
 } from '@/constants/regions';
-import { RegionAllocation, Typology } from '@/types';
+import {
+  RegionAllocation,
+  RegionCosts,
+  RegionPurchase,
+  StrategyStep,
+  TypePurchased,
+  Typology,
+} from '@/types';
 
 export const checkPriceExPost = (
   year: number,
   quantityToOffset: number,
   typology: Typology,
   regionAllocation: RegionAllocation,
-): [number, number, string[]] => {
+): [number, number, TypePurchased[]] => {
   const options = {
     nbsRemoval: [
       typology.nbsRemoval,
@@ -31,19 +38,22 @@ export const checkPriceExPost = (
     dac: [typology.dac, dacExPostMedium[year as keyof typeof dacExPostMedium]],
   };
 
+  // Filter out options where available quantity is 0 or less
   const validOptions = Object.entries(options).filter(
     ([_, [availableQuantity]]) => availableQuantity > 0,
   );
 
+  // If no valid options are left, return 'All sources are depleted'
   if (validOptions.length === 0) {
-    return [0.0, 0.0, ['All sources are depleted']];
+    return [0, 0, []];
   }
 
+  // Sort options by price (ascending)
   const sortedOptions = validOptions.sort(([, [, priceA]], [, [, priceB]]) => priceA - priceB);
 
   let totalQuantityUsed = 0.0;
   let totalCost = 0.0;
-  const typesPurchased: string[] = [];
+  const typesPurchased: TypePurchased[] = [];
 
   for (const [typologyKey, [availableQuantity, price]] of sortedOptions) {
     if (totalQuantityUsed >= quantityToOffset) break;
@@ -54,21 +64,109 @@ export const checkPriceExPost = (
       const region = regionKey as keyof RegionAllocation;
       const regionalQuantity = regionAllocation[region] * quantityToBuy;
       if (regionalQuantity > 0) {
-        const costForTypology = getRegionFactor(typologyKey, region) * price * regionalQuantity;
+        const coefficient = getRegionFactor(typologyKey, region);
+        const costForTypology = coefficient * price * regionalQuantity;
 
         totalQuantityUsed += regionalQuantity;
         totalCost += costForTypology;
 
-        typesPurchased.push(
-          `${typologyKey} in ${region}: ${regionalQuantity.toFixed(2)} units at $${price.toFixed(2)} per unit (coefficient: ${getRegionFactor(typologyKey, region)})`,
-        );
+        let regionPurchase: RegionPurchase = {
+          region,
+          quantity: regionalQuantity,
+          region_factor: coefficient,
+          cost: costForTypology,
+        };
 
+        typesPurchased.push({
+          typology: typologyKey,
+          quantity: regionalQuantity,
+          regions: [regionPurchase],
+        });
+
+        // Deduct the purchased quantity from the available quantity for the typology
         typology[typologyKey as keyof Typology] -= regionalQuantity;
       }
     }
   }
 
   return [totalQuantityUsed, totalCost, typesPurchased];
+};
+
+export const getCostPerTypes = (strategies: StrategyStep[]) => {
+  let costNbsRemoval = 0;
+  let costNbsAvoidance = 0;
+  let costBiochar = 0;
+  let costDac = 0;
+
+  strategies.forEach((strategy) => {
+    strategy.types_purchased.forEach((type) => {
+      const totalCostForType = type.regions.reduce((total, region) => total + region.cost, 0);
+
+      if (type.typology === 'nbsRemoval') {
+        costNbsRemoval += totalCostForType;
+      } else if (type.typology === 'nbsAvoidance') {
+        costNbsAvoidance += totalCostForType;
+      } else if (type.typology === 'biochar') {
+        costBiochar += totalCostForType;
+      } else if (type.typology === 'dac') {
+        costDac += totalCostForType;
+      }
+    });
+  });
+
+  return {
+    costNbsRemoval,
+    costNbsAvoidance,
+    costBiochar,
+    costDac,
+  };
+};
+
+export const getCostPerRegions = (strategies: StrategyStep[]): RegionCosts => {
+  let costNorthAmerica = 0;
+  let costSouthAmerica = 0;
+  let costEurope = 0;
+  let costAfrica = 0;
+  let costAsia = 0;
+  let costOceania = 0;
+
+  strategies.forEach((strategy) => {
+    strategy.types_purchased.forEach((type) => {
+      type.regions.forEach((regionPurchase) => {
+        switch (regionPurchase.region) {
+          case 'northAmerica':
+            costNorthAmerica += regionPurchase.cost;
+            break;
+          case 'southAmerica':
+            costSouthAmerica += regionPurchase.cost;
+            break;
+          case 'europe':
+            costEurope += regionPurchase.cost;
+            break;
+          case 'africa':
+            costAfrica += regionPurchase.cost;
+            break;
+          case 'asia':
+            costAsia += regionPurchase.cost;
+            break;
+          case 'oceania':
+            costOceania += regionPurchase.cost;
+            break;
+          default:
+            break;
+        }
+      });
+    });
+  });
+
+  return {
+    northAmerica: costNorthAmerica,
+    southAmerica: costSouthAmerica,
+    europe: costEurope,
+    africa: costAfrica,
+    asia: costAsia,
+    oceania: costOceania,
+  };
 };
 
 const getRegionFactor = (typology: string, region: keyof RegionAllocation): number => {
