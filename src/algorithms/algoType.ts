@@ -1,30 +1,19 @@
-import { RegionAllocation, Typology, Financing, TimeConstraint, ProjectConfig } from '@/types';
+import {
+  RegionAllocation,
+  Typology,
+  TimeConstraint,
+  ProjectConfig,
+  TypoAlgorithmInput,
+} from '@/types';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
-import {
-  nbsRemovalRegion,
-  nbsAvoidanceRegion,
-  biocharRegion,
-  dacRegion,
-} from '@/constants/regions';
-import {
-  nbsRemovalExPostMedium,
-  nbsAvoidanceExPostMedium,
-  biocharExPostMedium,
-  dacExPostMedium,
-  deltaExAnte,
-} from '@/constants/forecasts';
+import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
+import { configMap } from '@/constants/configs';
 
-export const runTypoAlgorithm = (input: {
-  projectConfig: ProjectConfig[]; // we're not passing the config type but directly the config object
-  budget: number;
-  regionAllocation: RegionAllocation;
-  financing: Financing;
-  timeConstraints: TimeConstraint;
-}) => {
-  const { projectConfig, budget, regionAllocation, financing, timeConstraints } = input;
-  console.log('run typo algo');
+export const runTypoAlgorithm = (input: TypoAlgorithmInput) => {
+  const { configType, budget, regionAllocation, financing, timeConstraints } = input;
+  const projectConfig: ProjectConfig[] = configMap[configType];
 
   for (const config of projectConfig) {
     console.log('config: ', config);
@@ -66,6 +55,11 @@ export const runTypoAlgorithm = (input: {
           regionAllocation,
         );
         break;
+    }
+
+    if (!totalBudget) {
+      console.error('An error occurred while running the algorithm. Total budget is null.');
+      return null;
     }
 
     adjustedBudget = totalBudget;

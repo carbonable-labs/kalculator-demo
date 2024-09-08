@@ -41,7 +41,7 @@ const InputForm = () => {
       regionAllocation,
     };
 
-    const response = await fetch('/api/run-algo', {
+    const response = await fetch('/api/run-budget-algo', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

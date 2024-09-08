@@ -1,32 +1,19 @@
-import { RegionAllocation, Typology, Financing } from '@/types';
+import { RegionAllocation, Typology, Financing, StratAlgorithmInput } from '@/types';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
-import {
-  nbsRemovalRegion,
-  nbsAvoidanceRegion,
-  biocharRegion,
-  dacRegion,
-} from '@/constants/regions';
-import {
-  nbsRemovalExPostMedium,
-  nbsAvoidanceExPostMedium,
-  biocharExPostMedium,
-  dacExPostMedium,
-  deltaExAnte,
-} from '@/constants/forecasts';
+import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
 
-export const runStratAlgorithm = (input: {
-  timeConstraints: number;
-  budget: number;
-  financing: Financing;
-  typology: Typology;
-  regionAllocation: RegionAllocation;
-}) => {
+export const runStratAlgorithm = (input: StratAlgorithmInput) => {
   const { timeConstraints, budget, financing, typology, regionAllocation } = input;
 
   let { nbsRemoval, nbsAvoidance, biochar, dac } = typology;
-  let [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac] = [nbsRemoval, nbsAvoidance, biochar, dac];
+  let [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac] = [
+    nbsRemoval,
+    nbsAvoidance,
+    biochar,
+    dac,
+  ];
 
   let totalBudget, stratAdjustedBudget;
 
@@ -73,7 +60,12 @@ export const runStratAlgorithm = (input: {
       stratAdjustedBudget = exAnteCost + totalBudget * financing.financingExPost;
     }
 
-    [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac] = [nbsRemoval, nbsAvoidance, biochar, dac];
+    [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac] = [
+      nbsRemoval,
+      nbsAvoidance,
+      biochar,
+      dac,
+    ];
 
     if (dac > 0) {
       const adjustment = Math.min(0.01 * carbonToOffset, dac);
@@ -89,11 +81,16 @@ export const runStratAlgorithm = (input: {
       nbsAvoidance += adjustment;
     } else {
       console.error('Insufficient budget. Please increase your budget.');
-      return;
+      return -1;
     }
   }
 
-  [nbsRemoval, nbsAvoidance, biochar, dac] = [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac];
+  [nbsRemoval, nbsAvoidance, biochar, dac] = [
+    prevNbsRemoval,
+    prevNbsAvoidance,
+    prevBiochar,
+    prevDac,
+  ];
 
   // print(f"Nbs Removal: {current_nbs_removal / carbon_to_offset * 100:.2f}%, "
   // f"Nbs Avoidance: {current_nbs_avoidance / carbon_to_offset * 100:.2f}%, "
@@ -371,11 +368,10 @@ export const noAlgo = (
   return optimalBudget;
 };
 
-
 const applyAlgo = (
   timeConstraints: number,
   carbonToOffset: number,
   regionAllocation: RegionAllocation,
   typology: Typology,
-  financing: Financing,) => {
-}
+  financing: Financing,
+) => {};
