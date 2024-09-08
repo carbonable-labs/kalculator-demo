@@ -1,0 +1,72 @@
+// Define the configuration types as enums
+export enum ConfigType {
+    CarbonImpact = 'CarbonImpact',
+    Durability = 'Durability',
+    Biodiversity = 'Biodiversity',
+    ProjectMaker = 'ProjectMaker',
+}
+
+export type ProjectConfig = {
+    nbs_removal: number;
+    biochar: number;
+    dac: number;
+    nbs_avoidance: number;
+};
+
+
+// Define the configuration mappings for each type
+export const carbonImpactConfigs = [
+    { nbs_removal: 0.7, biochar: 0.2, dac: 0.1, nbs_avoidance: 0 },
+    { nbs_removal: 0.75, biochar: 0.2, dac: 0.05, nbs_avoidance: 0 },
+    { nbs_removal: 0.8, biochar: 0.15, dac: 0.05, nbs_avoidance: 0 },
+    { nbs_removal: 0.85, biochar: 0.15, dac: 0, nbs_avoidance: 0 },
+    { nbs_removal: 0.9, biochar: 0.1, dac: 0, nbs_avoidance: 0 },
+    { nbs_removal: 0.95, biochar: 0.05, dac: 0, nbs_avoidance: 0 },
+    { nbs_removal: 1, biochar: 0, dac: 0, nbs_avoidance: 0 },
+];
+
+export const durabilityConfigs = [
+    { dac: 0.6, biochar: 0.3, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.55, biochar: 0.35, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.5, biochar: 0.4, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.45, biochar: 0.45, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.4, biochar: 0.5, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.35, biochar: 0.55, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.3, biochar: 0.6, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.25, biochar: 0.65, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.2, biochar: 0.7, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.15, biochar: 0.75, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.1, biochar: 0.8, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0.05, biochar: 0.85, nbs_avoidance: 0, nbs_removal: 0.1 },
+    { dac: 0, biochar: 0.9, nbs_avoidance: 0, nbs_removal: 0.1 },
+];
+
+export const biodiversityConfigs = [
+    { nbs_removal: 0.6, nbs_avoidance: 0.3, biochar: 0.1, dac: 0 },
+    { nbs_removal: 0.6, nbs_avoidance: 0.35, biochar: 0.05, dac: 0 },
+    { nbs_removal: 0.6, nbs_avoidance: 0.4, biochar: 0, dac: 0 },
+    { nbs_removal: 0.55, nbs_avoidance: 0.45, biochar: 0, dac: 0 },
+    { nbs_removal: 0.5, nbs_avoidance: 0.5, biochar: 0, dac: 0 },
+    { nbs_removal: 0.45, nbs_avoidance: 0.55, biochar: 0, dac: 0 },
+    { nbs_removal: 0.4, nbs_avoidance: 0.6, biochar: 0, dac: 0 },
+    { nbs_removal: 0.35, nbs_avoidance: 0.65, biochar: 0, dac: 0 },
+    { nbs_removal: 0.3, nbs_avoidance: 0.7, biochar: 0, dac: 0 },
+    { nbs_removal: 0.25, nbs_avoidance: 0.75, biochar: 0, dac: 0 },
+    { nbs_removal: 0.2, nbs_avoidance: 0.8, biochar: 0, dac: 0 },
+];
+
+export const projectMakerConfigs = [
+    { nbs_removal: 0.35, biochar: 0.15, dac: 0.05, nbs_avoidance: 0.45 },
+    { nbs_removal: 0.4, biochar: 0.15, dac: 0, nbs_avoidance: 0.45 },
+    { nbs_removal: 0.4, biochar: 0.1, dac: 0, nbs_avoidance: 0.5 },
+    { nbs_removal: 0.45, biochar: 0.05, dac: 0, nbs_avoidance: 0.5 },
+    { nbs_removal: 0.5, biochar: 0, dac: 0, nbs_avoidance: 0.5 },
+];
+
+// Map the enum to the respective configuration arrays
+export const configMap = {
+    [ConfigType.CarbonImpact]: carbonImpactConfigs,
+    [ConfigType.Durability]: durabilityConfigs,
+    [ConfigType.Biodiversity]: biodiversityConfigs,
+    [ConfigType.ProjectMaker]: projectMakerConfigs,
+};
