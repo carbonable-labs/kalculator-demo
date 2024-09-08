@@ -43,14 +43,22 @@ export enum ConfigType {
 export type AlgorithmInput = BudgetAlgorithmInput | TypoAlgorithmInput;
 
 export interface BudgetAlgorithmInput {
-  timeConstraints: number;
+  timeConstraints: TimeConstraint;
   financing: Financing;
   typology: Typology;
   regionAllocation: RegionAllocation;
 }
 
+export interface StratAlgorithmInput {
+  timeConstraints: TimeConstraint;
+  financing: Financing;
+  typology: Typology;
+  regionAllocation: RegionAllocation;
+  budget: number;
+}
+
 export interface TypoAlgorithmInput {
-  timeConstraints: number;
+  timeConstraints: TimeConstraint;
   financing: Financing;
   regionAllocation: RegionAllocation;
   budget: number;

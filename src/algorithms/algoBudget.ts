@@ -1,27 +1,10 @@
-import { RegionAllocation, Typology, Financing } from '@/types';
+import { RegionAllocation, Typology, Financing, BudgetAlgorithmInput } from '@/types';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
-import {
-  nbsRemovalRegion,
-  nbsAvoidanceRegion,
-  biocharRegion,
-  dacRegion,
-} from '@/constants/regions';
-import {
-  nbsRemovalExPostMedium,
-  nbsAvoidanceExPostMedium,
-  biocharExPostMedium,
-  dacExPostMedium,
-  deltaExAnte,
-} from '@/constants/forecasts';
+import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
 
-export const runBudgetAlgorithm = (input: {
-  regionAllocation: RegionAllocation;
-  typology: Typology;
-  financing: Financing;
-  timeConstraints: number;
-}) => {
+export const runBudgetAlgorithm = (input: BudgetAlgorithmInput) => {
   const { regionAllocation, typology, financing, timeConstraints } = input;
 
   let { nbsRemoval, nbsAvoidance, biochar, dac } = typology;
