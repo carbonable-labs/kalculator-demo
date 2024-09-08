@@ -27,7 +27,7 @@ const InputForm = () => {
 
   const handleConfigTypeChange = (type: ConfigType) => {
     if (selectedConfigTypes.includes(type)) {
-      setSelectedConfigTypes(selectedConfigTypes.filter(t => t !== type));
+      setSelectedConfigTypes(selectedConfigTypes.filter((t) => t !== type));
     } else {
       setSelectedConfigTypes([...selectedConfigTypes, type]);
     }

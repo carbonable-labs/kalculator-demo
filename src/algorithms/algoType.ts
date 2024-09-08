@@ -1,4 +1,4 @@
-import { RegionAllocation, Typology, Financing, TimeConstraint } from '@/types';
+import { RegionAllocation, Typology, Financing, TimeConstraint, ProjectConfig } from '@/types';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import {
@@ -15,48 +15,47 @@ import {
   deltaExAnte,
 } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
-import { ProjectConfig } from '@/constants/configs';
 
 export const runTypoAlgorithm = (input: {
   projectConfig: ProjectConfig[]; // we're not passing the config type but directly the config object
-  budget: number,
+  budget: number;
   regionAllocation: RegionAllocation;
   financing: Financing;
   timeConstraints: TimeConstraint;
 }) => {
   const { projectConfig, budget, regionAllocation, financing, timeConstraints } = input;
-  console.log("run typo algo");
+  console.log('run typo algo');
 
   for (const config of projectConfig) {
-    console.log("config: ", config);
+    console.log('config: ', config);
     // Access values from the config object
     const nbsRemoval = config.nbs_removal * carbonToOffset;
     const biochar = config.biochar * carbonToOffset;
     const dac = config.dac * carbonToOffset;
     const nbsAvoidance = config.nbs_avoidance * carbonToOffset;
 
-    console.log("nbsRemoval: ", nbsRemoval);
-    console.log("biochar: ", biochar);
-    console.log("dac: ", dac);
-    console.log("nbsAvoidance: ", nbsAvoidance);
+    console.log('nbsRemoval: ', nbsRemoval);
+    console.log('biochar: ', biochar);
+    console.log('dac: ', dac);
+    console.log('nbsAvoidance: ', nbsAvoidance);
     let adjustedBudget, totalBudget;
 
     switch (timeConstraints) {
       case TimeConstraint.Yearly:
-        totalBudget = yearlyAlgo(
-          timeConstraints,
-          carbonToOffset,
-          regionAllocation,
-          { nbsRemoval, nbsAvoidance, biochar, dac },
-        );
+        totalBudget = yearlyAlgo(timeConstraints, carbonToOffset, regionAllocation, {
+          nbsRemoval,
+          nbsAvoidance,
+          biochar,
+          dac,
+        });
         break;
       case TimeConstraint.FiveYear:
-        totalBudget = fiveYearAlgo(
-          timeConstraints,
-          carbonToOffset,
-          regionAllocation,
-          { nbsRemoval, nbsAvoidance, biochar, dac },
-        );
+        totalBudget = fiveYearAlgo(timeConstraints, carbonToOffset, regionAllocation, {
+          nbsRemoval,
+          nbsAvoidance,
+          biochar,
+          dac,
+        });
         break;
       case TimeConstraint.NoConstraint:
         totalBudget = noAlgo(
@@ -77,17 +76,15 @@ export const runTypoAlgorithm = (input: {
 
     // Check if the budget fits
     if (checkBudget(adjustedBudget, budget) === 1) {
-      console.log("\nHere are the quantities you need to buy:\n");
-      console.log(`Configuration used: Nbs Removal: ${config.nbs_removal * 100}%, Nbs Avoidance: ${config.nbs_avoidance * 100}%, Biochar: ${config.biochar * 100}%, DAC: ${config.dac * 100}%`);
+      console.log('\nHere are the quantities you need to buy:\n');
+      console.log(
+        `Configuration used: Nbs Removal: ${config.nbs_removal * 100}%, Nbs Avoidance: ${config.nbs_avoidance * 100}%, Biochar: ${config.biochar * 100}%, DAC: ${config.dac * 100}%`,
+      );
       return adjustedBudget;
     }
-    break;
-
-
   }
-  console.log("\nBudget too low\n");
+  console.log('\nBudget too low\n');
   return -1;
-
 };
 
 // Function to check if the adjusted budget is within an acceptable range of the user's budget
@@ -99,39 +96,38 @@ function checkBudget(adjustedBudget: number, budget: number): number {
 
   // If the adjusted budget is less than or equal to the actual budget
   if (diffBudgetOne <= 0) {
-    finalDiff = diffBudgetTwo;  // Set the final difference as the positive gap
+    finalDiff = diffBudgetTwo; // Set the final difference as the positive gap
   }
   // If the actual budget is less than the adjusted budget
   else if (diffBudgetTwo < 0) {
-    finalDiff = diffBudgetOne;  // Set the final difference as the positive gap
+    finalDiff = diffBudgetOne; // Set the final difference as the positive gap
   }
 
   // Check if the actual budget is within 10% (plus or minus) of the adjusted budget
   if (adjustedBudget * 0.9 <= budget && budget <= adjustedBudget * 1.1) {
-    console.log("\nBudget OK");
-    console.log("Adjusted budget: ", adjustedBudget);
-    console.log("Actual budget: ", budget);
-    console.log("Difference in budgets: ", finalDiff);
-    return 1;  // Return 1 to indicate that the budget is acceptable
+    console.log('\nBudget OK');
+    console.log('Adjusted budget: ', adjustedBudget);
+    console.log('Actual budget: ', budget);
+    console.log('Difference in budgets: ', finalDiff);
+    return 1; // Return 1 to indicate that the budget is acceptable
   }
   // If the actual budget is greater than the adjusted budget
   else if (adjustedBudget < budget) {
-    console.log("\nBudget OK and you can reduce it!");
-    console.log("Adjusted budget: ", adjustedBudget);
-    console.log("Actual budget: ", budget);
+    console.log('\nBudget OK and you can reduce it!');
+    console.log('Adjusted budget: ', adjustedBudget);
+    console.log('Actual budget: ', budget);
     console.log("Thanks to Carbonable you've saved: ", finalDiff);
-    return 1;  // Return 1 to indicate that the budget is acceptable with savings
+    return 1; // Return 1 to indicate that the budget is acceptable with savings
   }
   // If the actual budget is less than the adjusted budget
   else {
-    console.log("\nBudget too low\n");
-    console.log("Adjusted budget: ", adjustedBudget);
-    console.log("Actual budget: ", budget);
-    console.log("You must add: ", finalDiff, " to your budget.");
-    return -1;  // Return -1 to indicate that the budget is insufficient
+    console.log('\nBudget too low\n');
+    console.log('Adjusted budget: ', adjustedBudget);
+    console.log('Actual budget: ', budget);
+    console.log('You must add: ', finalDiff, ' to your budget.');
+    return -1; // Return -1 to indicate that the budget is insufficient
   }
 }
-
 
 /// Sub Algorithms
 
@@ -143,8 +139,8 @@ export const yearlyAlgo = (
   typology: Typology,
 ): number => {
   let percentageToOffset = timeConstraints / duration; // % of carbon to offset each year
-  let quantityToOffset = percentageToOffset * carbonToOffset  // Quantity of carbon to offset each year
-  console.log("quantityToOffset: ", quantityToOffset);
+  let quantityToOffset = percentageToOffset * carbonToOffset; // Quantity of carbon to offset each year
+  console.log('quantityToOffset: ', quantityToOffset);
 
   let totalBudget = 0;
   let remainingCarbonToOffset = carbonToOffset;
@@ -154,24 +150,21 @@ export const yearlyAlgo = (
 
   // Loop through each year
   for (let year = currentYear; year <= targetYear; year++) {
-
     if (year === targetYear) {
       // Last year
       quantityToOffset = remainingCarbonToOffset;
     }
 
-    
-    
     const [quantityUsed, cost, typesPurchased] = checkPriceExPost(
       year,
       quantityToOffset,
       typology,
       regionAllocation,
     );
-    console.log("year: ", year);
-    console.log("quantityUsed: ", quantityUsed);
-    console.log("cost: ", cost);
-    console.log("typesPurchased: ", typesPurchased);
+    console.log('year: ', year);
+    console.log('quantityUsed: ', quantityUsed);
+    console.log('cost: ', cost);
+    console.log('typesPurchased: ', typesPurchased);
 
     if (typesPurchased.includes('All sources are depleted')) {
       console.error(`Year ${year}: All sources are depleted. No purchases made.`);
@@ -190,8 +183,7 @@ export const yearlyAlgo = (
 
       remainingCarbonToOffset = 0;
       break;
-    }
-    else {
+    } else {
       totalBudget += cost;
       remainingCarbonToOffset -= quantityUsed;
       currentStrategy.push(
@@ -216,7 +208,7 @@ export const fiveYearAlgo = (
   typology: Typology,
 ): number => {
   let percentageToOffset = timeConstraints / duration; // % of carbon to offset each year
-  let quantityToOffset = percentageToOffset * carbonToOffset  // Quantity of carbon to offset each year
+  let quantityToOffset = percentageToOffset * carbonToOffset; // Quantity of carbon to offset each year
 
   let totalBudget = 0;
   let remainingCarbonToOffset = carbonToOffset;
@@ -226,12 +218,10 @@ export const fiveYearAlgo = (
 
   // Loop through each year
   for (let year = currentYear; year <= targetYear; year += 5) {
-
     if (year === targetYear) {
       // Last year
       quantityToOffset = remainingCarbonToOffset;
     }
-
 
     const [quantityUsed, cost, typesPurchased] = checkPriceExPost(
       year,
@@ -257,8 +247,7 @@ export const fiveYearAlgo = (
 
       remainingCarbonToOffset = 0;
       break;
-    }
-    else {
+    } else {
       totalBudget += cost;
       remainingCarbonToOffset -= quantityUsed;
       currentStrategy.push(
