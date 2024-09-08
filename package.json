@@ -12,6 +12,9 @@
     "fmt:check": "prettier --check ."
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
+    "@nextui-org/react": "^2.4.6",
+    "framer-motion": "^11.5.2",
     "next": "14.2.7",
     "react": "^18",
     "react-dom": "^18"
