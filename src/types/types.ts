@@ -39,13 +39,6 @@ export enum ConfigType {
   ProjectMaker = 'ProjectMaker',
 }
 
-export interface StrategyStep {
-  year: number;
-  quantity_purchased: number;
-  total_cost: number;
-  types_purchased: TypePurchased[];
-}
-
 // Algos input
 export type AlgorithmInput = BudgetAlgorithmInput | TypoAlgorithmInput;
 
@@ -115,6 +108,7 @@ export interface TypePurchased {
   typology: string;
   quantity: number;
   regions: RegionPurchase[];
+  price_per_ton: number;
 }
 
 export interface TypologyCosts {

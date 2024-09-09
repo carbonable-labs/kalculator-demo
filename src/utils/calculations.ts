@@ -14,7 +14,7 @@ import {
   RegionAllocation,
   RegionCosts,
   RegionPurchase,
-  StrategyStep,
+  YearlyStrategy,
   TypePurchased,
   Typology,
 } from '@/types';
@@ -80,6 +80,7 @@ export const checkPriceExPost = (
         typesPurchased.push({
           typology: typologyKey,
           quantity: regionalQuantity,
+          price_per_ton: price,
           regions: [regionPurchase],
         });
 
@@ -92,7 +93,7 @@ export const checkPriceExPost = (
   return [totalQuantityUsed, totalCost, typesPurchased];
 };
 
-export const getCostPerTypes = (strategies: StrategyStep[]) => {
+export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
   let costNbsRemoval = 0;
   let costNbsAvoidance = 0;
   let costBiochar = 0;
@@ -122,7 +123,7 @@ export const getCostPerTypes = (strategies: StrategyStep[]) => {
   };
 };
 
-export const getCostPerRegions = (strategies: StrategyStep[]): RegionCosts => {
+export const getCostPerRegions = (strategies: YearlyStrategy[]): RegionCosts => {
   let costNorthAmerica = 0;
   let costSouthAmerica = 0;
   let costEurope = 0;
