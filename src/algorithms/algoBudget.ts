@@ -28,12 +28,12 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
   dac *= carbonToOffset;
 
   if (timeConstraints === 1) {
-    ({ totalBudget, strategies } = yearlyAlgo(
-      timeConstraints,
-      carbonToOffset,
-      regionAllocation,
-      { nbsRemoval, nbsAvoidance, biochar, dac },
-    ));
+    ({ totalBudget, strategies } = yearlyAlgo(timeConstraints, carbonToOffset, regionAllocation, {
+      nbsRemoval,
+      nbsAvoidance,
+      biochar,
+      dac,
+    }));
   } else if (timeConstraints === 5) {
     ({ totalBudget, strategies } = fiveYearAlgo(timeConstraints, carbonToOffset, regionAllocation, {
       nbsRemoval,

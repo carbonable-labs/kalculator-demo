@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { runTypoAlgorithm } from '@/algorithms/algoType';
+import { runTypoAlgorithm } from '@/algorithms/algoTypo';
 import { TypoAlgorithmInput } from '@/types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

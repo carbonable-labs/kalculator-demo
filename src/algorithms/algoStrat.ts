@@ -1,4 +1,16 @@
-import { RegionAllocation, Typology, Financing, StratAlgorithmInput, StrategyStep, StratOutputData, RegionCosts, TypologyCosts, FinancingData, RegionsData, TypologiesData } from '@/types';
+import {
+  RegionAllocation,
+  Typology,
+  Financing,
+  StratAlgorithmInput,
+  StrategyStep,
+  StratOutputData,
+  RegionCosts,
+  TypologyCosts,
+  FinancingData,
+  RegionsData,
+  TypologiesData,
+} from '@/types';
 import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
@@ -15,7 +27,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     dac,
   ];
 
-  let totalBudget = NaN
+  let totalBudget = NaN;
   let adjustedBudget: number;
   let strategies: StrategyStep[] = [];
 
@@ -30,18 +42,18 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
 
   while (adjustedBudget > upperBound) {
     if (timeConstraints === 1) {
-      ({ totalBudget, strategies } = yearlyAlgo(
-        timeConstraints,
-        carbonToOffset,
-        regionAllocation,
-        { nbsRemoval, nbsAvoidance, biochar, dac },
-      ));
+      ({ totalBudget, strategies } = yearlyAlgo(timeConstraints, carbonToOffset, regionAllocation, {
+        nbsRemoval,
+        nbsAvoidance,
+        biochar,
+        dac,
+      }));
     } else if (timeConstraints === 5) {
       ({ totalBudget, strategies } = fiveYearAlgo(
         timeConstraints,
         carbonToOffset,
         regionAllocation,
-        { nbsRemoval, nbsAvoidance, biochar, dac }
+        { nbsRemoval, nbsAvoidance, biochar, dac },
       ));
     } else {
       ({ totalBudget, strategies } = noAlgo(
@@ -94,7 +106,6 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
   const regionCosts: RegionCosts = getCostPerRegions(strategies);
 
-
   let financingData: FinancingData = {
     ex_ante: financing.financingExAnte,
     ex_post: financing.financingExPost,
@@ -125,7 +136,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     user_budget: budget,
     money_saving: 0, //TODO ??
     money_to_add: 0, //TODO ??
-    budget_not_compatible: '',  //TODO ??
+    budget_not_compatible: '', //TODO ??
     total_cost_low: totalBudget,
     total_cost_medium: totalBudget,
     total_cost_high: totalBudget,
@@ -153,7 +164,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     advice_typo: 'TODO', //TODO ??
     advice_geography: 'TODO', //TODO ??
     strategies: strategies,
-  }
+  };
   return res;
 };
 
@@ -161,7 +172,7 @@ export const yearlyAlgo = (
   timeConstraints: number,
   carbonToOffset: number,
   regionAllocation: RegionAllocation,
-  typology: Typology
+  typology: Typology,
 ): { totalBudget: number; strategies: StrategyStep[] } => {
   const percentageToOffset = timeConstraints / duration;
   let quantityToOffset = percentageToOffset * carbonToOffset;
