@@ -16,7 +16,7 @@ export default function DAC({ isDontKnowSelected }: NbSProps) {
   useEffect(() => {
     setTypology({
       ...typology,
-      dac: Math.floor(dac as number) / 100,
+      dac: Math.round(dac as number) / 100,
     });
   }, [dac]);
 

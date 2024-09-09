@@ -17,7 +17,7 @@ export default function Cost() {
       0,
     );
 
-    const calculatePercentage = (cost: number) => Math.floor((cost / totalCost) * 100);
+    const calculatePercentage = (cost: number) => Math.round((cost / totalCost) * 100);
 
     return continents.reduce(
       (result, continent) => {

@@ -1,3 +1,4 @@
+import { displayedNames } from '@/utils/charts';
 import { Cell, Pie, PieChart } from 'recharts';
 
 type DataPoint = Record<string, number>;
@@ -18,18 +19,6 @@ export default function PieChartComponent<T extends DataPoint>({ data, unit }: P
     north_america: '#f87171', // Light Red
     oceania: '#8b5cf6', // Violet (changed)
     south_america: '#ec4899', // Pink (changed)
-  };
-
-  const displayedNames: Record<string, string> = {
-    nbs: 'NbS',
-    biochar: 'Biochar',
-    dac: 'DAC',
-    africa: 'Africa',
-    asia: 'Asia',
-    europe: 'Europe',
-    north_america: 'North America',
-    oceania: 'Oceania',
-    south_america: 'South America',
   };
 
   const RADIAN = Math.PI / 180;
@@ -84,7 +73,9 @@ export default function PieChartComponent<T extends DataPoint>({ data, unit }: P
               className="mr-3 h-2 w-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             ></div>
-            <div className="text-sm font-light capitalize text-neutral-300">{entry.name}</div>
+            <div className="text-sm font-light capitalize text-neutral-300">
+              {entry.name} ({entry.value}%)
+            </div>
           </div>
         ))}
       </div>

@@ -12,17 +12,17 @@ export default function Quantity() {
 
   const totalNbs = budgetResults.typologies.nbs_avoidance + budgetResults.typologies.nbs_removal;
 
-  const nbsPercentage = Math.floor(
+  const nbsPercentage = Math.round(
     (totalNbs / (totalNbs + budgetResults.typologies.dac + budgetResults.typologies.biochar)) * 100,
   );
 
-  const biocharPercentage = Math.floor(
+  const biocharPercentage = Math.round(
     (budgetResults.typologies.biochar /
       (totalNbs + budgetResults.typologies.dac + budgetResults.typologies.biochar)) *
       100,
   );
 
-  const dacPercentage = Math.floor(
+  const dacPercentage = Math.round(
     (budgetResults.typologies.dac /
       (totalNbs + budgetResults.typologies.dac + budgetResults.typologies.biochar)) *
       100,

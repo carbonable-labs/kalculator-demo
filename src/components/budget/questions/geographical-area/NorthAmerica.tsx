@@ -14,7 +14,7 @@ export default function NorthAmerica() {
   useEffect(() => {
     setRegionAllocation({
       ...regionAllocation,
-      northAmerica: Math.floor(northAmerica as number) / 100,
+      northAmerica: Math.round(northAmerica as number) / 100,
     });
   }, [northAmerica]);
 

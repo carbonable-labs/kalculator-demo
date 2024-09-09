@@ -12,17 +12,17 @@ export default function Cost() {
 
   const totalNbs = budgetResults.cost_nbs_avoidance + budgetResults.cost_nbs_removal;
 
-  const nbsPercentage = Math.floor(
+  const nbsPercentage = Math.round(
     (totalNbs / (totalNbs + budgetResults.cost_dac + budgetResults.cost_biochar)) * 100,
   );
 
-  const biocharPercentage = Math.floor(
+  const biocharPercentage = Math.round(
     (budgetResults.cost_biochar /
       (totalNbs + budgetResults.cost_dac + budgetResults.cost_biochar)) *
       100,
   );
 
-  const dacPercentage = Math.floor(
+  const dacPercentage = Math.round(
     (budgetResults.cost_dac / (totalNbs + budgetResults.cost_dac + budgetResults.cost_biochar)) *
       100,
   );

@@ -17,7 +17,7 @@ export default function Quantity() {
       0,
     );
 
-    const calculatePercentage = (cost: number) => Math.floor((cost / totalCost) * 100);
+    const calculatePercentage = (cost: number) => Math.round((cost / totalCost) * 100);
 
     return continents.reduce(
       (result, continent) => {
@@ -34,7 +34,7 @@ export default function Quantity() {
 
   return (
     <div>
-      <ChartTitle title="Costs" />
+      <ChartTitle title="Quantity" />
       <div className="mt-4">
         <PieChartComponent data={[percentages]} unit="%" />
       </div>

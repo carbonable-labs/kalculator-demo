@@ -16,7 +16,7 @@ export default function NbSRemoval({ isDontKnowSelected }: NbSProps) {
   useEffect(() => {
     setTypology({
       ...typology,
-      nbsRemoval: Math.floor(nbs as number) / 100,
+      nbsRemoval: Math.round(nbs as number) / 100,
     });
   }, [nbs]);
 

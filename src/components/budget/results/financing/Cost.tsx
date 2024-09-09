@@ -11,7 +11,7 @@ export default function Cost() {
     return null;
   }
 
-  const exPostPercentage = Math.floor(
+  const exPostPercentage = Math.round(
     (budgetResults.cost_ex_post / (budgetResults.cost_ex_post + budgetResults.cost_ex_ante)) * 100,
   );
 

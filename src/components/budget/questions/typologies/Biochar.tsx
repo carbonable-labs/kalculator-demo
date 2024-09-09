@@ -16,7 +16,7 @@ export default function Biochar({ isDontKnowSelected }: NbSProps) {
   useEffect(() => {
     setTypology({
       ...typology,
-      biochar: Math.floor(biochar as number) / 100,
+      biochar: Math.round(biochar as number) / 100,
     });
   }, [biochar]);
 

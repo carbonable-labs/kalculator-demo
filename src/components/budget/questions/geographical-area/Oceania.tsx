@@ -14,7 +14,7 @@ export default function Oceania() {
   useEffect(() => {
     setRegionAllocation({
       ...regionAllocation,
-      oceania: Math.floor(oceania as number) / 100,
+      oceania: Math.round(oceania as number) / 100,
     });
   }, [oceania]);
 
