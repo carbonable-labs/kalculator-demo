@@ -5,7 +5,11 @@ import { NextUIProvider } from '@nextui-org/react';
 import Title from '@/components/common/Title';
 import Navigation from '@/components/common/Navigation';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: 'Carbonable Carculator',

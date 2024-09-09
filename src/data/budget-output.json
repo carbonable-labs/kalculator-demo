@@ -1,0 +1,517 @@
+{
+    "financing": {
+      "ex_ante": 0.5,
+      "ex_post": 0.5
+    },
+    "typologies": {
+      "nbs_removal": 0.6,
+      "nbs_avoidance": 0.3,
+      "biochar": 0.05,
+      "dac": 0.05
+    },
+    "regions": {
+      "north_america": 0.4,
+      "south_america": 0.1,
+      "europe": 0.2,
+      "africa": 0.1,
+      "asia": 0.1,
+      "oceania": 0.1
+    },
+    "carbon_offset": 10000,
+    "total_cost_low": 1000000,
+    "total_cost_medium": 2000000,
+    "total_cost_high": 3000000,
+    "average_yearly_cost_low": 100000,
+    "average_yearly_cost_medium": 200000,
+    "average_yearly_cost_high": 300000,
+    "average_price_per_ton_low": 100,
+    "average_price_per_ton_medium": 200,
+    "average_price_per_ton_high": 300,
+    "total_cost_flexible": 2300400,
+    "cost_ex_post": 555444,
+    "cost_ex_ante": 777999,
+    "cost_nbs_removal": 123444,
+    "cost_nbs_avoidance": 456777,
+    "cost_biochar": 890111,
+    "cost_dac": 234555,
+    "cost_north_america": 1234,
+    "cost_south_america": 1234,
+    "cost_europe": 1234,
+    "cost_africa": 1234,
+    "cost_asia": 1234,
+    "cost_oceania": 1234,
+    "advice_timeline": "Du texte",
+    "advice_financing": "Du texte",
+    "advice_typo": "Du texte",
+    "advice_geography": "Du texte",
+    "strategies": [
+      {
+        "year": 2024,
+        "quantity_purchased": 800,
+        "total_cost_low": 30000,
+        "total_cost_medium": 40000,
+        "total_cost_high": 50000,
+        "types_purchased": [
+          {
+            "typology": "nbs_removal",
+            "quantity": 400,
+            "regions": [
+              {
+                "region": "north_america",
+                "quantity": 160,
+                "region_factor": 2.16,
+                "cost": 55555
+              },
+              {
+                "region": "europe",
+                "quantity": 80,
+                "region_factor": 2.43,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "biochar",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "europe",
+                "quantity": 100,
+                "region_factor": 2,
+                "cost": 5555
+              },
+              {
+                "region": "oceania",
+                "quantity": 100,
+                "region_factor": 1.96,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "dac",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "asia",
+                "quantity": 100,
+                "region_factor": 0.67,
+                "cost": 5555
+              },
+              {
+                "region": "africa",
+                "quantity": 100,
+                "region_factor": 1.11,
+                "cost": 5555
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": 2028,
+        "quantity_purchased": 1000,
+        "total_cost_low": 38000,
+        "total_cost_medium": 48000,
+        "total_cost_high": 58000,
+        "types_purchased": [
+          {
+            "typology": "nbs_removal",
+            "quantity": 650,
+            "regions": [
+              {
+                "region": "north_america",
+                "quantity": 260,
+                "region_factor": 2.16,
+                "cost": 5555
+              },
+              {
+                "region": "europe",
+                "quantity": 130,
+                "region_factor": 2.43,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "nbs_avoidance",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "south_america",
+                "quantity": 100,
+                "region_factor": 0.29,
+                "cost": 5555
+              },
+              {
+                "region": "asia",
+                "quantity": 100,
+                "region_factor": 0.27,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "dac",
+            "quantity": 150,
+            "regions": [
+              {
+                "region": "oceania",
+                "quantity": 100,
+                "region_factor": 1.2,
+                "cost": 5555
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": 2032,
+        "quantity_purchased": 1120,
+        "total_cost_low": 44000,
+        "total_cost_medium": 54000,
+        "total_cost_high": 64000,
+        "types_purchased": [
+          {
+            "typology": "nbs_removal",
+            "quantity": 770,
+            "regions": [
+              {
+                "region": "north_america",
+                "quantity": 308,
+                "region_factor": 2.16,
+                "cost": 5555
+              },
+              {
+                "region": "europe",
+                "quantity": 154,
+                "region_factor": 2.43,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "nbs_avoidance",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "south_america",
+                "quantity": 100,
+                "region_factor": 0.29,
+                "cost": 5555
+              },
+              {
+                "region": "asia",
+                "quantity": 100,
+                "region_factor": 0.27,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "dac",
+            "quantity": 150,
+            "regions": [
+              {
+                "region": "oceania",
+                "quantity": 100,
+                "region_factor": 1.2,
+                "cost": 5555
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": 2036,
+        "quantity_purchased": 1140,
+        "total_cost_low": 46000,
+        "total_cost_medium": 56000,
+        "total_cost_high": 66000,
+        "types_purchased": [
+          {
+            "typology": "nbs_removal",
+            "quantity": 790,
+            "regions": [
+              {
+                "region": "north_america",
+                "quantity": 316,
+                "region_factor": 2.16,
+                "cost": 5555
+              },
+              {
+                "region": "europe",
+                "quantity": 158,
+                "region_factor": 2.43,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "nbs_avoidance",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "south_america",
+                "quantity": 100,
+                "region_factor": 0.29,
+                "cost": 5555
+              },
+              {
+                "region": "asia",
+                "quantity": 100,
+                "region_factor": 0.27,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "dac",
+            "quantity": 150,
+            "regions": [
+              {
+                "region": "oceania",
+                "quantity": 100,
+                "region_factor": 1.2,
+                "cost": 5555
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": 2040,
+        "quantity_purchased": 1160,
+        "total_cost_low": 47000,
+        "total_cost_medium": 57000,
+        "total_cost_high": 67000,
+        "types_purchased": [
+          {
+            "typology": "nbs_removal",
+            "quantity": 810,
+            "regions": [
+              {
+                "region": "north_america",
+                "quantity": 324,
+                "region_factor": 2.16,
+                "cost": 5555
+              },
+              {
+                "region": "europe",
+                "quantity": 162,
+                "region_factor": 2.43,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "nbs_avoidance",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "south_america",
+                "quantity": 100,
+                "region_factor": 0.29,
+                "cost": 5555
+              },
+              {
+                "region": "asia",
+                "quantity": 100,
+                "region_factor": 0.27,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "dac",
+            "quantity": 150,
+            "regions": [
+              {
+                "region": "oceania",
+                "quantity": 100,
+                "region_factor": 1.2,
+                "cost": 5555
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": 2044,
+        "quantity_purchased": 1180,
+        "total_cost_low": 48000,
+        "total_cost_medium": 58000,
+        "total_cost_high": 68000,
+        "types_purchased": [
+          {
+            "typology": "nbs_removal",
+            "quantity": 830,
+            "regions": [
+              {
+                "region": "north_america",
+                "quantity": 332,
+                "region_factor": 2.16,
+                "cost": 5555
+              },
+              {
+                "region": "europe",
+                "quantity": 166,
+                "region_factor": 2.43,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "nbs_avoidance",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "south_america",
+                "quantity": 100,
+                "region_factor": 0.29,
+                "cost": 5555
+              },
+              {
+                "region": "asia",
+                "quantity": 100,
+                "region_factor": 0.27,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "dac",
+            "quantity": 150,
+            "regions": [
+              {
+                "region": "oceania",
+                "quantity": 100,
+                "region_factor": 1.2,
+                "cost": 5555
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": 2048,
+        "quantity_purchased": 1190,
+        "total_cost_low": 49000,
+        "total_cost_medium": 59000,
+        "total_cost_high": 69000,
+        "types_purchased": [
+          {
+            "typology": "nbs_removal",
+            "quantity": 840,
+            "regions": [
+              {
+                "region": "north_america",
+                "quantity": 336,
+                "region_factor": 2.16,
+                "cost": 5555
+              },
+              {
+                "region": "europe",
+                "quantity": 168,
+                "region_factor": 2.43,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "nbs_avoidance",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "south_america",
+                "quantity": 100,
+                "region_factor": 0.29,
+                "cost": 5555
+              },
+              {
+                "region": "asia",
+                "quantity": 100,
+                "region_factor": 0.27,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "dac",
+            "quantity": 150,
+            "regions": [
+              {
+                "region": "oceania",
+                "quantity": 100,
+                "region_factor": 1.2,
+                "cost": 5555
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "year": 2050,
+        "quantity_purchased": 1200,
+        "total_cost_low": 50000,
+        "total_cost_medium": 60000,
+        "total_cost_high": 70000,
+        "types_purchased": [
+          {
+            "typology": "nbs_removal",
+            "quantity": 800,
+            "regions": [
+              {
+                "region": "north_america",
+                "quantity": 320,
+                "region_factor": 2.16,
+                "cost": 5555
+              },
+              {
+                "region": "europe",
+                "quantity": 160,
+                "region_factor": 2.43,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "biochar",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "europe",
+                "quantity": 100,
+                "region_factor": 2,
+                "cost": 5555
+              },
+              {
+                "region": "oceania",
+                "quantity": 100,
+                "region_factor": 1.96,
+                "cost": 5555
+              }
+            ]
+          },
+          {
+            "typology": "dac",
+            "quantity": 200,
+            "regions": [
+              {
+                "region": "asia",
+                "quantity": 100,
+                "region_factor": 0.67,
+                "cost": 5555
+              },
+              {
+                "region": "africa",
+                "quantity": 100,
+                "region_factor": 1.11,
+                "cost": 5555
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

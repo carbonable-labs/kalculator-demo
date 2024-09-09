@@ -1,8 +1,8 @@
-import CalculateBudget from './Calculate';
-import GeographicalArea from './GeographicalArea';
-import InvestmentStrategy from './InvestmentStrategy';
-import PlanningCycle from './PlanningCycle';
-import ProjectTypology from './ProjectTypology';
+import CalculateBudget from './questions/Calculate';
+import GeographicalArea from './questions/GeographicalArea';
+import InvestmentStrategy from './questions/InvestmentStrategy';
+import PlanningCycle from './questions/PlanningCycle';
+import ProjectTypology from './questions/ProjectTypology';
 
 export default function BudgetQuestions() {
   return (

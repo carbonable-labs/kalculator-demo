@@ -1,7 +1,7 @@
 'use server';
 
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
-import { BudgetAlgorithmInput, BudgetOutputData } from '@/types';
+import { BudgetAlgorithmInput, BudgetOutputData } from '@/types/types';
 
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
   const algoRes: BudgetOutputData = runBudgetAlgorithm(input);

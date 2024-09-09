@@ -1,6 +1,6 @@
 'use client';
 
-import { Financing, RegionAllocation, Typology } from '@/types';
+import { BudgetOutputData, Financing, RegionAllocation, Typology } from '@/types/types';
 import {
   DEFAULT_FINANCING,
   DEFAULT_GEOGRAPHICAL_AREA,
@@ -17,6 +17,8 @@ interface BudgetContextType {
   setTypology: (value: Typology) => void;
   regionAllocation: RegionAllocation;
   setRegionAllocation: (value: RegionAllocation) => void;
+  budgetResults: BudgetOutputData | null;
+  setBudgetResults: (value: BudgetOutputData | null) => void;
 }
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
@@ -27,6 +29,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLGY);
   const [regionAllocation, setRegionAllocation] =
     useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
+  const [budgetResults, setBudgetResults] = useState<BudgetOutputData | null>(null);
 
   return (
     <BudgetContext.Provider
@@ -39,6 +42,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setTypology,
         regionAllocation,
         setRegionAllocation,
+        budgetResults,
+        setBudgetResults,
       }}
     >
       {children}
