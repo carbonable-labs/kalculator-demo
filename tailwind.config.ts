@@ -66,6 +66,9 @@ const config: Config = {
           90: 'rgba(11, 13, 19, 0.9)',
         },
       },
+      backgroundImage: {
+        'tips-gradient': 'linear-gradient(to bottom right, #1c242b 0%, #145150 40%, #9eb9ef 100%)',
+      },
     },
   },
   darkMode: 'class',

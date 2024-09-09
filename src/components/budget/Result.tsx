@@ -4,6 +4,7 @@ import { useBudget } from '@/context/BudgetContext';
 import Title from '../form/Title';
 import CostTable from './results/CostTable';
 import CostChart from './results/CostChart';
+import { Tips } from '../common/Tips';
 
 export default function BudgetResults() {
   const { budgetResults } = useBudget();
@@ -20,6 +21,12 @@ export default function BudgetResults() {
       </div>
       <div className="mt-12">
         <CostChart />
+      </div>
+      <div className="mt-4">
+        <Title title="Investment timeline" />
+      </div>
+      <div className="mt-4">
+        <Tips text={budgetResults.advice_timeline} />
       </div>
     </>
   );
