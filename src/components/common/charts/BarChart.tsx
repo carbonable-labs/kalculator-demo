@@ -44,13 +44,13 @@ export default function BarChartComponent<T extends DataPoint>({
     <div className="h-full w-full md:mt-4">
       <BarChart
         width={chartWidth}
-        height={400}
+        height={300}
         data={transformedData}
         margin={{
           top: 30,
           right: 0,
           left: 0,
-          bottom: 20,
+          bottom: 0,
         }}
         barGap={12}
       >

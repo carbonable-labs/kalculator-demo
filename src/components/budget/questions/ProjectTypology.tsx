@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Title from '../form/Title';
+import Title from '../../form/Title';
 import { useBudget } from '@/context/BudgetContext';
-import DontKnowCheckbox from '../form/DontKnowCheckbox';
+import DontKnowCheckbox from '../../form/DontKnowCheckbox';
 import NbSRemoval from './typologies/NbSRemoval';
 import NbSAvoidance from './typologies/NbSAvoidance';
 import DAC from './typologies/DAC';
@@ -20,7 +20,7 @@ import {
   DEFAULT_TYPOLGY,
   TYPOLOGY_PREFERENCE,
 } from '@/utils/configuration';
-import { Typology } from '@/types/inputTypes';
+import { Typology } from '@/types/types';
 
 export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);

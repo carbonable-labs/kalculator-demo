@@ -1,6 +1,6 @@
 'use client';
 
-import { Financing, RegionAllocation, Typology } from '@/types/inputTypes';
+import { BudgetOutputData, Financing, RegionAllocation, Typology } from '@/types/types';
 import {
   DEFAULT_FINANCING,
   DEFAULT_GEOGRAPHICAL_AREA,

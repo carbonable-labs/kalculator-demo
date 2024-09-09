@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import SliderComponent from '../form/Slider';
-import Title from '../form/Title';
-import DontKnowCheckbox from '../form/DontKnowCheckbox';
 import { useBudget } from '@/context/BudgetContext';
 import { DEFAULT_FINANCING } from '@/utils/configuration';
+import Title from '@/components/form/Title';
+import SliderComponent from '@/components/form/Slider';
+import DontKnowCheckbox from '@/components/form/DontKnowCheckbox';
 
 export default function InvestmentStrategy() {
   const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(50);

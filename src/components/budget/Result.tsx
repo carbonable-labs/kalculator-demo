@@ -5,7 +5,8 @@ import Title from '../form/Title';
 import CostTable from './results/CostTable';
 import CostChart from './results/CostChart';
 import { Tips } from '../common/Tips';
-import Financing from './results/financing/Financing';
+import Financing from './results/Financing';
+import Typology from './results/Typology';
 
 export default function BudgetResults() {
   const { budgetResults } = useBudget();
@@ -28,6 +29,9 @@ export default function BudgetResults() {
       </div>
       <div className="mt-12">
         <Financing />
+      </div>
+      <div className="mt-12">
+        <Typology />
       </div>
     </>
   );

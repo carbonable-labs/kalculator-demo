@@ -1,9 +1,9 @@
 'use client';
 import Title from '@/components/form/Title';
-import Quantity from './Quantity';
-import Stock from './Stock';
+import Quantity from './financing/Quantity';
 import { Tips } from '@/components/common/Tips';
 import { useBudget } from '@/context/BudgetContext';
+import Cost from './financing/Cost';
 
 export default function Financing() {
   const { budgetResults } = useBudget();
@@ -16,7 +16,7 @@ export default function Financing() {
           <Quantity />
         </div>
         <div className="w-full md:w-5/12">
-          <Stock />
+          <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
           <Tips text={budgetResults?.advice_financing} />

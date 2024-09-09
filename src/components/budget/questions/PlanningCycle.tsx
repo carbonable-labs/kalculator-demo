@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import RadioButtons from '../form/RadioButtons';
-import Title from '../form/Title';
 import { useBudget } from '@/context/BudgetContext';
+import Title from '@/components/form/Title';
+import RadioButtons from '@/components/form/RadioButtons';
 
 const planningCycleOptions = [
   { value: '1', text: 'Yearly' },

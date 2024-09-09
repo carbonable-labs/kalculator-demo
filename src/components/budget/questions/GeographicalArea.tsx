@@ -1,15 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Title from '../form/Title';
+import { useBudget } from '@/context/BudgetContext';
+import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
+import Title from '@/components/form/Title';
 import Africa from './geographical-area/Africa';
 import Asia from './geographical-area/Asia';
 import Europe from './geographical-area/Europe';
 import LatinAmerica from './geographical-area/LatinAmerica';
-import NorthAmerica from './geographical-area/NorthAmerica';
-import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
 import Oceania from './geographical-area/Oceania';
+import NorthAmerica from './geographical-area/NorthAmerica';
 
 export default function GeographicalArea() {
   const [isFullGeographicalArea, setIsFullGeographicalArea] = useState(true);

@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { GreenButton } from '../form/Button';
 import { runBudgetAlgo } from '@/actions/budget';
 import { useBudget } from '@/context/BudgetContext';
+import { GreenButton } from '@/components/form/Button';
 
 export default function CalculateBudget() {
   const [isLoading, setIsLoading] = useState(false);
