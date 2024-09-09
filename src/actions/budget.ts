@@ -1,28 +1,14 @@
 'use server';
 
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
-import { Financing, RegionAllocation, Typology } from '@/types';
+import { BudgetAlgorithmInput, BudgetOutputData } from '@/types';
 
-interface BudgetInput {
-  regionAllocation: RegionAllocation;
-  typology: Typology;
-  financing: Financing;
-  timeConstraints: number;
-}
-
-export async function runBudgetAlgo(input: BudgetInput) {
-  const algoRes = runBudgetAlgorithm({
-    regionAllocation: input.regionAllocation,
-    typology: input.typology,
-    financing: input.financing,
-    timeConstraints: input.timeConstraints,
-  });
+export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
+  const algoRes: BudgetOutputData = runBudgetAlgorithm(input);
 
   if (!algoRes) {
     throw new Error('An error occurred while running the algorithm.');
   }
 
-  const { totalBudget, adjustedBudget } = algoRes;
-
-  return { totalBudget, adjustedBudget };
+  return algoRes;
 }
