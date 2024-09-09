@@ -29,6 +29,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
 
   let totalBudget = NaN;
   let adjustedBudget: number;
+  let budget_not_compatible: string = 'false'; //TODO: use boolean instead of string
   let strategies: StrategyStep[] = [];
 
   // initial to current
@@ -91,8 +92,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
       nbsRemoval -= adjustment;
       nbsAvoidance += adjustment;
     } else {
-      console.error('Insufficient budget. Please increase your budget.');
-      return -1;
+      budget_not_compatible = 'true';
     }
   }
 
@@ -136,7 +136,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     user_budget: budget,
     money_saving: 0, //TODO ??
     money_to_add: 0, //TODO ??
-    budget_not_compatible: '', //TODO ??
+    budget_not_compatible: budget_not_compatible,
     total_cost_low: totalBudget,
     total_cost_medium: totalBudget,
     total_cost_high: totalBudget,
