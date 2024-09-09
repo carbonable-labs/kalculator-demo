@@ -108,6 +108,7 @@ export interface TypePurchased {
   typology: string;
   quantity: number;
   regions: RegionPurchase[];
+  price_per_ton: number;
 }
 
 export interface TypologyCosts {

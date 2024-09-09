@@ -80,6 +80,7 @@ export const checkPriceExPost = (
         typesPurchased.push({
           typology: typologyKey,
           quantity: regionalQuantity,
+          price_per_ton: price,
           regions: [regionPurchase],
         });
 
