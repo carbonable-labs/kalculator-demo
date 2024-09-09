@@ -132,10 +132,12 @@ export interface TypesPurchasedPriceExPost {
   coefficient: number;
 }
 
-interface YearlyStrategy {
+export interface YearlyStrategy {
   year: number;
   quantity_purchased: number;
-  total_cost: number;
+  cost_low: number;
+  cost_medium: number;
+  cost_high: number;
   types_purchased: TypePurchased[];
 }
 

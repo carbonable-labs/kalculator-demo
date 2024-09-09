@@ -1,6 +1,7 @@
 'use client';
 import Title from '@/components/form/Title';
 import { useBudget } from '@/context/BudgetContext';
+import { YearlyStrategy } from '@/types/types';
 import { formatLargeNumber } from '@/utils/output';
 import { useEffect, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
@@ -35,12 +36,12 @@ export default function CostChart() {
       return;
     }
 
-    const data = budgetResults?.strategies.map((strategy) => {
+    const data = budgetResults?.strategies.map((strategy: YearlyStrategy) => {
       return {
         year: strategy.year,
-        low: strategy.total_cost_low,
-        medium: strategy.total_cost_medium,
-        high: strategy.total_cost_high,
+        low: strategy.cost_low,
+        medium: strategy.cost_medium,
+        high: strategy.cost_high,
       };
     });
     setGraphData(data);
