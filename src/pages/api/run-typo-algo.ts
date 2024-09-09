@@ -1,29 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
+import { runTypoAlgorithm } from '@/algorithms/algoTypo';
+import { TypoAlgorithmInput } from '@/types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
       const input = req.body;
-
-      // Run the algorithm with the provided input
-      console.log('\n\n\n\n');
-      console.log('\x1b[36m%s\x1b[0m', '#############################');
-      console.log('Running algorithm with input:', input);
-      const algoRes = runBudgetAlgorithm({
-        regionAllocation: input.regionAllocation,
-        typology: input.typology,
-        financing: input.financing,
-        timeConstraints: input.timeConstraints,
-      });
+      const algoRes = runTypoAlgorithm(input);
       if (!algoRes) {
         throw new Error('An error occurred while running the algorithm.');
       }
 
-      const { totalBudget, adjustedBudget } = algoRes;
+      const totalBudget = algoRes;
 
       // Respond with the result
-      res.status(200).json({ totalBudget, adjustedBudget });
+      res.status(200).json(totalBudget);
     } catch (error) {
       console.error('Error running algorithm:', error);
       res.status(500).json({ error: 'An error occurred while running the algorithm.' });

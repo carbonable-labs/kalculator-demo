@@ -2,59 +2,106 @@ import {
   RegionAllocation,
   Typology,
   Financing,
-  BudgetAlgorithmInput,
-  BudgetOutputData,
-  FinancingData,
-  TypologiesData,
-  RegionsData,
+  StratAlgorithmInput,
   StrategyStep,
-  TypologyCosts,
+  StratOutputData,
   RegionCosts,
+  TypologyCosts,
+  FinancingData,
+  RegionsData,
+  TypologiesData,
 } from '@/types';
 import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
 
-export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputData => {
-  const { regionAllocation, typology, financing, timeConstraints } = input;
+export const runStratAlgorithm = (input: StratAlgorithmInput) => {
+  const { timeConstraints, budget, financing, typology, regionAllocation } = input;
 
   let { nbsRemoval, nbsAvoidance, biochar, dac } = typology;
-  let totalBudget: number, adjustedBudget: number, strategies: StrategyStep[];
+  let [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac] = [
+    nbsRemoval,
+    nbsAvoidance,
+    biochar,
+    dac,
+  ];
 
+  let totalBudget = NaN;
+  let adjustedBudget: number;
+  let budget_not_compatible: string = 'false'; //TODO: use boolean instead of string
+  let strategies: StrategyStep[] = [];
+
+  // initial to current
   nbsRemoval *= carbonToOffset;
   nbsAvoidance *= carbonToOffset;
   biochar *= carbonToOffset;
   dac *= carbonToOffset;
 
-  if (timeConstraints === 1) {
-    ({ totalBudget, strategies } = yearlyAlgo(timeConstraints, carbonToOffset, regionAllocation, {
+  let upperBound = budget * 1.03;
+  adjustedBudget = Infinity;
+
+  while (adjustedBudget > upperBound) {
+    if (timeConstraints === 1) {
+      ({ totalBudget, strategies } = yearlyAlgo(timeConstraints, carbonToOffset, regionAllocation, {
+        nbsRemoval,
+        nbsAvoidance,
+        biochar,
+        dac,
+      }));
+    } else if (timeConstraints === 5) {
+      ({ totalBudget, strategies } = fiveYearAlgo(
+        timeConstraints,
+        carbonToOffset,
+        regionAllocation,
+        { nbsRemoval, nbsAvoidance, biochar, dac },
+      ));
+    } else {
+      ({ totalBudget, strategies } = noAlgo(
+        currentYear,
+        targetYear,
+        carbonToOffset,
+        { nbsRemoval, nbsAvoidance, biochar, dac },
+        regionAllocation,
+      ));
+    }
+
+    adjustedBudget = totalBudget;
+    if (financing.financingExAnte > 0) {
+      const exAnteCost = totalBudget * financing.financingExAnte * deltaExAnte;
+      adjustedBudget = exAnteCost + totalBudget * financing.financingExPost;
+    }
+
+    [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac] = [
       nbsRemoval,
       nbsAvoidance,
       biochar,
       dac,
-    }));
-  } else if (timeConstraints === 5) {
-    ({ totalBudget, strategies } = fiveYearAlgo(timeConstraints, carbonToOffset, regionAllocation, {
-      nbsRemoval,
-      nbsAvoidance,
-      biochar,
-      dac,
-    }));
-  } else {
-    ({ totalBudget, strategies } = fiveYearAlgo(timeConstraints, carbonToOffset, regionAllocation, {
-      nbsRemoval,
-      nbsAvoidance,
-      biochar,
-      dac,
-    }));
+    ];
+
+    if (dac > 0) {
+      const adjustment = Math.min(0.01 * carbonToOffset, dac);
+      dac -= adjustment;
+      nbsAvoidance += adjustment;
+    } else if (biochar > 0) {
+      const adjustment = Math.min(0.01 * carbonToOffset, biochar);
+      biochar -= adjustment;
+      nbsAvoidance += adjustment;
+    } else if (nbsRemoval > 0) {
+      const adjustment = Math.min(0.01 * carbonToOffset, nbsRemoval);
+      nbsRemoval -= adjustment;
+      nbsAvoidance += adjustment;
+    } else {
+      budget_not_compatible = 'true';
+    }
   }
 
-  adjustedBudget = totalBudget;
-  if (financing.financingExAnte > 0) {
-    const exAnteCost = totalBudget * financing.financingExAnte * deltaExAnte;
-    adjustedBudget = exAnteCost + totalBudget * financing.financingExPost;
-  }
+  [nbsRemoval, nbsAvoidance, biochar, dac] = [
+    prevNbsRemoval,
+    prevNbsAvoidance,
+    prevBiochar,
+    prevDac,
+  ];
 
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
   const regionCosts: RegionCosts = getCostPerRegions(strategies);
@@ -80,11 +127,16 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     oceania: regionAllocation.oceania,
   };
 
-  let res: BudgetOutputData = {
+  let res: StratOutputData = {
     financing: financingData,
     typologies: typologiesData,
     regions: regionsData,
+    otherTypologiesPossible: [], //TODO ??
     carbon_offset: carbonToOffset,
+    user_budget: budget,
+    money_saving: 0, //TODO ??
+    money_to_add: 0, //TODO ??
+    budget_not_compatible: budget_not_compatible,
     total_cost_low: totalBudget,
     total_cost_medium: totalBudget,
     total_cost_high: totalBudget,
@@ -94,9 +146,9 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     average_price_per_ton_low: totalBudget / carbonToOffset,
     average_price_per_ton_medium: totalBudget / carbonToOffset,
     average_price_per_ton_high: totalBudget / carbonToOffset,
-    total_cost_flexible: totalBudget,
+    total_cost_flexible: totalBudget, //TODO ??
     cost_ex_post: totalBudget * financing.financingExPost,
-    cost_ex_ante: adjustedBudget - totalBudget * financing.financingExPost,
+    cost_ex_ante: totalBudget * financing.financingExAnte,
     cost_nbs_removal: typologyCosts.costNbsRemoval,
     cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
     cost_biochar: typologyCosts.costBiochar,
@@ -107,13 +159,12 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     cost_africa: regionCosts.africa,
     cost_asia: regionCosts.asia,
     cost_oceania: regionCosts.oceania,
-    advice_timeline: 'Consider a longer timeline to reduce costs.',
-    advice_financing: 'Increase ex-ante financing for more flexibility.',
-    advice_typo: 'Focus on NBS removal for better impact.',
-    advice_geography: 'Increase investments in Africa for cost efficiency.',
+    advice_timeline: 'TODO', //TODO ??
+    advice_financing: 'TODO', //TODO ??
+    advice_typo: 'TODO', //TODO ??
+    advice_geography: 'TODO', //TODO ??
     strategies: strategies,
   };
-
   return res;
 };
 
@@ -169,10 +220,9 @@ export const yearlyAlgo = (
       });
     }
 
-    year += 1; // Increment by 1 year
+    year += 1;
   }
 
-  // Return the structured strategy and total budget
   return { totalBudget, strategies: currentStrategy };
 };
 
@@ -241,17 +291,18 @@ export const noAlgo = (
   carbonToOffset: number,
   typology: Typology,
   regionAllocation: RegionAllocation,
-): { optimalBudget: number; bestStrategy: StrategyStep[] } => {
+): { totalBudget: number; strategies: StrategyStep[] } => {
   let optimalBudget = Infinity;
   let bestStrategy: StrategyStep[] = [];
   const initialTypology = structuredClone(typology);
 
   let n = currentYear;
 
+  // Check for 2050
   let totalBudget = 0.0;
   let quantityToOffset = carbonToOffset;
 
-  // First strategy: try to buy all for the first year
+  // Try to buy all for first year
   let [quantityUsed, cost, typesPurchased] = checkPriceExPost(
     n,
     quantityToOffset,
@@ -277,7 +328,7 @@ export const noAlgo = (
     }
   }
 
-  // Second strategy: buy all in the target year (2050)
+  // Try to buy all in 2050
   [quantityUsed, cost, typesPurchased] = checkPriceExPost(
     targetYear,
     quantityToOffset,
@@ -303,7 +354,6 @@ export const noAlgo = (
     }
   }
 
-  // Explore other strategies by spreading purchases across different years
   for (n = currentYear; n <= targetYear; n++) {
     for (let y = 1; y <= targetYear - n; y++) {
       totalBudget = 0.0;
@@ -314,9 +364,9 @@ export const noAlgo = (
       quantityToOffset = carbonToOffset / totalPurchases;
 
       typology = structuredClone(initialTypology); // Reset typology
+
       let remainingCarbonToOffset = carbonToOffset;
 
-      // Spread purchases over the years
       while (year <= targetYear) {
         if (year === targetYear) {
           quantityToOffset = remainingCarbonToOffset;
@@ -363,7 +413,8 @@ export const noAlgo = (
         bestStrategy = currentStrategy;
       }
     }
+    break;
   }
 
-  return { optimalBudget, bestStrategy };
+  return { totalBudget, strategies: bestStrategy };
 };

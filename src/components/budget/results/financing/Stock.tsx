@@ -7,7 +7,11 @@ export default function Stock() {
     <div>
       <ChartTitle title="Stock" />
       <div className="mt-4">
-        <BarChartComponent data={[{ spot: 90, forward: 10 }]} unit="%" maxValue={PERCENTAGE_MAX_VALUE} />
+        <BarChartComponent
+          data={[{ spot: 90, forward: 10 }]}
+          unit="%"
+          maxValue={PERCENTAGE_MAX_VALUE}
+        />
       </div>
     </div>
   );

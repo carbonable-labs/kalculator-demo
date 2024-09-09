@@ -18,7 +18,7 @@ export default function Financing() {
         <div className="w-full md:w-5/12">
           <Stock />
         </div>
-        <div className="w-full md:w-2/12 pb-4">
+        <div className="w-full pb-4 md:w-2/12">
           <Tips text={budgetResults?.advice_financing} />
         </div>
       </div>

@@ -20,7 +20,7 @@ export default function CalculateBudget() {
 
   const handleClick = async () => {
     setIsLoading(true);
-    console.log(financing, regionAllocation, timeConstraints, typology);
+
     if (!financing || !regionAllocation || !timeConstraints || !typology) {
       setIsLoading(false);
       return;

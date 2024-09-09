@@ -9,7 +9,11 @@ interface BarChartProps<T extends DataPoint> {
   maxValue?: number;
 }
 
-export default function BarChartComponent<T extends DataPoint>({ data, unit, maxValue = 100 }: BarChartProps<T>) {
+export default function BarChartComponent<T extends DataPoint>({
+  data,
+  unit,
+  maxValue = 100,
+}: BarChartProps<T>) {
   const CustomizedLabel: React.FC<any> = ({ x, y, width, value }) => (
     <text x={x + width / 2} y={y - 10} fill="#878A94" textAnchor="middle" className="text-xs">
       {`${value}${unit}`}
@@ -52,10 +56,10 @@ export default function BarChartComponent<T extends DataPoint>({ data, unit, max
       >
         <YAxis hide domain={[0, maxValue] as [number, number]} />
         <XAxis dataKey="name" tick={<CustomizedXAxisTick />} axisLine={false} tickLine={false} />
-        <Bar 
-          dataKey="value" 
-          barSize={36} 
-          radius={[10, 10, 0, 0]} 
+        <Bar
+          dataKey="value"
+          barSize={36}
+          radius={[10, 10, 0, 0]}
           label={<CustomizedLabel />}
           maxBarSize={300}
         >

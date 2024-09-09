@@ -55,7 +55,7 @@ const TipsBackground = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className={`bg-tips-gradient rounded-lg ${isFullWidth ? 'p-8' : 'p-4'}`}>
+    <div className={`rounded-lg bg-tips-gradient ${isFullWidth ? 'p-8' : 'p-4'}`}>
       <div className="flex items-center justify-start">
         <Image src="/assets/logo.svg" width={24} height={24} alt="Tips" />
         <div className="ml-2 font-bold text-opacity-80">Tips</div>
