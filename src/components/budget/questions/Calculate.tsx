@@ -11,7 +11,7 @@ export default function CalculateBudget() {
   const { financing, regionAllocation, timeConstraints, typology, setBudgetResults } = useBudget();
 
   useEffect(() => {
-    if (financing && regionAllocation && timeConstraints && typology) {
+    if (financing && regionAllocation && timeConstraints !== null && typology) {
       setCanCalculate(true);
     } else {
       setCanCalculate(false);
@@ -21,7 +21,7 @@ export default function CalculateBudget() {
   const handleClick = async () => {
     setIsLoading(true);
 
-    if (!financing || !regionAllocation || !timeConstraints || !typology) {
+    if (financing === null || !regionAllocation || !timeConstraints || !typology) {
       setIsLoading(false);
       return;
     }
