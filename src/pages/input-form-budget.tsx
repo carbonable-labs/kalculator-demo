@@ -58,7 +58,6 @@ const InputForm = () => {
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Input Form</h1>
       <form onSubmit={handleSubmit}>
-
         <div className="mb-4">
           <label className="block text-sm font-medium">Time Constraints</label>
           <input

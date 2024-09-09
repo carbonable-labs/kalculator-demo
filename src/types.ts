@@ -182,7 +182,45 @@ export interface StratOutputData {
   user_budget: number;
   money_saving: number;
   money_to_add: number;
-  budget_not_compatible: string;  //TODO ??
+  budget_not_compatible: string; //TODO ??
+  total_cost_low: number;
+  total_cost_medium: number;
+  total_cost_high: number;
+  average_yearly_cost_low: number;
+  average_yearly_cost_medium: number;
+  average_yearly_cost_high: number;
+  average_price_per_ton_low: number;
+  average_price_per_ton_medium: number;
+  average_price_per_ton_high: number;
+  total_cost_flexible: number;
+  cost_ex_post: number;
+  cost_ex_ante: number;
+  cost_nbs_removal: number;
+  cost_nbs_avoidance: number;
+  cost_biochar: number;
+  cost_dac: number;
+  cost_north_america: number;
+  cost_south_america: number;
+  cost_europe: number;
+  cost_africa: number;
+  cost_asia: number;
+  cost_oceania: number;
+  advice_timeline: string;
+  advice_financing: string;
+  advice_typo: string;
+  advice_geography: string;
+  strategies: YearlyStrategy[];
+}
+
+export interface TypoOutputData {
+  financing: FinancingData;
+  typologies: TypologiesData;
+  regions: RegionsData;
+  carbon_offset: number;
+  user_budget: number;
+  money_saving: number;
+  money_to_add: number;
+  budget_not_compatible: string; //TODO ??
   total_cost_low: number;
   total_cost_medium: number;
   total_cost_high: number;
