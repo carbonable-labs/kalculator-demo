@@ -15,6 +15,7 @@ import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/ca
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
+import { Advice, advice_financing, advice_geography, advice_timeline, advice_typo } from './advice';
 
 export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputData => {
   const { regionAllocation, typology, financing, timeConstraints } = input;
@@ -42,12 +43,12 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
       dac,
     }));
   } else {
-    ({ totalBudget, strategies } = fiveYearAlgo(timeConstraints, carbonToOffset, regionAllocation, {
+    ({ optimalBudget: totalBudget, bestStrategy: strategies } = noAlgo(currentYear, targetYear, carbonToOffset, {
       nbsRemoval,
       nbsAvoidance,
       biochar,
       dac,
-    }));
+    }, regionAllocation));
   }
 
   adjustedBudget = totalBudget;
@@ -80,6 +81,11 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     oceania: regionAllocation.oceania,
   };
 
+  let adv_timeline: Advice = advice_timeline(timeConstraints);
+  let adv_financing: Advice = advice_financing(financing);
+  let adv_typo: Advice = advice_typo(typology, typologyCosts);
+  let adv_geography: Advice = advice_geography(regionAllocation, regionCosts);
+
   let res: BudgetOutputData = {
     financing: financingData,
     typologies: typologiesData,
@@ -107,10 +113,10 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     cost_africa: regionCosts.africa,
     cost_asia: regionCosts.asia,
     cost_oceania: regionCosts.oceania,
-    advice_timeline: 'Consider a longer timeline to reduce costs.',
-    advice_financing: 'Increase ex-ante financing for more flexibility.',
-    advice_typo: 'Focus on NBS removal for better impact.',
-    advice_geography: 'Increase investments in Africa for cost efficiency.',
+    advice_timeline: adv_timeline.change ? adv_timeline.advice : 'No advice needed.',
+    advice_financing: adv_financing.change ? adv_financing.advice : 'No advice needed.',
+    advice_typo: adv_typo.change ? adv_typo.advice : 'No advice needed.',
+    advice_geography: adv_geography.change ? adv_geography.advice : 'No advice needed.',
     strategies: strategies,
   };
 
