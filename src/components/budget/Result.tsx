@@ -41,6 +41,15 @@ export default function BudgetResults() {
       <div className="mt-12">
         <PurchaseRecoTable />
       </div>
+      <div className="mt-12">
+        <Tips
+          text="Do you wish to fine-tune the above strategy?"
+          isFullWidth={true}
+          isGradient={false}
+          buttonText="Let's fine-tune !"
+          title="Optimizer"
+        />
+      </div>
     </>
   );
 }
