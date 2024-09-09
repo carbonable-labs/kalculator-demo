@@ -9,15 +9,27 @@ interface PieChartProps<T extends DataPoint> {
 
 export default function PieChartComponent<T extends DataPoint>({ data, unit }: PieChartProps<T>) {
   const barColors: Record<string, string> = {
-    nbs: '#29A46F',
-    biochar: '#f97316',
-    dac: '#3b82f6',
+    nbs: '#29A46F', // Green
+    biochar: '#f97316', // Orange
+    dac: '#3b82f6', // Blue
+    africa: '#f59e0b', // Amber
+    asia: '#10b981', // Emerald
+    europe: '#2563eb', // Royal Blue
+    north_america: '#f87171', // Light Red
+    oceania: '#8b5cf6', // Violet (changed)
+    south_america: '#ec4899', // Pink (changed)
   };
 
   const displayedNames: Record<string, string> = {
     nbs: 'NbS',
     biochar: 'Biochar',
     dac: 'DAC',
+    africa: 'Africa',
+    asia: 'Asia',
+    europe: 'Europe',
+    north_america: 'North America',
+    oceania: 'Oceania',
+    south_america: 'South America',
   };
 
   const RADIAN = Math.PI / 180;

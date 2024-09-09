@@ -1,16 +1,16 @@
 'use client';
 import Title from '@/components/form/Title';
-import Quantity from './typology/Quantity';
+import Quantity from './geography/Quantity';
 import { Tips } from '@/components/common/Tips';
 import { useBudget } from '@/context/BudgetContext';
-import Cost from './typology/Cost';
+import Cost from './geography/Cost';
 
-export default function Typology() {
+export default function Geography() {
   const { budgetResults } = useBudget();
 
   return (
     <>
-      <Title title="By Typologies" />
+      <Title title="By Geography" />
       <div className="mt-8 flex items-end">
         <div className="w-full md:w-5/12">
           <Quantity />
@@ -19,7 +19,7 @@ export default function Typology() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips text={budgetResults?.advice_typo} />
+          <Tips text={budgetResults?.advice_geography} />
         </div>
       </div>
     </>

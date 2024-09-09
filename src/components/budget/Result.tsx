@@ -7,6 +7,7 @@ import CostChart from './results/CostChart';
 import { Tips } from '../common/Tips';
 import Financing from './results/Financing';
 import Typology from './results/Typology';
+import Geography from './results/Geography';
 
 export default function BudgetResults() {
   const { budgetResults } = useBudget();
@@ -32,6 +33,9 @@ export default function BudgetResults() {
       </div>
       <div className="mt-12">
         <Typology />
+      </div>
+      <div className="mt-12">
+        <Geography />
       </div>
     </>
   );
