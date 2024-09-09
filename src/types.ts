@@ -39,13 +39,6 @@ export enum ConfigType {
   ProjectMaker = 'ProjectMaker',
 }
 
-export interface StrategyStep {
-  year: number;
-  quantity_purchased: number;
-  total_cost: number;
-  types_purchased: TypePurchased[];
-}
-
 // Algos input
 export type AlgorithmInput = BudgetAlgorithmInput | TypoAlgorithmInput;
 
@@ -132,10 +125,12 @@ export interface TypesPurchasedPriceExPost {
   coefficient: number;
 }
 
-interface YearlyStrategy {
+export interface YearlyStrategy {
   year: number;
   quantity_purchased: number;
-  total_cost: number;
+  cost_low: number;
+  cost_medium: number;
+  cost_high: number;
   types_purchased: TypePurchased[];
 }
 

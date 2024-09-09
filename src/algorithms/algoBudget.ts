@@ -7,9 +7,9 @@ import {
   FinancingData,
   TypologiesData,
   RegionsData,
-  StrategyStep,
   TypologyCosts,
   RegionCosts,
+  YearlyStrategy,
 } from '@/types';
 import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
@@ -20,7 +20,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
   const { regionAllocation, typology, financing, timeConstraints } = input;
 
   let { nbsRemoval, nbsAvoidance, biochar, dac } = typology;
-  let totalBudget: number, adjustedBudget: number, strategies: StrategyStep[];
+  let totalBudget: number, adjustedBudget: number, strategies: YearlyStrategy[];
 
   nbsRemoval *= carbonToOffset;
   nbsAvoidance *= carbonToOffset;
@@ -122,12 +122,12 @@ export const yearlyAlgo = (
   carbonToOffset: number,
   regionAllocation: RegionAllocation,
   typology: Typology,
-): { totalBudget: number; strategies: StrategyStep[] } => {
+): { totalBudget: number; strategies: YearlyStrategy[] } => {
   const percentageToOffset = timeConstraints / duration;
   let quantityToOffset = percentageToOffset * carbonToOffset;
   let totalBudget = 0.0;
   let remainingCarbonToOffset = carbonToOffset;
-  const currentStrategy: StrategyStep[] = [];
+  const currentStrategy: YearlyStrategy[] = [];
 
   let year = currentYear;
   while (year <= targetYear) {
@@ -153,7 +153,9 @@ export const yearlyAlgo = (
       currentStrategy.push({
         year: year,
         quantity_purchased: remainingCarbonToOffset,
-        total_cost: yearlyCost,
+        cost_low: yearlyCost,
+        cost_medium: yearlyCost,
+        cost_high: yearlyCost,
         types_purchased: typesPurchased,
       });
       remainingCarbonToOffset = 0;
@@ -164,7 +166,9 @@ export const yearlyAlgo = (
       currentStrategy.push({
         year: year,
         quantity_purchased: quantityUsed,
-        total_cost: cost,
+        cost_low: cost,
+        cost_medium: cost,
+        cost_high: cost,
         types_purchased: typesPurchased,
       });
     }
@@ -181,12 +185,12 @@ export const fiveYearAlgo = (
   carbonToOffset: number,
   regionAllocation: RegionAllocation,
   typology: Typology,
-): { totalBudget: number; strategies: StrategyStep[] } => {
+): { totalBudget: number; strategies: YearlyStrategy[] } => {
   const percentageToOffset = timeConstraints / duration;
   let quantityToOffset = percentageToOffset * carbonToOffset;
   let totalBudget = 0.0;
   let remainingCarbonToOffset = carbonToOffset;
-  const currentStrategy: StrategyStep[] = [];
+  const currentStrategy: YearlyStrategy[] = [];
 
   let year = currentYear;
   while (year <= targetYear) {
@@ -212,7 +216,9 @@ export const fiveYearAlgo = (
       currentStrategy.push({
         year,
         quantity_purchased: remainingCarbonToOffset,
-        total_cost: yearlyCost,
+        cost_low: yearlyCost,
+        cost_medium: yearlyCost,
+        cost_high: yearlyCost,
         types_purchased: typesPurchased,
       });
 
@@ -224,7 +230,9 @@ export const fiveYearAlgo = (
       currentStrategy.push({
         year,
         quantity_purchased: quantityUsed,
-        total_cost: cost,
+        cost_low: cost,
+        cost_medium: cost,
+        cost_high: cost,
         types_purchased: typesPurchased,
       });
     }
@@ -241,9 +249,9 @@ export const noAlgo = (
   carbonToOffset: number,
   typology: Typology,
   regionAllocation: RegionAllocation,
-): { optimalBudget: number; bestStrategy: StrategyStep[] } => {
+): { optimalBudget: number; bestStrategy: YearlyStrategy[] } => {
   let optimalBudget = Infinity;
-  let bestStrategy: StrategyStep[] = [];
+  let bestStrategy: YearlyStrategy[] = [];
   const initialTypology = structuredClone(typology);
 
   let n = currentYear;
@@ -263,11 +271,13 @@ export const noAlgo = (
 
   if (!typesPurchased.some((type) => type.typology === 'All sources are depleted')) {
     totalBudget = cost;
-    const currentStrategy: StrategyStep[] = [
+    const currentStrategy: YearlyStrategy[] = [
       {
         year: targetYear,
         quantity_purchased: quantityUsed,
-        total_cost: totalBudget,
+        cost_low: totalBudget,
+        cost_medium: totalBudget,
+        cost_high: totalBudget,
         types_purchased: typesPurchased,
       },
     ];
@@ -289,11 +299,13 @@ export const noAlgo = (
 
   if (!typesPurchased.some((type) => type.typology === 'All sources are depleted')) {
     totalBudget = cost;
-    const currentStrategy: StrategyStep[] = [
+    const currentStrategy: YearlyStrategy[] = [
       {
         year: targetYear,
         quantity_purchased: quantityUsed,
-        total_cost: totalBudget,
+        cost_low: totalBudget,
+        cost_medium: totalBudget,
+        cost_high: totalBudget,
         types_purchased: typesPurchased,
       },
     ];
@@ -308,7 +320,7 @@ export const noAlgo = (
     for (let y = 1; y <= targetYear - n; y++) {
       totalBudget = 0.0;
       let year = n;
-      let currentStrategy: StrategyStep[] = [];
+      let currentStrategy: YearlyStrategy[] = [];
 
       const totalPurchases = Math.floor((targetYear - n) / y) + 1;
       quantityToOffset = carbonToOffset / totalPurchases;
@@ -339,7 +351,9 @@ export const noAlgo = (
           currentStrategy.push({
             year: year,
             quantity_purchased: remainingCarbonToOffset,
-            total_cost: yearlyCost,
+            cost_low: yearlyCost,
+            cost_medium: yearlyCost,
+            cost_high: yearlyCost,
             types_purchased: typesPurchased,
           });
           remainingCarbonToOffset = 0;
@@ -350,7 +364,9 @@ export const noAlgo = (
           currentStrategy.push({
             year: year,
             quantity_purchased: quantityUsed,
-            total_cost: cost,
+            cost_low: cost,
+            cost_medium: cost,
+            cost_high: cost,
             types_purchased: typesPurchased,
           });
         }
