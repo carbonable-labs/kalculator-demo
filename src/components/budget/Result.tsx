@@ -5,6 +5,7 @@ import Title from '../form/Title';
 import CostTable from './results/CostTable';
 import CostChart from './results/CostChart';
 import { Tips } from '../common/Tips';
+import Financing from './results/financing/Financing';
 
 export default function BudgetResults() {
   const { budgetResults } = useBudget();
@@ -23,10 +24,10 @@ export default function BudgetResults() {
         <CostChart />
       </div>
       <div className="mt-4">
-        <Title title="Investment timeline" />
+        <Tips text={budgetResults.advice_timeline} isFullWidth={true} />
       </div>
-      <div className="mt-4">
-        <Tips text={budgetResults.advice_timeline} />
+      <div className="mt-12">
+        <Financing />
       </div>
     </>
   );

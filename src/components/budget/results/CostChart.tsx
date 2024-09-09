@@ -1,4 +1,5 @@
 'use client';
+import Title from '@/components/form/Title';
 import { useBudget } from '@/context/BudgetContext';
 import { formatLargeNumber } from '@/utils/output';
 import { useEffect, useState } from 'react';
@@ -88,6 +89,9 @@ export default function CostChart() {
           <Tooltip content={<CustomTooltip />} />
         </LineChart>
       </ResponsiveContainer>
+      <div className="mt-4">
+        <Title title="Investment timeline" />
+      </div>
     </div>
   );
 }
