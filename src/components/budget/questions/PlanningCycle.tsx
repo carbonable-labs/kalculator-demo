@@ -8,7 +8,7 @@ import RadioButtons from '@/components/form/RadioButtons';
 const planningCycleOptions = [
   { value: '1', text: 'Yearly' },
   { value: '5', text: 'Every 5 years' },
-  { value: '0', text: 'Flexible' },
+  { value: '-1', text: 'Flexible' },
 ];
 
 export default function PlanningCycle() {
