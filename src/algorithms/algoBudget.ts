@@ -126,4 +126,3 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
 
   return res;
 };
-
