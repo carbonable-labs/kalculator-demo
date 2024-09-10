@@ -1,11 +1,6 @@
-import {
-  RegionAllocation,
-  Typology,
-  YearlyStrategy,
-} from '@/types/types';
+import { RegionAllocation, Typology, YearlyStrategy } from '@/types/types';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
-
 
 export const yearlyAlgo = (
   timeConstraints: number,
