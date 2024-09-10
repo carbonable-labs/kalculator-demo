@@ -70,3 +70,5 @@ export const BIODIVERSITY_REMOVAL_TYPOLGY: Typology = {
   biochar: 0.2,
   dac: 0,
 };
+
+export const continents = ['africa', 'asia', 'europe', 'north_america', 'oceania', 'south_america'];

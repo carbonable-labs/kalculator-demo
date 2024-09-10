@@ -2,6 +2,7 @@
 import PieChartComponent from '@/components/common/charts/PieChart';
 import { ChartTitle } from '@/components/form/Title';
 import { useBudget } from '@/context/BudgetContext';
+import { continents } from '@/utils/configuration';
 import { useMemo } from 'react';
 
 export default function Quantity() {
@@ -9,8 +10,6 @@ export default function Quantity() {
 
   const percentages = useMemo(() => {
     if (!budgetResults) return null;
-
-    const continents = ['africa', 'asia', 'europe', 'north_america', 'oceania', 'south_america'];
 
     const totalCost = continents.reduce(
       (sum, continent) => sum + (budgetResults.regions as any)[continent],
