@@ -51,7 +51,7 @@ export const checkPriceExPost = (
   // Sort options by price (ascending)
   const sortedOptions = validOptions.sort(([, [, priceA]], [, [, priceB]]) => priceA - priceB);
 
-  let totalQuantityUsed = 0.0;
+  let totalQuantityUsed = 0;
   let totalCost = 0.0;
   const typesPurchased: TypePurchased[] = [];
 
