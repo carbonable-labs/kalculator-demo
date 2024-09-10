@@ -11,14 +11,15 @@ interface PieChartProps<T extends DataPoint> {
 export default function PieChartComponent<T extends DataPoint>({ data, unit }: PieChartProps<T>) {
   const barColors: Record<string, string> = {
     nbs: '#29A46F', // Green
+    renewable: '#FBBF24', // New color: Amber/Yellow
     biochar: '#f97316', // Orange
     dac: '#3b82f6', // Blue
     africa: '#f59e0b', // Amber
     asia: '#10b981', // Emerald
     europe: '#2563eb', // Royal Blue
     north_america: '#f87171', // Light Red
-    oceania: '#8b5cf6', // Violet (changed)
-    south_america: '#ec4899', // Pink (changed)
+    oceania: '#8b5cf6', // Violet
+    south_america: '#ec4899', // Pink
   };
 
   const RADIAN = Math.PI / 180;

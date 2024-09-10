@@ -10,30 +10,33 @@ export default function Quantity() {
     return null;
   }
 
-  const totalNbs = budgetResults.typologies.nbs_avoidance + budgetResults.typologies.nbs_removal;
+  const total =
+    budgetResults.typologies.nbs_avoidance +
+    budgetResults.typologies.nbs_removal +
+    budgetResults.typologies.dac +
+    budgetResults.typologies.biochar;
 
-  const nbsPercentage = Math.round(
-    (totalNbs / (totalNbs + budgetResults.typologies.dac + budgetResults.typologies.biochar)) * 100,
-  );
+  const nbsPercentage = Math.round((budgetResults.typologies.nbs_removal / total) * 100);
 
-  const biocharPercentage = Math.round(
-    (budgetResults.typologies.biochar /
-      (totalNbs + budgetResults.typologies.dac + budgetResults.typologies.biochar)) *
-      100,
-  );
+  const renewablePercentage = Math.round((budgetResults.typologies.nbs_avoidance / total) * 100);
 
-  const dacPercentage = Math.round(
-    (budgetResults.typologies.dac /
-      (totalNbs + budgetResults.typologies.dac + budgetResults.typologies.biochar)) *
-      100,
-  );
+  const biocharPercentage = Math.round((budgetResults.typologies.biochar / total) * 100);
+
+  const dacPercentage = Math.round((budgetResults.typologies.dac / total) * 100);
 
   return (
     <div>
       <ChartTitle title="Quantity" />
       <div className="mt-4">
         <PieChartComponent
-          data={[{ nbs: nbsPercentage, biochar: biocharPercentage, dac: dacPercentage }]}
+          data={[
+            {
+              nbs: nbsPercentage,
+              renewable: renewablePercentage,
+              biochar: biocharPercentage,
+              dac: dacPercentage,
+            },
+          ]}
           unit="%"
         />
       </div>
