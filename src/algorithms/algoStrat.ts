@@ -31,7 +31,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
 
   let totalBudget = NaN;
   let adjustedBudget: number;
-  let budget_not_compatible: string = 'false'; //TODO: use boolean instead of string
+  let budget_not_compatible: boolean = false;
   let strategies: YearlyStrategy[] = [];
 
   // initial to current
@@ -43,7 +43,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
   let upperBound = budget * 1.03;
   adjustedBudget = Infinity;
 
-  while (adjustedBudget > upperBound) {
+  while (adjustedBudget > upperBound && !budget_not_compatible) {
     if (timeConstraints === 1) {
       ({ totalBudget, strategies } = yearlyAlgo(timeConstraints, carbonToOffset, regionAllocation, {
         nbsRemoval,
@@ -94,7 +94,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
       nbsRemoval -= adjustment;
       nbsAvoidance += adjustment;
     } else {
-      budget_not_compatible = 'true';
+      budget_not_compatible = true;
     }
   }
 
@@ -143,7 +143,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     user_budget: budget,
     money_saving: 0, //TODO ??
     money_to_add: 0, //TODO ??
-    budget_not_compatible: budget_not_compatible,
+    budget_not_compatible: budget_not_compatible ? 'true' : 'false',
     total_cost_low: totalBudget,
     total_cost_medium: totalBudget,
     total_cost_high: totalBudget,
