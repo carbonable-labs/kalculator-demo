@@ -1,4 +1,5 @@
 import Budget from './questions/Budget';
+import CalculateStrategy from './questions/Calculate';
 import GeographicalArea from './questions/GeographicalArea';
 import InvestmentStrategy from './questions/InvestmentStrategy';
 import PlanningCycle from './questions/PlanningCycle';
@@ -21,6 +22,9 @@ export default function StrategyQuestions() {
       </div>
       <div className="mt-16">
         <GeographicalArea />
+      </div>
+      <div className="mt-24 text-center">
+        <CalculateStrategy />
       </div>
     </div>
   );
