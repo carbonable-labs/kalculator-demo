@@ -1,6 +1,6 @@
 'use client';
 
-import { Financing, RegionAllocation, Typology } from '@/types/types';
+import { Financing, RegionAllocation, StratOutputData, Typology } from '@/types/types';
 import {
   DEFAULT_FINANCING,
   DEFAULT_GEOGRAPHICAL_AREA,
@@ -19,6 +19,8 @@ interface StrategyContextType {
   setTypology: (value: Typology) => void;
   regionAllocation: RegionAllocation;
   setRegionAllocation: (value: RegionAllocation) => void;
+  startegyResults: StratOutputData | null;
+  setStrategyResults: (value: StratOutputData | null) => void;
 }
 
 const StrategyContext = createContext<StrategyContextType | undefined>(undefined);
@@ -30,6 +32,7 @@ export const StrategyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLGY);
   const [regionAllocation, setRegionAllocation] =
     useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
+  const [startegyResults, setStrategyResults] = useState<StratOutputData | null>(null);
 
   return (
     <StrategyContext.Provider
@@ -44,6 +47,8 @@ export const StrategyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setTypology,
         regionAllocation,
         setRegionAllocation,
+        startegyResults,
+        setStrategyResults,
       }}
     >
       {children}
