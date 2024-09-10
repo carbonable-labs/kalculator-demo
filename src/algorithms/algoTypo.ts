@@ -30,11 +30,12 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
     const dac = config.dac * carbonToOffset;
     const nbsAvoidance = config.nbs_avoidance * carbonToOffset;
 
-    let totalBudget: number, adjustedBudget: number, strategies: YearlyStrategy[];
+    let strategies: YearlyStrategy[];
+    let totalBudgetLow: number, totalBudgetMedium: number, totalBudgetHigh: number;
 
     switch (timeConstraints) {
       case TimeConstraint.Yearly:
-        ({ totalBudget, strategies } = yearlyAlgo(
+        ({ totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = yearlyAlgo(
           timeConstraints,
           carbonToOffset,
           regionAllocation,
@@ -47,7 +48,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         ));
         break;
       case TimeConstraint.FiveYear:
-        ({ totalBudget, strategies } = fiveYearAlgo(
+        ({ totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = fiveYearAlgo(
           timeConstraints,
           carbonToOffset,
           regionAllocation,
@@ -60,7 +61,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         ));
         break;
       case TimeConstraint.NoConstraint:
-        ({ optimalBudget: totalBudget, bestStrategy: strategies } = noAlgo(
+        ({ totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = noAlgo(
           currentYear,
           targetYear,
           carbonToOffset,
@@ -70,19 +71,24 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         break;
     }
 
-    if (!totalBudget) {
+    if (!totalBudgetMedium || !strategies) {
       throw new Error('An error occurred while running the algorithm.');
     }
 
-    adjustedBudget = totalBudget;
+    const notAdjustedBudget = totalBudgetMedium;
     if (financing.financingExAnte > 0) {
-      const exAnteCost = totalBudget * financing.financingExAnte * deltaExAnte;
-      adjustedBudget = exAnteCost + totalBudget * financing.financingExPost;
-    }
+      const exAnteCostMedium = totalBudgetMedium * financing.financingExAnte * deltaExAnte;
+      totalBudgetMedium = exAnteCostMedium + totalBudgetMedium * financing.financingExPost;
 
+      const exAnteCostLow = totalBudgetLow * financing.financingExAnte * deltaExAnte;
+      totalBudgetLow = exAnteCostLow + totalBudgetLow * financing.financingExPost;
+
+      const exAnteCostHigh = totalBudgetHigh * financing.financingExAnte * deltaExAnte;
+      totalBudgetHigh = exAnteCostHigh + totalBudgetHigh * financing.financingExPost;
+    }
     // If the budget fits the user's constraints, return the results. If not, try the next configuration
     let budget_not_compatible;
-    if (checkBudget(adjustedBudget, budget)) {
+    if (checkBudget(totalBudgetMedium, budget)) {
       budget_not_compatible = false;
 
       const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
@@ -123,18 +129,18 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         money_saving: 0, //TODO
         money_to_add: 0, //TODO
         budget_not_compatible: '', //TODO ??
-        total_cost_low: adjustedBudget, //TODO
-        total_cost_medium: adjustedBudget,
-        total_cost_high: adjustedBudget,
-        average_yearly_cost_low: adjustedBudget / duration,
-        average_yearly_cost_medium: adjustedBudget / duration,
-        average_yearly_cost_high: adjustedBudget / duration,
-        average_price_per_ton_low: adjustedBudget / carbonToOffset,
-        average_price_per_ton_medium: adjustedBudget / carbonToOffset,
-        average_price_per_ton_high: adjustedBudget / carbonToOffset,
-        total_cost_flexible: adjustedBudget, //TODO
-        cost_ex_post: totalBudget * financing.financingExPost,
-        cost_ex_ante: adjustedBudget - totalBudget * financing.financingExPost,
+        total_cost_low: totalBudgetLow, //TODO
+        total_cost_medium: totalBudgetMedium,
+        total_cost_high: totalBudgetHigh,
+        average_yearly_cost_low: totalBudgetLow / duration,
+        average_yearly_cost_medium: totalBudgetMedium / duration,
+        average_yearly_cost_high: totalBudgetHigh / duration,
+        average_price_per_ton_low: totalBudgetLow / carbonToOffset,
+        average_price_per_ton_medium: totalBudgetMedium / carbonToOffset,
+        average_price_per_ton_high: totalBudgetHigh / carbonToOffset,
+        total_cost_flexible: totalBudgetMedium, //TODO
+        cost_ex_post: notAdjustedBudget * financing.financingExPost,
+        cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financing.financingExPost,
         cost_nbs_removal: typologyCosts.costNbsRemoval,
         cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
         cost_biochar: typologyCosts.costBiochar,

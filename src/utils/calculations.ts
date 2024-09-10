@@ -24,18 +24,32 @@ export const checkPriceExPost = (
   quantityToOffset: number,
   typology: Typology,
   regionAllocation: RegionAllocation,
-): [number, number, TypePurchased[]] => {
+): [number, number, number, number, TypePurchased[]] => {
   const options = {
     nbsRemoval: [
       typology.nbsRemoval,
       nbsRemovalExPostMedium[year as keyof typeof nbsRemovalExPostMedium],
+      65 / 163, // low coefficient for nbsRemoval
+      261 / 163, // high coefficient for nbsRemoval
     ],
     nbsAvoidance: [
       typology.nbsAvoidance,
       nbsAvoidanceExPostMedium[year as keyof typeof nbsAvoidanceExPostMedium],
+      0.5, // low coefficient for nbsAvoidance
+      1.5, // high coefficient for nbsAvoidance
     ],
-    biochar: [typology.biochar, biocharExPostMedium[year as keyof typeof biocharExPostMedium]],
-    dac: [typology.dac, dacExPostMedium[year as keyof typeof dacExPostMedium]],
+    biochar: [
+      typology.biochar,
+      biocharExPostMedium[year as keyof typeof biocharExPostMedium],
+      1666 / 3055, // low coefficient for biochar
+      1.454664484, // high coefficient for biochar
+    ],
+    dac: [
+      typology.dac,
+      dacExPostMedium[year as keyof typeof dacExPostMedium],
+      2 / 3, // low coefficient for dac
+      4 / 3, // high coefficient for dac
+    ],
   };
 
   // Filter out options where available quantity is 0 or less
@@ -45,17 +59,22 @@ export const checkPriceExPost = (
 
   // If no valid options are left, return 'All sources are depleted'
   if (validOptions.length === 0) {
-    return [0, 0, []];
+    return [0, 0, 0, 0, []];
   }
 
   // Sort options by price (ascending)
   const sortedOptions = validOptions.sort(([, [, priceA]], [, [, priceB]]) => priceA - priceB);
 
-  let totalQuantityUsed = 0;
-  let totalCost = 0.0;
+  let totalQuantityUsed = 0.0;
+  let totalCostLow = 0.0;
+  let totalCostMedium = 0.0;
+  let totalCostHigh = 0.0;
   const typesPurchased: TypePurchased[] = [];
 
-  for (const [typologyKey, [availableQuantity, price]] of sortedOptions) {
+  for (const [
+    typologyKey,
+    [availableQuantity, priceMedium, priceLowCoeff, priceHighCoeff],
+  ] of sortedOptions) {
     if (totalQuantityUsed >= quantityToOffset) break;
 
     const quantityToBuy = Math.min(availableQuantity, quantityToOffset - totalQuantityUsed);
@@ -65,22 +84,27 @@ export const checkPriceExPost = (
       const regionalQuantity = regionAllocation[region] * quantityToBuy;
       if (regionalQuantity > 0) {
         const coefficient = getRegionFactor(typologyKey, region);
-        const costForTypology = coefficient * price * regionalQuantity;
+        const costForTypologyMedium = coefficient * priceMedium * regionalQuantity;
+        const costForTypologyLow = coefficient * priceMedium * priceLowCoeff * regionalQuantity;
+        const costForTypologyHigh = coefficient * priceMedium * priceHighCoeff * regionalQuantity;
 
         totalQuantityUsed += regionalQuantity;
-        totalCost += costForTypology;
+        totalCostMedium += costForTypologyMedium;
+        totalCostLow += costForTypologyLow;
+        totalCostHigh += costForTypologyHigh;
 
         let regionPurchase: RegionPurchase = {
           region,
           quantity: regionalQuantity,
           region_factor: coefficient,
-          cost: costForTypology,
+          cost: costForTypologyMedium,
         };
 
+        // Check if this typology has already been added to `typesPurchased`
         typesPurchased.push({
           typology: typologyKey,
           quantity: regionalQuantity,
-          price_per_ton: price,
+          price_per_ton: priceMedium, // Add price per ton for medium scenario
           regions: [regionPurchase],
         });
 
@@ -90,7 +114,7 @@ export const checkPriceExPost = (
     }
   }
 
-  return [totalQuantityUsed, totalCost, typesPurchased];
+  return [totalQuantityUsed, totalCostLow, totalCostMedium, totalCostHigh, typesPurchased];
 };
 
 export const getCostPerTypes = (strategies: YearlyStrategy[]) => {

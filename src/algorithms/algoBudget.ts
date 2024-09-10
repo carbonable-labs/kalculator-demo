@@ -19,7 +19,8 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
   const { regionAllocation, typology, financing, timeConstraints } = input;
 
   let { nbsRemoval, nbsAvoidance, biochar, dac } = typology;
-  let totalBudget: number, adjustedBudget: number, strategies: YearlyStrategy[];
+  let strategies: YearlyStrategy[];
+  let totalBudgetLow: number, totalBudgetMedium: number, totalBudgetHigh: number;
 
   nbsRemoval *= carbonToOffset;
   nbsAvoidance *= carbonToOffset;
@@ -27,21 +28,31 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
   dac *= carbonToOffset;
 
   if (timeConstraints === 1) {
-    ({ totalBudget, strategies } = yearlyAlgo(timeConstraints, carbonToOffset, regionAllocation, {
-      nbsRemoval,
-      nbsAvoidance,
-      biochar,
-      dac,
-    }));
+    ({ totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = yearlyAlgo(
+      timeConstraints,
+      carbonToOffset,
+      regionAllocation,
+      {
+        nbsRemoval,
+        nbsAvoidance,
+        biochar,
+        dac,
+      },
+    ));
   } else if (timeConstraints === 5) {
-    ({ totalBudget, strategies } = fiveYearAlgo(timeConstraints, carbonToOffset, regionAllocation, {
-      nbsRemoval,
-      nbsAvoidance,
-      biochar,
-      dac,
-    }));
+    ({ totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = fiveYearAlgo(
+      timeConstraints,
+      carbonToOffset,
+      regionAllocation,
+      {
+        nbsRemoval,
+        nbsAvoidance,
+        biochar,
+        dac,
+      },
+    ));
   } else {
-    ({ optimalBudget: totalBudget, bestStrategy: strategies } = noAlgo(
+    ({ totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = noAlgo(
       currentYear,
       targetYear,
       carbonToOffset,
@@ -55,10 +66,17 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     ));
   }
 
-  adjustedBudget = totalBudget;
+  const notAdjustedBudget = totalBudgetMedium;
+
   if (financing.financingExAnte > 0) {
-    const exAnteCost = totalBudget * financing.financingExAnte * deltaExAnte;
-    adjustedBudget = exAnteCost + totalBudget * financing.financingExPost;
+    const exAnteCostMedium = totalBudgetMedium * financing.financingExAnte * deltaExAnte;
+    totalBudgetMedium = exAnteCostMedium + totalBudgetMedium * financing.financingExPost;
+
+    const exAnteCostLow = totalBudgetLow * financing.financingExAnte * deltaExAnte;
+    totalBudgetLow = exAnteCostLow + totalBudgetLow * financing.financingExPost;
+
+    const exAnteCostHigh = totalBudgetHigh * financing.financingExAnte * deltaExAnte;
+    totalBudgetHigh = exAnteCostHigh + totalBudgetHigh * financing.financingExPost;
   }
 
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
@@ -95,18 +113,18 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     typologies: typologiesData,
     regions: regionsData,
     carbon_offset: carbonToOffset,
-    total_cost_low: adjustedBudget,
-    total_cost_medium: adjustedBudget,
-    total_cost_high: adjustedBudget,
-    average_yearly_cost_low: adjustedBudget / duration,
-    average_yearly_cost_medium: adjustedBudget / duration,
-    average_yearly_cost_high: adjustedBudget / duration,
-    average_price_per_ton_low: adjustedBudget / carbonToOffset,
-    average_price_per_ton_medium: adjustedBudget / carbonToOffset,
-    average_price_per_ton_high: adjustedBudget / carbonToOffset,
-    total_cost_flexible: adjustedBudget,
-    cost_ex_post: totalBudget * financing.financingExPost,
-    cost_ex_ante: adjustedBudget - totalBudget * financing.financingExPost,
+    total_cost_low: totalBudgetLow,
+    total_cost_medium: totalBudgetMedium,
+    total_cost_high: totalBudgetHigh,
+    average_yearly_cost_low: totalBudgetLow / duration,
+    average_yearly_cost_medium: totalBudgetMedium / duration,
+    average_yearly_cost_high: totalBudgetHigh / duration,
+    average_price_per_ton_low: totalBudgetLow / carbonToOffset,
+    average_price_per_ton_medium: totalBudgetMedium / carbonToOffset,
+    average_price_per_ton_high: totalBudgetHigh / carbonToOffset,
+    total_cost_flexible: totalBudgetMedium,
+    cost_ex_post: totalBudgetMedium * financing.financingExPost,
+    cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financing.financingExPost,
     cost_nbs_removal: typologyCosts.costNbsRemoval,
     cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
     cost_biochar: typologyCosts.costBiochar,
@@ -126,4 +144,3 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
 
   return res;
 };
-

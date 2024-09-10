@@ -1,21 +1,25 @@
-import {
-  RegionAllocation,
-  Typology,
-  YearlyStrategy,
-} from '@/types/types';
+import { RegionAllocation, Typology, YearlyStrategy } from '@/types/types';
 import { checkPriceExPost } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
-
 
 export const yearlyAlgo = (
   timeConstraints: number,
   carbonToOffset: number,
   regionAllocation: RegionAllocation,
   typology: Typology,
-): { totalBudget: number; strategies: YearlyStrategy[] } => {
+): {
+  totalBudgetLow: number;
+  totalBudgetMedium: number;
+  totalBudgetHigh: number;
+  strategies: YearlyStrategy[];
+} => {
   const percentageToOffset = timeConstraints / duration;
   let quantityToOffset = Math.ceil(percentageToOffset * carbonToOffset);
-  let totalBudget = 0.0;
+
+  let totalCostLow = 0.0;
+  let totalCostMedium = 0.0;
+  let totalCostHigh = 0.0;
+
   let remainingCarbonToOffset = carbonToOffset;
   const currentStrategy: YearlyStrategy[] = [];
 
@@ -25,7 +29,7 @@ export const yearlyAlgo = (
       quantityToOffset = remainingCarbonToOffset;
     }
 
-    let [quantityUsed, cost, typesPurchased] = checkPriceExPost(
+    let [quantityUsed, costLow, costMedium, costHigh, typesPurchased] = checkPriceExPost(
       year,
       quantityToOffset,
       typology,
@@ -39,27 +43,37 @@ export const yearlyAlgo = (
     }
 
     if (quantityUsed >= remainingCarbonToOffset) {
-      const yearlyCost = cost * (remainingCarbonToOffset / quantityUsed);
-      totalBudget += yearlyCost;
+      const yearlyCostLow = costLow * (remainingCarbonToOffset / quantityUsed);
+      const yearlyCostMedium = costMedium * (remainingCarbonToOffset / quantityUsed);
+      const yearlyCostHigh = costHigh * (remainingCarbonToOffset / quantityUsed);
+
+      totalCostLow += yearlyCostLow;
+      totalCostMedium += yearlyCostMedium;
+      totalCostHigh += yearlyCostHigh;
+
       currentStrategy.push({
         year: year,
         quantity_purchased: remainingCarbonToOffset,
-        cost_low: yearlyCost,
-        cost_medium: yearlyCost,
-        cost_high: yearlyCost,
+        cost_low: yearlyCostLow,
+        cost_medium: yearlyCostMedium,
+        cost_high: yearlyCostHigh,
         types_purchased: typesPurchased,
       });
+
       remainingCarbonToOffset = 0;
       break;
     } else {
-      totalBudget += cost;
+      totalCostLow += costLow;
+      totalCostMedium += costMedium;
+      totalCostHigh += costHigh;
+
       remainingCarbonToOffset -= quantityUsed;
       currentStrategy.push({
         year: year,
         quantity_purchased: quantityUsed,
-        cost_low: cost,
-        cost_medium: cost,
-        cost_high: cost,
+        cost_low: costLow,
+        cost_medium: costMedium,
+        cost_high: costHigh,
         types_purchased: typesPurchased,
       });
     }
@@ -68,7 +82,12 @@ export const yearlyAlgo = (
   }
 
   // Return the structured strategy and total budget
-  return { totalBudget, strategies: currentStrategy };
+  return {
+    totalBudgetLow: totalCostLow,
+    totalBudgetMedium: totalCostMedium,
+    totalBudgetHigh: totalCostHigh,
+    strategies: currentStrategy,
+  };
 };
 
 export const fiveYearAlgo = (
@@ -76,10 +95,18 @@ export const fiveYearAlgo = (
   carbonToOffset: number,
   regionAllocation: RegionAllocation,
   typology: Typology,
-): { totalBudget: number; strategies: YearlyStrategy[] } => {
+): {
+  totalBudgetLow: number;
+  totalBudgetMedium: number;
+  totalBudgetHigh: number;
+  strategies: YearlyStrategy[];
+} => {
   const percentageToOffset = timeConstraints / duration;
   let quantityToOffset = Math.ceil(percentageToOffset * carbonToOffset);
-  let totalBudget = 0.0;
+  let totalCostLow = 0.0;
+  let totalCostMedium = 0.0;
+  let totalCostHigh = 0.0;
+
   let remainingCarbonToOffset = carbonToOffset;
   const currentStrategy: YearlyStrategy[] = [];
 
@@ -89,7 +116,8 @@ export const fiveYearAlgo = (
       quantityToOffset = remainingCarbonToOffset;
     }
 
-    let [quantityUsed, cost, typesPurchased] = checkPriceExPost(
+    // Get low, medium, and high cost scenarios from `checkPriceExPost`
+    let [quantityUsed, costLow, costMedium, costHigh, typesPurchased] = checkPriceExPost(
       year,
       quantityToOffset,
       typology,
@@ -102,29 +130,43 @@ export const fiveYearAlgo = (
     }
 
     if (quantityUsed >= remainingCarbonToOffset) {
-      const yearlyCost = cost * (remainingCarbonToOffset / quantityUsed);
-      totalBudget += yearlyCost;
+      // Proportional cost for the remaining carbon to offset
+      const yearlyCostLow = costLow * (remainingCarbonToOffset / quantityUsed);
+      const yearlyCostMedium = costMedium * (remainingCarbonToOffset / quantityUsed);
+      const yearlyCostHigh = costHigh * (remainingCarbonToOffset / quantityUsed);
 
+      // Update total costs
+      totalCostLow += yearlyCostLow;
+      totalCostMedium += yearlyCostMedium;
+      totalCostHigh += yearlyCostHigh;
+
+      // Add to the strategy
       currentStrategy.push({
         year,
         quantity_purchased: remainingCarbonToOffset,
-        cost_low: yearlyCost,
-        cost_medium: yearlyCost,
-        cost_high: yearlyCost,
+        cost_low: yearlyCostLow,
+        cost_medium: yearlyCostMedium,
+        cost_high: yearlyCostHigh,
         types_purchased: typesPurchased,
       });
 
       remainingCarbonToOffset = 0;
       break;
     } else {
-      totalBudget += cost;
+      // If not all carbon is offset, deduct and continue for next period
+      totalCostLow += costLow;
+      totalCostMedium += costMedium;
+      totalCostHigh += costHigh;
+
       remainingCarbonToOffset -= quantityUsed;
+
+      // Add to the strategy
       currentStrategy.push({
         year,
         quantity_purchased: quantityUsed,
-        cost_low: cost,
-        cost_medium: cost,
-        cost_high: cost,
+        cost_low: costLow,
+        cost_medium: costMedium,
+        cost_high: costHigh,
         types_purchased: typesPurchased,
       });
     }
@@ -132,7 +174,12 @@ export const fiveYearAlgo = (
     year += 5; // Increment by 5 years as this is the five-year algorithm
   }
 
-  return { totalBudget, strategies: currentStrategy };
+  return {
+    totalBudgetLow: totalCostLow,
+    totalBudgetMedium: totalCostMedium,
+    totalBudgetHigh: totalCostHigh,
+    strategies: currentStrategy,
+  };
 };
 
 export const noAlgo = (
@@ -141,18 +188,26 @@ export const noAlgo = (
   carbonToOffset: number,
   typology: Typology,
   regionAllocation: RegionAllocation,
-): { optimalBudget: number; bestStrategy: YearlyStrategy[] } => {
-  let optimalBudget = Infinity;
+): {
+  totalBudgetLow: number;
+  totalBudgetMedium: number;
+  totalBudgetHigh: number;
+  strategies: YearlyStrategy[];
+} => {
+  let totalBudgetLow = Infinity;
+  let totalBudgetMedium = Infinity;
+  let totalBudgetHigh = Infinity;
   let bestStrategy: YearlyStrategy[] = [];
   const initialTypology = structuredClone(typology);
 
   let n = currentYear;
-
-  let totalBudget = 0.0;
+  let totalCostLow = 0.0;
+  let totalCostMedium = 0.0;
+  let totalCostHigh = 0.0;
   let quantityToOffset = carbonToOffset;
 
   // First strategy: try to buy all for the first year
-  let [quantityUsed, cost, typesPurchased] = checkPriceExPost(
+  let [quantityUsed, costLow, costMedium, costHigh, typesPurchased] = checkPriceExPost(
     n,
     quantityToOffset,
     typology,
@@ -163,25 +218,30 @@ export const noAlgo = (
   typology = structuredClone(initialTypology); // Reset typology
 
   if (!typesPurchased.some((type) => type.typology === 'All sources are depleted')) {
-    totalBudget = cost;
+    totalCostLow = costLow;
+    totalCostMedium = costMedium;
+    totalCostHigh = costHigh;
+
     const currentStrategy: YearlyStrategy[] = [
       {
         year: targetYear,
         quantity_purchased: quantityUsed,
-        cost_low: totalBudget,
-        cost_medium: totalBudget,
-        cost_high: totalBudget,
+        cost_low: totalCostLow,
+        cost_medium: totalCostMedium,
+        cost_high: totalCostHigh,
         types_purchased: typesPurchased,
       },
     ];
-    if (totalBudget < optimalBudget) {
-      optimalBudget = totalBudget;
+    if (totalCostMedium < totalBudgetMedium) {
+      totalBudgetLow = totalCostLow;
+      totalBudgetMedium = totalCostMedium;
+      totalBudgetHigh = totalCostHigh;
       bestStrategy = currentStrategy;
     }
   }
 
   // Second strategy: buy all in the target year (2050)
-  [quantityUsed, cost, typesPurchased] = checkPriceExPost(
+  [quantityUsed, costLow, costMedium, costHigh, typesPurchased] = checkPriceExPost(
     targetYear,
     quantityToOffset,
     typology,
@@ -192,19 +252,24 @@ export const noAlgo = (
   typology = structuredClone(initialTypology); // Reset typology
 
   if (!typesPurchased.some((type) => type.typology === 'All sources are depleted')) {
-    totalBudget = cost;
+    totalCostLow = costLow;
+    totalCostMedium = costMedium;
+    totalCostHigh = costHigh;
+
     const currentStrategy: YearlyStrategy[] = [
       {
         year: targetYear,
         quantity_purchased: quantityUsed,
-        cost_low: totalBudget,
-        cost_medium: totalBudget,
-        cost_high: totalBudget,
+        cost_low: totalCostLow,
+        cost_medium: totalCostMedium,
+        cost_high: totalCostHigh,
         types_purchased: typesPurchased,
       },
     ];
-    if (totalBudget < optimalBudget) {
-      optimalBudget = totalBudget;
+    if (totalCostMedium < totalBudgetMedium) {
+      totalBudgetLow = totalCostLow;
+      totalBudgetMedium = totalCostMedium;
+      totalBudgetHigh = totalCostHigh;
       bestStrategy = currentStrategy;
     }
   }
@@ -212,7 +277,9 @@ export const noAlgo = (
   // Explore other strategies by spreading purchases across different years
   for (n = currentYear; n <= targetYear; n++) {
     for (let y = 1; y <= targetYear - n; y++) {
-      totalBudget = 0.0;
+      totalCostLow = 0.0;
+      totalCostMedium = 0.0;
+      totalCostHigh = 0.0;
       let year = n;
       let currentStrategy: YearlyStrategy[] = [];
 
@@ -228,7 +295,7 @@ export const noAlgo = (
           quantityToOffset = remainingCarbonToOffset;
         }
 
-        [quantityUsed, cost, typesPurchased] = checkPriceExPost(
+        [quantityUsed, costLow, costMedium, costHigh, typesPurchased] = checkPriceExPost(
           year,
           quantityToOffset,
           typology,
@@ -241,27 +308,37 @@ export const noAlgo = (
         }
 
         if (quantityUsed >= remainingCarbonToOffset) {
-          const yearlyCost = cost * (remainingCarbonToOffset / quantityUsed);
-          totalBudget += yearlyCost;
+          const yearlyCostLow = costLow * (remainingCarbonToOffset / quantityUsed);
+          const yearlyCostMedium = costMedium * (remainingCarbonToOffset / quantityUsed);
+          const yearlyCostHigh = costHigh * (remainingCarbonToOffset / quantityUsed);
+
+          totalCostLow += yearlyCostLow;
+          totalCostMedium += yearlyCostMedium;
+          totalCostHigh += yearlyCostHigh;
+
           currentStrategy.push({
             year: year,
             quantity_purchased: remainingCarbonToOffset,
-            cost_low: yearlyCost,
-            cost_medium: yearlyCost,
-            cost_high: yearlyCost,
+            cost_low: yearlyCostLow,
+            cost_medium: yearlyCostMedium,
+            cost_high: yearlyCostHigh,
             types_purchased: typesPurchased,
           });
           remainingCarbonToOffset = 0;
           break;
         } else {
-          totalBudget += cost;
+          totalCostLow += costLow;
+          totalCostMedium += costMedium;
+          totalCostHigh += costHigh;
+
           remainingCarbonToOffset -= quantityUsed;
+
           currentStrategy.push({
             year: year,
             quantity_purchased: quantityUsed,
-            cost_low: cost,
-            cost_medium: cost,
-            cost_high: cost,
+            cost_low: costLow,
+            cost_medium: costMedium,
+            cost_high: costHigh,
             types_purchased: typesPurchased,
           });
         }
@@ -269,12 +346,14 @@ export const noAlgo = (
         year += y;
       }
 
-      if (remainingCarbonToOffset === 0 && totalBudget < optimalBudget) {
-        optimalBudget = totalBudget;
+      if (remainingCarbonToOffset === 0 && totalCostMedium < totalBudgetMedium) {
+        totalBudgetLow = totalCostLow;
+        totalBudgetMedium = totalCostMedium;
+        totalBudgetHigh = totalCostHigh;
         bestStrategy = currentStrategy;
       }
     }
   }
 
-  return { optimalBudget, bestStrategy };
+  return { totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies: bestStrategy };
 };
