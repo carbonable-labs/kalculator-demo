@@ -9,6 +9,7 @@ import Financing from './results/Financing';
 import Typology from './results/Typology';
 import Geography from './results/Geography';
 import { ResultAnalysis } from './results/ResultAnalysis';
+import { ACCEPTABLE_DELTA } from '@/utils/configuration';
 
 export default function StrategyResults() {
   const { startegyResults } = useStrategy();
@@ -18,9 +19,7 @@ export default function StrategyResults() {
   }
 
   const isStrategyOk =
-    startegyResults.user_budget > startegyResults.total_cost_low &&
-    startegyResults.user_budget > startegyResults.total_cost_medium &&
-    startegyResults.user_budget >= startegyResults.total_cost_high;
+    startegyResults.user_budget > startegyResults.total_cost_medium * ACCEPTABLE_DELTA;
 
   return (
     <>
