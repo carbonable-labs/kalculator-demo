@@ -16,7 +16,7 @@ export const displayedNames: Record<string, string> = {
 
 export const displayedMethodology: Record<string, string> = {
   nbsAvoidance: 'Avoidance',
-  dac: 'Avoidance',
+  dac: 'Removal',
   nbsRemoval: 'Removal',
   biochar: 'Removal',
 };

@@ -8,6 +8,7 @@ import { Tips } from '../common/Tips';
 import Financing from './results/Financing';
 import Typology from './results/Typology';
 import Geography from './results/Geography';
+import { ResultAnalysis } from './results/ResultAnalysis';
 
 export default function StrategyResults() {
   const { startegyResults } = useStrategy();
@@ -15,9 +16,20 @@ export default function StrategyResults() {
   if (startegyResults === null) {
     return null;
   }
+
+  const isStrategyOk =
+    startegyResults.user_budget > startegyResults.total_cost_low &&
+    startegyResults.user_budget > startegyResults.total_cost_medium &&
+    startegyResults.user_budget >= startegyResults.total_cost_high;
+
   return (
     <>
-      <Title title="Results" subtitle="Based on carbon forecasts scenarios" />
+      <div className="mx-auto w-8/12">
+        <ResultAnalysis resultIsOk={isStrategyOk} />
+      </div>
+      <div className="mt-12">
+        <Title title="Results" subtitle="Based on carbon forecasts scenarios" />
+      </div>
       <div className="mt-12">
         <CostTable />
       </div>

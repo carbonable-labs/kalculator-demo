@@ -8,6 +8,7 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
+  safelist: ['strategy-ok', 'strategy-ko'],
   theme: {
     extend: {
       fontFamily: {
@@ -70,6 +71,10 @@ const config: Config = {
         'tips-gradient': 'linear-gradient(to bottom right, #1c242b 0%, #145150 40%, #9eb9ef 100%)',
         optimize:
           "linear-gradient(50.39deg, rgba(11, 13, 19, 0.5) 15.27%, rgba(19, 21, 28, 0.5) 46.91%, rgba(31, 33, 40, 0.5) 91.42%), url('/assets/images/bg-optimize.png');",
+        'strategy-ok':
+          "linear-gradient(50.39deg, rgba(11, 13, 19, 0.5) 15.27%, rgba(19, 21, 28, 0.5) 46.91%, rgba(31, 33, 40, 0.5) 91.42%), url('/assets/images/strategy-ok.png');",
+        'strategy-ko':
+          "linear-gradient(50.39deg, rgba(11, 13, 19, 0.5) 15.27%, rgba(19, 21, 28, 0.5) 46.91%, rgba(31, 33, 40, 0.5) 91.42%), url('/assets/images/strategy-ko.png');",
       },
     },
   },
