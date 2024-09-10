@@ -123,18 +123,18 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         money_saving: 0, //TODO
         money_to_add: 0, //TODO
         budget_not_compatible: '', //TODO ??
-        total_cost_low: totalBudget, //TODO
-        total_cost_medium: totalBudget,
-        total_cost_high: totalBudget,
-        average_yearly_cost_low: totalBudget / duration,
-        average_yearly_cost_medium: totalBudget / duration,
-        average_yearly_cost_high: totalBudget / duration,
-        average_price_per_ton_low: totalBudget / carbonToOffset,
-        average_price_per_ton_medium: totalBudget / carbonToOffset,
-        average_price_per_ton_high: totalBudget / carbonToOffset,
-        total_cost_flexible: totalBudget, //TODO
+        total_cost_low: adjustedBudget, //TODO
+        total_cost_medium: adjustedBudget,
+        total_cost_high: adjustedBudget,
+        average_yearly_cost_low: adjustedBudget / duration,
+        average_yearly_cost_medium: adjustedBudget / duration,
+        average_yearly_cost_high: adjustedBudget / duration,
+        average_price_per_ton_low: adjustedBudget / carbonToOffset,
+        average_price_per_ton_medium: adjustedBudget / carbonToOffset,
+        average_price_per_ton_high: adjustedBudget / carbonToOffset,
+        total_cost_flexible: adjustedBudget, //TODO
         cost_ex_post: totalBudget * financing.financingExPost,
-        cost_ex_ante: totalBudget * financing.financingExAnte,
+        cost_ex_ante: adjustedBudget - totalBudget * financing.financingExPost,
         cost_nbs_removal: typologyCosts.costNbsRemoval,
         cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
         cost_biochar: typologyCosts.costBiochar,
