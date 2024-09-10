@@ -1,6 +1,4 @@
 import {
-  RegionAllocation,
-  Typology,
   TimeConstraint,
   ProjectConfig,
   TypoAlgorithmInput,
@@ -12,7 +10,7 @@ import {
   TypologiesData,
   TypologyCosts,
 } from '@/types/types';
-import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
+import { getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
