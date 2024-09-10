@@ -1,18 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useBudget } from '@/context/BudgetContext';
 import { DEFAULT_FINANCING } from '@/utils/configuration';
 import Title from '@/components/form/Title';
 import SliderComponent from '@/components/form/Slider';
 import DontKnowCheckbox from '@/components/form/DontKnowCheckbox';
+import { useStrategy } from '@/context/StrategyContext';
 import { tooltip } from '@/components/common/tootips/InvestmentStrategyTooltip';
 
 export default function InvestmentStrategy() {
   const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(50);
   const [formattedInvestmentStrategy, setFormattedInvestmentStrategy] = useState<number>(50);
   const [isDontKnowSelected, setIsDontKnowSelected] = useState<boolean>(false);
-  const { setFinancing } = useBudget();
+  const { setFinancing } = useStrategy();
 
   useEffect(() => {
     setFormattedInvestmentStrategy(investmentStrategy as number);
@@ -33,7 +33,7 @@ export default function InvestmentStrategy() {
   return (
     <>
       <Title
-        title="2. On Spot vs Forward Finance"
+        title="3. On Spot vs Forward Finance"
         subtitle="Please select your investment strategy split"
         tooltip={tooltip}
       />
