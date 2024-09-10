@@ -24,6 +24,8 @@ export const checkPriceExPost = (
   quantityToOffset: number,
   typology: Typology,
   regionAllocation: RegionAllocation,
+  currentYear: number,
+  targetYear: number,
 ): [number, number, number, number, TypePurchased[]] => {
   const options = {
     nbsRemoval: [
@@ -71,6 +73,14 @@ export const checkPriceExPost = (
   let totalCostHigh = 0.0;
   const typesPurchased: TypePurchased[] = [];
 
+  // Function to add noise to the costs
+  const addNoise = (cost: number, noiseFactor: number) => {
+    const noise = Math.random() * noiseFactor * 2 - noiseFactor; // Random noise between -noiseFactor and +noiseFactor
+    return cost * (1 + noise);
+  };
+
+  const yearFactor = (year - currentYear) / (targetYear - currentYear); // Factor to make noise grow over time
+
   for (const [
     typologyKey,
     [availableQuantity, priceMedium, priceLowCoeff, priceHighCoeff],
@@ -84,9 +94,17 @@ export const checkPriceExPost = (
       const regionalQuantity = regionAllocation[region] * quantityToBuy;
       if (regionalQuantity > 0) {
         const coefficient = getRegionFactor(typologyKey, region);
-        const costForTypologyMedium = coefficient * priceMedium * regionalQuantity;
-        const costForTypologyLow = coefficient * priceMedium * priceLowCoeff * regionalQuantity;
-        const costForTypologyHigh = coefficient * priceMedium * priceHighCoeff * regionalQuantity;
+
+        // Base costs for medium, low, and high scenarios
+        const baseCostMedium = coefficient * priceMedium * regionalQuantity;
+        const baseCostLow = coefficient * priceMedium * priceLowCoeff * regionalQuantity;
+        const baseCostHigh = coefficient * priceMedium * priceHighCoeff * regionalQuantity;
+
+        // Add increasing noise over time to low and high costs
+        const noiseFactor = yearFactor * 0.1; // Adjust the 0.1 to control the noise magnitude
+        const costForTypologyMedium = baseCostMedium; // Medium remains unaffected
+        const costForTypologyLow = addNoise(baseCostLow, noiseFactor);
+        const costForTypologyHigh = addNoise(baseCostHigh, noiseFactor);
 
         totalQuantityUsed += regionalQuantity;
         totalCostMedium += costForTypologyMedium;
@@ -97,16 +115,22 @@ export const checkPriceExPost = (
           region,
           quantity: regionalQuantity,
           region_factor: coefficient,
-          cost: costForTypologyMedium,
+          cost: costForTypologyMedium, // Only store medium cost for now
         };
 
         // Check if this typology has already been added to `typesPurchased`
-        typesPurchased.push({
-          typology: typologyKey,
-          quantity: regionalQuantity,
-          price_per_ton: priceMedium, // Add price per ton for medium scenario
-          regions: [regionPurchase],
-        });
+        const existingTypology = typesPurchased.find((tp) => tp.typology === typologyKey);
+        if (existingTypology) {
+          existingTypology.quantity += regionalQuantity;
+          existingTypology.regions.push(regionPurchase);
+        } else {
+          typesPurchased.push({
+            typology: typologyKey,
+            quantity: regionalQuantity,
+            price_per_ton: priceMedium, // Add price per ton for medium scenario
+            regions: [regionPurchase],
+          });
+        }
 
         // Deduct the purchased quantity from the available quantity for the typology
         typology[typologyKey as keyof Typology] -= regionalQuantity;

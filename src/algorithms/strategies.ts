@@ -34,6 +34,8 @@ export const yearlyAlgo = (
       quantityToOffset,
       typology,
       regionAllocation,
+      currentYear,
+      targetYear,
     );
 
     quantityUsed = Math.ceil(quantityUsed);
@@ -122,6 +124,8 @@ export const fiveYearAlgo = (
       quantityToOffset,
       typology,
       regionAllocation,
+      currentYear,
+      targetYear,
     );
 
     quantityUsed = Math.ceil(quantityUsed);
@@ -212,6 +216,8 @@ export const noAlgo = (
     quantityToOffset,
     typology,
     regionAllocation,
+    currentYear,
+    targetYear,
   );
 
   quantityUsed = Math.ceil(quantityUsed);
@@ -246,6 +252,8 @@ export const noAlgo = (
     quantityToOffset,
     typology,
     regionAllocation,
+    currentYear,
+    targetYear,
   );
 
   quantityUsed = Math.ceil(quantityUsed);
@@ -300,6 +308,8 @@ export const noAlgo = (
           quantityToOffset,
           typology,
           regionAllocation,
+          currentYear,
+          targetYear,
         );
 
         quantityUsed = Math.ceil(quantityUsed);
