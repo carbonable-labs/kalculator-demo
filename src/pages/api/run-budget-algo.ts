@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
-import { BudgetAlgorithmInput, BudgetOutputData } from '@/types';
+import { BudgetAlgorithmInput, BudgetOutputData } from '@/types/types';
 
 export default async function handler(
   req: NextApiRequest,

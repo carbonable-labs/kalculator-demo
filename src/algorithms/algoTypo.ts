@@ -11,7 +11,7 @@ import {
   RegionsData,
   TypologiesData,
   TypologyCosts,
-} from '@/types';
+} from '@/types/types';
 import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';

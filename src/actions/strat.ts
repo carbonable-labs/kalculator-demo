@@ -1,7 +1,7 @@
 'use server';
 
 import { runStratAlgorithm } from '@/algorithms/algoStrat';
-import { StratAlgorithmInput, StratOutputData } from '@/types';
+import { StratAlgorithmInput, StratOutputData } from '@/types/types';
 
 export async function runStratAlgo(input: StratAlgorithmInput): Promise<StratOutputData> {
   const algoRes: StratOutputData = runStratAlgorithm(input);

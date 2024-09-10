@@ -1,4 +1,4 @@
-import { ConfigType } from '@/types';
+import { ConfigType } from '@/types/types';
 
 // Define the configuration mappings for each type
 export const carbonImpactConfigs = [

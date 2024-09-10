@@ -10,7 +10,7 @@ import {
   TypologyCosts,
   RegionCosts,
   YearlyStrategy,
-} from '@/types';
+} from '@/types/types';
 import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
@@ -43,12 +43,18 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
       dac,
     }));
   } else {
-    ({ optimalBudget: totalBudget, bestStrategy: strategies } = noAlgo(currentYear, targetYear, carbonToOffset, {
-      nbsRemoval,
-      nbsAvoidance,
-      biochar,
-      dac,
-    }, regionAllocation));
+    ({ optimalBudget: totalBudget, bestStrategy: strategies } = noAlgo(
+      currentYear,
+      targetYear,
+      carbonToOffset,
+      {
+        nbsRemoval,
+        nbsAvoidance,
+        biochar,
+        dac,
+      },
+      regionAllocation,
+    ));
   }
 
   adjustedBudget = totalBudget;

@@ -17,7 +17,7 @@ import {
   YearlyStrategy,
   TypePurchased,
   Typology,
-} from '@/types';
+} from '@/types/types';
 
 export const checkPriceExPost = (
   year: number,
