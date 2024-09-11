@@ -70,13 +70,19 @@ export const advice_typo = (typology: Typology, typoCosts: TypologyCosts): Advic
     return { change: true, advice: 'You should reduce Biochar financing' };
   }
   if (pctDac > 0.05 || typology.dac > 0.05) {
-    return { change: true, advice: 'You should reduce DAC financing and invest in nature-based solutions.' };
+    return {
+      change: true,
+      advice: 'You should reduce DAC financing and invest in nature-based solutions.',
+    };
   }
   if (typology.biochar > 0 && pctBiochar / typology.biochar > 2) {
     return { change: true, advice: 'You should reduce Biochar financing' };
   }
   if (typology.dac > 0 && pctDac / typology.dac > 2) {
-    return { change: true, advice: 'You should reduce DAC financing and invest in nature-based solutions.' };
+    return {
+      change: true,
+      advice: 'You should reduce DAC financing and invest in nature-based solutions.',
+    };
   }
   return { change: false, advice: '' };
 };
