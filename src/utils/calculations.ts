@@ -19,6 +19,20 @@ import {
   Typology,
 } from '@/types/types';
 
+const mulberry32 = (seed: number) => {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const addNoiseWithSeed = (cost: number, noiseFactor: number, prng: () => number) => {
+  const noise = (prng() * noiseFactor * 2 - noiseFactor); // Random noise between -noiseFactor and +noiseFactor
+  return cost * (1 + noise);
+};
+
 export const checkPriceExPost = (
   year: number,
   quantityToOffset: number,
@@ -73,12 +87,11 @@ export const checkPriceExPost = (
   let totalCostHigh = 0.0;
   const typesPurchased: TypePurchased[] = [];
 
-  // Function to add noise to the costs
-  const addNoise = (cost: number, noiseFactor: number) => {
-    const noise = Math.random() * noiseFactor * 2 - noiseFactor; // Random noise between -noiseFactor and +noiseFactor
-    return cost * (1 + noise);
-  };
+  // Use year and typology as seed base
+  const seed = year + Object.keys(typology).reduce((acc, key) => acc + typology[key as keyof Typology], 0);
+  const prng = mulberry32(seed); // Create a PRNG instance with the seed
 
+  // Calculate yearFactor to make noise grow over time
   const yearFactor = (year - currentYear) / (targetYear - currentYear); // Factor to make noise grow over time
 
   for (const [
@@ -103,8 +116,8 @@ export const checkPriceExPost = (
         // Add increasing noise over time to low and high costs
         const noiseFactor = yearFactor * 0.1; // Adjust the 0.1 to control the noise magnitude
         const costForTypologyMedium = baseCostMedium; // Medium remains unaffected
-        const costForTypologyLow = addNoise(baseCostLow, noiseFactor);
-        const costForTypologyHigh = addNoise(baseCostHigh, noiseFactor);
+        const costForTypologyLow = addNoiseWithSeed(baseCostLow, noiseFactor, prng);
+        const costForTypologyHigh = addNoiseWithSeed(baseCostHigh, noiseFactor, prng);
 
         totalQuantityUsed += regionalQuantity;
         totalCostMedium += costForTypologyMedium;
@@ -119,7 +132,7 @@ export const checkPriceExPost = (
         };
 
         // Check if this typology has already been added to `typesPurchased`
-        const existingTypology = typesPurchased.find((tp) => tp.typology === typologyKey);
+        const existingTypology = typesPurchased.find(tp => tp.typology === typologyKey);
         if (existingTypology) {
           existingTypology.quantity += regionalQuantity;
           existingTypology.regions.push(regionPurchase);
