@@ -8,9 +8,11 @@ export const displayedNames: Record<string, string> = {
   asia: 'Asia',
   europe: 'Europe',
   north_america: 'North America',
+  northAmerica: 'North America',
   oceania: 'Oceania',
-  south_america: 'South America',
-  nbsAvoidance: 'NbS',
+  south_america: 'Latin America',
+  southAmerica: 'Latin America',
+  nbsAvoidance: 'Renewable Energy',
   nbsRemoval: 'NbS',
 };
 
