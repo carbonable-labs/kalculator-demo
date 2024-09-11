@@ -20,7 +20,7 @@ export interface Advice {
 
 // advice_financing: string;
 export const advice_financing = (financing: Financing): Advice => {
-  if (financing.financingExPost > 0.5) {
+  if (financing.financingExPost > 0.2) {
     return {
       change: true,
       advice: 'You should consider reducing ex-post financing.',
@@ -59,14 +59,24 @@ export const advice_typo = (typology: Typology, typoCosts: TypologyCosts): Advic
   let pctNbsAvoidance = typoCosts.costNbsAvoidance / totalCost;
   let pctNbsRemoval = typoCosts.costNbsRemoval / totalCost;
 
-  if (pctNbsRemoval - typology.nbsRemoval > 0.25) {
-    return { change: true, advice: 'You should reduce removal financing' };
+  // console.log({
+  //   bio: pctBiochar / typology.biochar,
+  //   dac: pctDac / typology.dac,
+  //   nbsAvoidance: pctNbsAvoidance / typology.nbsAvoidance,
+  //   nbsRemoval: pctNbsRemoval / typology.nbsRemoval,
+  // })
+
+  if (pctBiochar > 0.1 || typology.biochar > 0.1) {
+    return { change: true, advice: 'You should reduce Biochar financing' };
   }
-  if (pctBiochar - typology.biochar > 0.3) {
-    return { change: true, advice: 'You should reduce biochar financing' };
+  if (pctDac > 0.05 || typology.dac > 0.05) {
+    return { change: true, advice: 'You should reduce DAC financing and invest in nature-based solutions.' };
   }
-  if (pctDac - typology.dac > 0.4) {
-    return { change: true, advice: 'You should reduce dac financing' };
+  if (typology.biochar > 0 && pctBiochar / typology.biochar > 2) {
+    return { change: true, advice: 'You should reduce Biochar financing' };
+  }
+  if (typology.dac > 0 && pctDac / typology.dac > 2) {
+    return { change: true, advice: 'You should reduce DAC financing and invest in nature-based solutions.' };
   }
   return { change: false, advice: '' };
 };
@@ -87,23 +97,26 @@ export const advice_geography = (region: RegionAllocation, regionsCosts: RegionC
   let pctOceania = regionsCosts.oceania / totalCost;
   let pctSouthAmerica = regionsCosts.southAmerica / totalCost;
 
-  if (pctAfrica - region.africa > 0.3) {
-    return { change: true, advice: 'You should reduce financing in Africa' };
-  }
-  if (pctAsia - region.asia > 0.3) {
-    return { change: true, advice: 'You should reduce financing in Asia' };
-  }
-  if (pctEurope - region.europe > 0.3) {
+  // console.log({
+  //   africa: pctAfrica / region.africa,
+  //   asia: pctAsia / region.asia,
+  //   europe: pctEurope / region.europe,
+  //   northAmerica: pctNorthAmerica / region.northAmerica,
+  //   oceania: pctOceania / region.oceania,
+  //   southAmerica: pctSouthAmerica / region.southAmerica,
+  // })
+
+  if (pctEurope > 0.2 || region.europe > 0.2) {
     return { change: true, advice: 'You should reduce financing in Europe' };
   }
-  if (pctNorthAmerica - region.northAmerica > 0.3) {
+  if (region.asia > 0 && pctAsia / region.asia > 1.3) {
+    return { change: true, advice: 'You should reduce financing in Asia' };
+  }
+  if (region.northAmerica > 0 && pctNorthAmerica / region.northAmerica > 1.3) {
     return { change: true, advice: 'You should reduce financing in North America' };
   }
-  if (pctOceania - region.oceania > 0.3) {
+  if (region.oceania > 0 && pctOceania / region.oceania > 1.3) {
     return { change: true, advice: 'You should reduce financing in Oceania' };
-  }
-  if (pctSouthAmerica - region.southAmerica > 0.3) {
-    return { change: true, advice: 'You should reduce financing in South America' };
   }
 
   return { change: false, advice: '' };
