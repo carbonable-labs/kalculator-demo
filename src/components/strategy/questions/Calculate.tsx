@@ -2,38 +2,47 @@
 
 import { useEffect, useState } from 'react';
 import { runBudgetAlgo } from '@/actions/budget';
-import { useBudget } from '@/context/BudgetContext';
 import { GreenButton } from '@/components/form/Button';
+import { useStrategy } from '@/context/StrategyContext';
+import { runStratAlgo } from '@/actions/strat';
 
-export default function CalculateBudget() {
+export default function CalculateStrategy() {
   const [isLoading, setIsLoading] = useState(false);
   const [canCalculate, setCanCalculate] = useState(false);
-  const { financing, regionAllocation, timeConstraints, typology, setBudgetResults } = useBudget();
+  const { financing, regionAllocation, timeConstraints, typology, budget, setStrategyResults } =
+    useStrategy();
 
   useEffect(() => {
-    if (financing && regionAllocation && timeConstraints !== null && typology) {
+    if (financing && regionAllocation && timeConstraints !== null && budget !== null && typology) {
       setCanCalculate(true);
     } else {
       setCanCalculate(false);
     }
-  }, [financing, regionAllocation, timeConstraints, typology]);
+  }, [financing, regionAllocation, timeConstraints, typology, budget]);
 
   const handleClick = async () => {
     setIsLoading(true);
 
-    if (financing === null || !regionAllocation || !timeConstraints || !typology) {
+    if (
+      financing === null ||
+      !regionAllocation ||
+      !timeConstraints ||
+      !typology ||
+      budget === null
+    ) {
       setIsLoading(false);
       return;
     }
 
-    const budgetResults = await runBudgetAlgo({
+    const stratResult = await runStratAlgo({
+      budget,
       financing,
       regionAllocation,
       timeConstraints,
       typology,
     });
 
-    setBudgetResults(budgetResults);
+    setStrategyResults(stratResult);
 
     setIsLoading(false);
   };

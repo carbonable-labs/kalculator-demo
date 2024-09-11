@@ -1,18 +1,18 @@
 'use client';
 import PieChartComponent from '@/components/common/charts/PieChart';
 import { ChartTitle } from '@/components/form/Title';
-import { useBudget } from '@/context/BudgetContext';
+import { useStrategy } from '@/context/StrategyContext';
 import { continents } from '@/utils/configuration';
 import { useMemo } from 'react';
 
 export default function Quantity() {
-  const { budgetResults } = useBudget();
+  const { startegyResults } = useStrategy();
 
   const percentages = useMemo(() => {
-    if (!budgetResults) return null;
+    if (!startegyResults) return null;
 
     const totalCost = continents.reduce(
-      (sum, continent) => sum + (budgetResults.regions as any)[continent],
+      (sum, continent) => sum + (startegyResults.regions as any)[continent],
       0,
     );
 
@@ -20,12 +20,12 @@ export default function Quantity() {
 
     return continents.reduce(
       (result, continent) => {
-        result[continent] = calculatePercentage((budgetResults.regions as any)[continent]);
+        result[continent] = calculatePercentage((startegyResults.regions as any)[continent]);
         return result;
       },
       {} as Record<string, number>,
     );
-  }, [budgetResults]);
+  }, [startegyResults]);
 
   if (!percentages) {
     return null;

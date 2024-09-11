@@ -131,19 +131,12 @@ export const checkPriceExPost = (
           cost: costForTypologyMedium, // Only store medium cost for now
         };
 
-        // Check if this typology has already been added to `typesPurchased`
-        const existingTypology = typesPurchased.find(tp => tp.typology === typologyKey);
-        if (existingTypology) {
-          existingTypology.quantity += regionalQuantity;
-          existingTypology.regions.push(regionPurchase);
-        } else {
-          typesPurchased.push({
-            typology: typologyKey,
-            quantity: regionalQuantity,
-            price_per_ton: priceMedium, // Add price per ton for medium scenario
-            regions: [regionPurchase],
-          });
-        }
+        typesPurchased.push({
+          typology: typologyKey,
+          quantity: regionalQuantity,
+          price_per_ton: priceMedium, // Add price per ton for medium scenario
+          regions: [regionPurchase],
+        });
 
         // Deduct the purchased quantity from the available quantity for the typology
         typology[typologyKey as keyof Typology] -= regionalQuantity;

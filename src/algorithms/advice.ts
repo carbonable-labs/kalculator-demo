@@ -37,10 +37,10 @@ export const advice_financing = (financing: Financing): Advice => {
 
 // advice_timeline: string;
 export const advice_timeline = (timeConstraints: TimeConstraint): Advice => {
-  if (timeConstraints === TimeConstraint.Yearly) {
+  if (timeConstraints === TimeConstraint.Yearly || timeConstraints === TimeConstraint.FiveYear) {
     return {
       change: true,
-      advice: 'You should consider a five-year timeframe to avoid spot financing.',
+      advice: 'You should consider a more flexible timeframe.',
     };
   }
 
