@@ -9,24 +9,24 @@ export enum TYPOLOGY_PREFERENCE {
 }
 
 export const DEFAULT_FINANCING: Financing = {
-  financingExAnte: 0.5,
-  financingExPost: 0.5,
+  financingExAnte: 0.6,
+  financingExPost: 0.4,
 };
 
 export const DEFAULT_TYPOLGY: Typology = {
-  nbsRemoval: 0.85,
-  nbsAvoidance: 0.1,
-  biochar: 0,
-  dac: 0.05,
+  nbsRemoval: 0.6,
+  nbsAvoidance: 0.2,
+  biochar: 0.1,
+  dac: 0.1,
 };
 
 export const DEFAULT_GEOGRAPHICAL_AREA = {
-  northAmerica: 0,
-  southAmerica: 0,
-  europe: 0.05,
-  africa: 0.85,
+  northAmerica: 0.1,
+  southAmerica: 0.2,
+  europe: 0.3,
+  africa: 0.2,
   asia: 0.1,
-  oceania: 0,
+  oceania: 0.1,
 };
 
 export const CLIMATE_AVOIDANCE_TYPOLGY: Typology = {
