@@ -7,6 +7,8 @@ import {
   RegionCosts,
 } from '@/types/types';
 
+import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
+
 export interface Advice {
   change: boolean;
   advice: string;
@@ -15,11 +17,10 @@ export interface Advice {
 // export interface AdviceFinancing {
 //     financingExPost: number;
 //     financingExAnte: number;
-//     advice_phrase: string;
+//     advicePhrase: string;
 // }
 
-// advice_financing: string;
-export const advice_financing = (financing: Financing): Advice => {
+export const adviceFinancing = (financing: Financing): Advice => {
   if (financing.financingExPost > 0.2) {
     return {
       change: true,
@@ -35,9 +36,10 @@ export const advice_financing = (financing: Financing): Advice => {
   return { change: false, advice: '' };
 };
 
-// advice_timeline: string;
-export const advice_timeline = (timeConstraints: TimeConstraint): Advice => {
+export const adviceTimeline = (timeConstraints: TimeConstraint): Advice => {
   if (timeConstraints === TimeConstraint.Yearly || timeConstraints === TimeConstraint.FiveYear) {
+    // Re-Run algorithm with new flexible constraint and check budget? output delta
+    // advice might be different for different algorithms
     return {
       change: true,
       advice: 'You should consider a more flexible timeframe.',
@@ -47,8 +49,7 @@ export const advice_timeline = (timeConstraints: TimeConstraint): Advice => {
   return { change: false, advice: '' };
 };
 
-// advice_typo: string;
-export const advice_typo = (typology: Typology, typoCosts: TypologyCosts): Advice => {
+export const adviceTypo = (typology: Typology, typoCosts: TypologyCosts): Advice => {
   let totalCost =
     typoCosts.costBiochar +
     typoCosts.costDac +
@@ -87,8 +88,7 @@ export const advice_typo = (typology: Typology, typoCosts: TypologyCosts): Advic
   return { change: false, advice: '' };
 };
 
-// advice_geography: string;
-export const advice_geography = (region: RegionAllocation, regionsCosts: RegionCosts): Advice => {
+export const adviceGeography = (region: RegionAllocation, regionsCosts: RegionCosts): Advice => {
   let totalCost =
     regionsCosts.africa +
     regionsCosts.asia +

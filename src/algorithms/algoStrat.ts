@@ -15,7 +15,7 @@ import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/ca
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
-import { Advice, advice_financing, advice_geography, advice_timeline, advice_typo } from './advice';
+import { Advice, adviceFinancing, adviceGeography, adviceTimeline, adviceTypo } from './advice';
 import { fiveYearAlgo, noAlgo, yearlyAlgo } from './strategies';
 
 export const runStratAlgorithm = (input: StratAlgorithmInput) => {
@@ -141,10 +141,10 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     oceania: regionAllocation.oceania,
   };
 
-  let adv_timeline: Advice = advice_timeline(timeConstraints);
-  let adv_financing: Advice = advice_financing(financing);
-  let adv_typo: Advice = advice_typo(typology, typologyCosts);
-  let adv_geography: Advice = advice_geography(regionAllocation, regionCosts);
+  let adv_timeline: Advice = adviceTimeline(timeConstraints);
+  let adv_financing: Advice = adviceFinancing(financing);
+  let adv_typo: Advice = adviceTypo(typology, typologyCosts);
+  let adv_geography: Advice = adviceGeography(regionAllocation, regionCosts);
 
   let res: StratOutputData = {
     financing: financingData,
