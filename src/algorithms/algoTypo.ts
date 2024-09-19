@@ -15,7 +15,7 @@ import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
 import { configMap } from '@/constants/configs';
-import { Advice, adviceFinancing, adviceGeography, adviceTimeline, advice_typo } from './advice';
+import { Advice, adviceFinancing, adviceGeography, adviceTimeline } from './advice';
 import { fiveYearAlgo, noAlgo, yearlyAlgo } from './strategies';
 
 export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
