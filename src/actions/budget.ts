@@ -13,7 +13,16 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
 
   let timelineTip = adviceBudgetTimeline(input, algoRes);
   console.log(timelineTip);
-  algoRes = { ...algoRes, advice_timeline: timelineTip.advice };
+  let advice: string;
+  if (!timelineTip.change) {
+    advice = timelineTip.advice;
+  } else {
+    let phrase = timelineTip.tip ? timelineTip.tip.advicePhrase : '';
+    let option = timelineTip.tip ? timelineTip.tip.smartTip : '';
+    let delta = timelineTip.tip ? timelineTip.tip.budgetDelta : '';
+    advice = `${phrase} ${option} and save $${delta}`;
+  }
+  algoRes = { ...algoRes, advice_timeline: advice };
 
   return algoRes;
 }

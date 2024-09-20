@@ -46,7 +46,7 @@ export const adviceBudgetTimeline = (
         advice: 'You should consider a more flexible timeframe.',
         tip: {
           advicePhrase: 'You should consider a more flexible timeframe.',
-          smartTip: 'Go Five Year.',
+          smartTip: 'Go Five Year',
           budgetDelta: deltaFiveYear.toFixed(2),
         },
       };
@@ -56,7 +56,7 @@ export const adviceBudgetTimeline = (
         advice: 'You should consider a more flexible timeframe.',
         tip: {
           advicePhrase: 'You should consider a more flexible timeframe.',
-          smartTip: 'Go Flexible.',
+          smartTip: 'Go Flexible',
           budgetDelta: deltaFlexible.toFixed(2),
         },
       };
@@ -68,7 +68,7 @@ export const adviceBudgetTimeline = (
         advice: 'You should consider a more flexible timeframe.',
         tip: {
           advicePhrase: 'You should consider a more flexible timeframe.',
-          smartTip: 'Go Flexible.',
+          smartTip: 'Go Flexible',
           budgetDelta: deltaFlexible.toFixed(2),
         },
       };
