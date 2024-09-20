@@ -15,7 +15,6 @@ import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
 import { configMap } from '@/constants/configs';
-import { Advice, adviceFinancing, adviceGeography, adviceTimeline } from './advice';
 import { fiveYearAlgo, noAlgo, yearlyAlgo } from './strategies';
 
 export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
@@ -115,11 +114,6 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         oceania: regionAllocation.oceania,
       };
 
-      let adv_timeline: Advice = adviceTimeline(timeConstraints);
-      let adv_financing: Advice = adviceFinancing(financing);
-      // let adv_typo: Advice = advice_typo(typology, typologyCosts);
-      let adv_geography: Advice = adviceGeography(regionAllocation, regionCosts);
-
       let res = {
         financing: financingData,
         typologies: typologiesData,
@@ -151,10 +145,10 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         cost_africa: regionCosts.africa,
         cost_asia: regionCosts.asia,
         cost_oceania: regionCosts.oceania,
-        advice_timeline: adv_timeline.change ? adv_timeline.advice : 'No advice needed.',
-        advice_financing: adv_financing.change ? adv_financing.advice : 'No advice needed.',
-        advice_typo: 'No advice needed.', // Should not be advisable??
-        advice_geography: adv_geography.change ? adv_geography.advice : 'No advice needed.',
+        advice_timeline: '',
+        advice_financing: '',
+        advice_typo: '', // Should not be advisable??
+        advice_geography: '',
         strategies: strategies,
       };
       return res;

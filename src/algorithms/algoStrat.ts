@@ -1,7 +1,4 @@
 import {
-  RegionAllocation,
-  Typology,
-  Financing,
   StratAlgorithmInput,
   YearlyStrategy,
   StratOutputData,
@@ -11,11 +8,10 @@ import {
   RegionsData,
   TypologiesData,
 } from '@/types/types';
-import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
+import { getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
-import { Advice, adviceFinancing, adviceGeography, adviceTimeline, adviceTypo } from './advice';
 import { fiveYearAlgo, noAlgo, yearlyAlgo } from './strategies';
 
 export const runStratAlgorithm = (input: StratAlgorithmInput) => {
@@ -141,11 +137,6 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     oceania: regionAllocation.oceania,
   };
 
-  let adv_timeline: Advice = adviceTimeline(timeConstraints);
-  let adv_financing: Advice = adviceFinancing(financing);
-  let adv_typo: Advice = adviceTypo(typology, typologyCosts);
-  let adv_geography: Advice = adviceGeography(regionAllocation, regionCosts);
-
   let res: StratOutputData = {
     financing: financingData,
     typologies: typologiesData,
@@ -178,10 +169,10 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     cost_africa: regionCosts.africa,
     cost_asia: regionCosts.asia,
     cost_oceania: regionCosts.oceania,
-    advice_timeline: adv_timeline.change ? adv_timeline.advice : 'No advice needed.',
-    advice_financing: adv_financing.change ? adv_financing.advice : 'No advice needed.',
-    advice_typo: adv_typo.change ? adv_typo.advice : 'No advice needed.',
-    advice_geography: adv_geography.change ? adv_geography.advice : 'No advice needed.',
+    advice_timeline: '',
+    advice_financing: '',
+    advice_typo: '',
+    advice_geography: '',
     strategies: strategies,
   };
   return res;
