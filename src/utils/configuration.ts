@@ -9,8 +9,8 @@ export enum TYPOLOGY_PREFERENCE {
 }
 
 export const DEFAULT_FINANCING: Financing = {
-  financingExAnte: 0.6,
-  financingExPost: 0.4,
+  financingExAnte: 0.88,
+  financingExPost: 0.12,
 };
 
 export const DEFAULT_TYPOLGY: Typology = {
