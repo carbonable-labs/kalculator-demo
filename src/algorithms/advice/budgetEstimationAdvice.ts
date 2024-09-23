@@ -1,13 +1,4 @@
-import {
-  RegionAllocation,
-  Typology,
-  Financing,
-  TimeConstraint,
-  TypologyCosts,
-  RegionCosts,
-  BudgetAlgorithmInput,
-  BudgetOutputData,
-} from '@/types/types';
+import { Typology, TimeConstraint, BudgetAlgorithmInput, BudgetOutputData } from '@/types/types';
 
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
 
@@ -99,135 +90,150 @@ export const adviceBudgetTypology = (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
 ): Advice => {
-  // Compute the cost coefficient of each typology
-
   let pctBiochar = input.typology.biochar;
   let pctDac = input.typology.dac;
   let pctNbsAvoidance = input.typology.nbsAvoidance;
-  let pctNbsRemoval = input.typology.nbsAvoidance;
+  let pctNbsRemoval = input.typology.nbsRemoval;
 
   let isPresent = (n: number): number => {
-    return n > 0 ? 1 : 0;
+    return n > 0 ? 100 : 0;
   };
   let targetCoeff =
     1 / [pctBiochar, pctDac, pctNbsAvoidance, pctNbsRemoval].map(isPresent).reduce((a, b) => a + b);
+  targetCoeff = targetCoeff * 100;
 
   // 0: biochar, 1: dac, 2: nbsAvoidance, 3: nbsRemoval
+  const typologyDistribution = [pctBiochar, pctDac, pctNbsAvoidance, pctNbsRemoval].map((x) =>
+    Math.round(x * 100),
+  );
+  let prevTypologyDistribution = [...typologyDistribution];
+  let newTypologyDistribution = [...typologyDistribution];
+  let costs = [
+    output.cost_biochar,
+    output.cost_dac,
+    output.cost_nbs_avoidance,
+    output.cost_nbs_removal,
+  ];
+  let prevCosts = [...costs];
+  let newCosts = [...costs];
 
-  let newTypology = { ...input.typology };
-  let step = 0.4;
-  // Compute current errors
-  let totalCost =
-    output.cost_biochar + output.cost_dac + output.cost_nbs_avoidance + output.cost_nbs_removal;
-  let costCoeffBiochar = output.cost_biochar / totalCost;
-  let costCoeffDac = output.cost_dac / totalCost;
-  let costCoeffNbsAvoidance = output.cost_nbs_avoidance / totalCost;
-  let costCoeffNbsRemoval = output.cost_nbs_removal / totalCost;
-  console.log(costCoeffBiochar, costCoeffDac, costCoeffNbsAvoidance, costCoeffNbsRemoval);
+  let step = Math.round(getMinStep(typologyDistribution) / 2);
 
   let newOutput: BudgetOutputData = output;
-
   let numLoops: number = 0;
-  while (step > 0.01) {
+  while (step > 0 && numLoops < 55) {
     numLoops++;
-    let errors = computeTypoSolutionCost(
-      input.typology,
-      {
-        costBiochar: costCoeffBiochar,
-        costDac: costCoeffDac,
-        costNbsAvoidance: costCoeffNbsAvoidance,
-        costNbsRemoval: costCoeffNbsRemoval,
-      },
-      targetCoeff,
-    );
+    let errors = computeSolutionError(prevTypologyDistribution, prevCosts, targetCoeff);
+    let totalCost = prevCosts.reduce((a, b) => a + b);
+    let costCoeffs = prevCosts.map((x) => x / totalCost);
 
-    // delta change for max error typology
-    // TODO: check if the typology is already at 0% or 100%
-    let pctChange = 0;
     let maxErrorIndex = errors.indexOf(Math.max(...errors));
-    if (maxErrorIndex == 0) {
-      let newBiochar = costCoeffBiochar < targetCoeff ? pctBiochar + step : pctBiochar - step;
-      newBiochar = Math.min(Math.max(0, newBiochar), 1);
-      pctChange = pctBiochar - newBiochar;
-      newTypology = { ...newTypology, biochar: newBiochar };
-    } else if (maxErrorIndex == 1) {
-      let newDac = costCoeffDac < targetCoeff ? pctDac + step : pctDac - step;
-      newDac = Math.min(Math.max(0, newDac), 1);
-      pctChange = pctDac - newDac;
-      newTypology = { ...newTypology, dac: newDac };
-    } else if (maxErrorIndex == 2) {
-      let newNbsAvoidance =
-        costCoeffNbsAvoidance < targetCoeff ? pctNbsAvoidance + step : pctNbsAvoidance - step;
-      newNbsAvoidance = Math.min(Math.max(0, newNbsAvoidance), 1);
-      pctChange = pctNbsAvoidance - newNbsAvoidance;
-    } else if (maxErrorIndex == 3) {
-      let newNbsRemoval =
-        costCoeffNbsRemoval < targetCoeff ? pctNbsRemoval + step : pctNbsRemoval - step;
-      newNbsRemoval = Math.min(Math.max(0, newNbsRemoval), 1);
-      pctChange = pctNbsRemoval - newNbsRemoval;
-      newTypology = { ...newTypology, nbsRemoval: newNbsRemoval };
-    }
-    let minErrorIndex = errors.indexOf(Math.min(...errors.map((x) => (x == 0 ? Infinity : x)))); // Discard typologies with 0% allocation
-    if (minErrorIndex == 0) {
-      let newBiochar = costCoeffBiochar < targetCoeff ? pctBiochar - step : pctBiochar + step;
-      newTypology = { ...newTypology, biochar: Math.min(Math.max(0, newBiochar), 1) };
-    }
+    let sign = Math.sign(targetCoeff - costCoeffs[maxErrorIndex]);
+    newTypologyDistribution[maxErrorIndex] = prevTypologyDistribution[maxErrorIndex] + sign * step;
 
-    newOutput = runBudgetAlgorithm({ ...input, typology: newTypology });
-    // Compute cost coefficients
-    totalCost =
-      newOutput.cost_biochar +
-      newOutput.cost_dac +
-      newOutput.cost_nbs_avoidance +
-      newOutput.cost_nbs_removal;
-    let newCostCoeffBiochar = newOutput.cost_biochar / totalCost;
-    let newCostCoeffDac = newOutput.cost_dac / totalCost;
-    let newCostCoeffNbsAvoidance = newOutput.cost_nbs_avoidance / totalCost;
-    let newCostCoeffNbsRemoval = newOutput.cost_nbs_removal / totalCost;
+    // Find change that lowers error the most
+    let currentError = errors.reduce((a, b) => a + b);
+    let errorDiff = 0;
+    let maxTypologyDistribution = [...prevTypologyDistribution];
+    let newTypology: Typology = {
+      biochar: newTypologyDistribution[0] / 100,
+      dac: newTypologyDistribution[1] / 100,
+      nbsAvoidance: newTypologyDistribution[2] / 100,
+      nbsRemoval: newTypologyDistribution[3] / 100,
+    };
+    let newErrors: Array<number> = errors;
+    newCosts = prevCosts;
+    // todo: remove typology with 0% allocation
+    // for each with filetered typology?
+    for (let i = 0; i < newTypologyDistribution.length; i++) {
+      if (i != maxErrorIndex) {
+        let tmpDistribution = [...newTypologyDistribution];
+        tmpDistribution[i] = newTypologyDistribution[i] - sign * step;
+        let tmpTypology = {
+          biochar: tmpDistribution[0] / 100,
+          dac: tmpDistribution[1] / 100,
+          nbsAvoidance: tmpDistribution[2] / 100,
+          nbsRemoval: tmpDistribution[3] / 100,
+        };
+        let tmpOutput = runBudgetAlgorithm({ ...input, typology: tmpTypology });
+        let tmpCosts = [
+          tmpOutput.cost_biochar,
+          tmpOutput.cost_dac,
+          tmpOutput.cost_nbs_avoidance,
+          tmpOutput.cost_nbs_removal,
+        ];
 
-    let newErrors = computeTypoSolutionCost(
-      input.typology,
-      {
-        costBiochar: newCostCoeffBiochar,
-        costDac: newCostCoeffDac,
-        costNbsAvoidance: newCostCoeffNbsAvoidance,
-        costNbsRemoval: newCostCoeffNbsRemoval,
-      },
-      targetCoeff,
+        let tmpErrors = computeSolutionError(tmpDistribution, tmpCosts, targetCoeff);
+        let tmpError = tmpErrors.reduce((a, b) => a + b);
+        let tmpErrorDiff = currentError - tmpError;
+        // console.log(' ', i, tmpDistribution, tmpError.toFixed(0), tmpErrorDiff.toFixed(0));
+        if (tmpErrorDiff > 0 && tmpErrorDiff > errorDiff) {
+          errorDiff = tmpErrorDiff;
+          maxTypologyDistribution = [...tmpDistribution];
+          newTypology = { ...tmpTypology };
+          newOutput = { ...tmpOutput };
+          newErrors = [...tmpErrors];
+          newCosts = [...tmpCosts];
+        }
+      }
+    }
+    newTypologyDistribution = [...maxTypologyDistribution];
+
+    console.log(
+      numLoops,
+      prevTypologyDistribution,
+      newTypologyDistribution,
+      errors.map((x) => x.toFixed(0)),
+      newErrors.map((x) => x.toFixed(0)),
+      // prevCosts.map((x) => x.toFixed(0)),
+      // newCosts.map((x) => x.toFixed(0)),
+      sign,
+      step,
+      errorDiff.toFixed(1),
+      costCoeffs.map((x) => x.toFixed(2)),
     );
 
-    if (errors.reduce((a, b) => a + b) - newErrors.reduce((a, b) => a + b) < 0) {
-      step = Math.round((step * 100) / 2) / 100;
+    if (errorDiff <= 0) {
+      step = Math.round((step - 0.5) / 2);
+      step = Math.min(step, Math.round(getMinStep(newTypologyDistribution) / 2));
     } else {
-      pctBiochar = newTypology.biochar;
-      pctDac = newTypology.dac;
-      pctNbsAvoidance = newTypology.nbsAvoidance;
-      pctNbsRemoval = newTypology.nbsRemoval;
-      errors = newErrors;
-      costCoeffBiochar = newCostCoeffBiochar;
-      costCoeffDac = newCostCoeffDac;
-      costCoeffNbsAvoidance = newCostCoeffNbsAvoidance;
-      costCoeffNbsRemoval = newCostCoeffNbsRemoval;
+      prevTypologyDistribution = [...newTypologyDistribution];
+      errors = [...newErrors];
+      prevCosts = [...newCosts];
     }
   }
 
   let minProfit = output.total_cost_medium * 0.005;
   let deltaOptimal = output.total_cost_medium - newOutput.total_cost_medium;
-  let newBiochar = Math.round(100 * newTypology.biochar);
-  let newDac = Math.round(100 * newTypology.dac);
-  let newNbsAvoidance = Math.round(100 * newTypology.nbsAvoidance);
-  let newNbsRemoval = Math.round(100 * newTypology.nbsRemoval);
+  // newTypologyDistribution = newTypologyDistribution.map((x) => Math.round(x));
+  // todo adjust off by one if necessary
 
-  console.log(deltaOptimal, numLoops);
-  console.log(input.typology, newBiochar, newDac, newNbsAvoidance, newNbsRemoval);
-  console.log(costCoeffBiochar, costCoeffDac, costCoeffNbsAvoidance, costCoeffNbsRemoval);
+  console.log(deltaOptimal.toFixed(), numLoops);
+  console.log(typologyDistribution, newTypologyDistribution);
+  console.log(newCosts.reduce((a, b) => a + b).toFixed(0), newOutput.total_cost_medium.toFixed(0));
+  console.log(
+    'newCoeffs ',
+    newCosts.map((x) => (x / newCosts.reduce((a, b) => a + b)).toFixed(2)),
+  );
+  console.log(
+    'oldCoeffs ',
+    costs.map((x) => (x / costs.reduce((a, b) => a + b)).toFixed(2)),
+  );
+  console.log(
+    'oldCoeffs2',
+    costs.map((x) => (x / output.total_cost_medium).toFixed(2)),
+  );
+  console.log(
+    'prevCoeffs2',
+    prevCosts.map((x) => (x / prevCosts.reduce((a, b) => a + b)).toFixed(2)),
+  );
   if (deltaOptimal > minProfit) {
-    if (newTypology != input.typology) {
+    if (newTypologyDistribution != typologyDistribution) {
       return {
         change: true,
         tip: {
           advicePhrase: 'You should consider changing your typology.',
-          smartTip: `Change Typology to biochar: ${newBiochar}%, dac: ${newDac}%, nbsAvoidance: ${newNbsAvoidance}%, nbsRemoval: ${newNbsRemoval}%`,
+          smartTip: `Change Typology to biochar: ${newTypologyDistribution[0]}%, dac: ${newTypologyDistribution[1]}%, nbsAvoidance: ${newTypologyDistribution[2]}%, nbsRemoval: ${newTypologyDistribution[3]}%`,
           budgetDelta: deltaOptimal.toFixed(2),
         },
       };
@@ -236,20 +242,23 @@ export const adviceBudgetTypology = (
   return { change: false };
 };
 
-const computeTypoSolutionCost = (
-  typo: Typology,
-  typoCost: TypologyCosts,
+const getMinStep = (values: Array<number>): number => {
+  let nonZeroValues = values.filter((x) => x != 0);
+  let minDecrease = Math.min(...nonZeroValues);
+  let maxIncrease = Math.max(...nonZeroValues.map((x) => 100 - x));
+  return Math.min(minDecrease, maxIncrease);
+};
+
+const computeSolutionError = (
+  distribution: Array<number>,
+  costs: Array<number>,
   target: number,
 ): Array<number> => {
-  let cost = [
-    [typoCost.costBiochar, typo.biochar],
-    [typoCost.costDac, typo.dac],
-    [typoCost.costNbsAvoidance, typo.nbsAvoidance],
-    [typoCost.costNbsRemoval, typo.nbsRemoval],
-  ]
-    .map((x) => (x[1] == 0 ? target : x[0])) // Discard typologies with 0% allocation
+  let sumCosts = costs.reduce((a, b) => a + b);
+  let errors = costs
+    .map((ci, i) => (distribution[i] == 0 ? target : (100 * ci) / sumCosts)) // Discard typologies with 0% allocation;
     .map((x) => Math.pow(x - target, 2)); // Compute the squared distance to optimal cost
-  return cost;
+  return errors;
 };
 export const adviceBudgetGeography = (
   input: BudgetAlgorithmInput,
