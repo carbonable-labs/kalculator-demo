@@ -14,7 +14,6 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   let computedAdvice = computeBudgetAdvice(input, algoRes);
   let formattedTips = computedAdvice.map(formatTip);
 
-  console.log(formattedTips);
   algoRes = {
     ...algoRes,
     advice_timeline: formattedTips[0],
