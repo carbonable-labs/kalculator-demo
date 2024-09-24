@@ -1,6 +1,6 @@
-import { Typology, TimeConstraint, BudgetAlgorithmInput, BudgetOutputData } from '@/types/types';
-
+import { TimeConstraint, BudgetAlgorithmInput, BudgetOutputData } from '@/types/types';
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
+import { deltaExAnte } from '@/constants/forecasts';
 
 export interface Advice {
   change: boolean;
@@ -120,12 +120,16 @@ export const adviceBudgetTypology = (
   let step = Math.round(getMinStep(typologyDistribution) / 2);
 
   let newOutput: BudgetOutputData = output;
+  let prevBudget = output.total_cost_medium;
   let numLoops: number = 0;
   while (step > 0 && numLoops < 55) {
     numLoops++;
     let errors = computeSolutionError(prevTypologyDistribution, prevCosts, targetCoeff);
-    let totalCost = prevCosts.reduce((a, b) => a + b);
+    let totalCost =
+      prevCosts.reduce((a, b) => a + b) *
+      (output.financing.ex_post + output.financing.ex_ante * deltaExAnte);
     let costCoeffs = prevCosts.map((x) => x / totalCost);
+    console.log('costs:', totalCost.toFixed(0), newOutput.total_cost_medium.toFixed(0));
 
     let maxErrorIndex = errors.indexOf(Math.max(...errors));
     let sign = Math.sign(targetCoeff - costCoeffs[maxErrorIndex]);
@@ -135,48 +139,43 @@ export const adviceBudgetTypology = (
     let currentError = errors.reduce((a, b) => a + b);
     let errorDiff = 0;
     let maxTypologyDistribution = [...prevTypologyDistribution];
-    let newTypology: Typology = {
-      biochar: newTypologyDistribution[0] / 100,
-      dac: newTypologyDistribution[1] / 100,
-      nbsAvoidance: newTypologyDistribution[2] / 100,
-      nbsRemoval: newTypologyDistribution[3] / 100,
-    };
     let newErrors: Array<number> = errors;
     newCosts = prevCosts;
     // todo: remove typology with 0% allocation
     // for each with filetered typology?
-    for (let i = 0; i < newTypologyDistribution.length; i++) {
-      if (i != maxErrorIndex) {
-        let tmpDistribution = [...newTypologyDistribution];
-        tmpDistribution[i] = newTypologyDistribution[i] - sign * step;
-        let tmpTypology = {
-          biochar: tmpDistribution[0] / 100,
-          dac: tmpDistribution[1] / 100,
-          nbsAvoidance: tmpDistribution[2] / 100,
-          nbsRemoval: tmpDistribution[3] / 100,
-        };
-        let tmpOutput = runBudgetAlgorithm({ ...input, typology: tmpTypology });
-        let tmpCosts = [
-          tmpOutput.cost_biochar,
-          tmpOutput.cost_dac,
-          tmpOutput.cost_nbs_avoidance,
-          tmpOutput.cost_nbs_removal,
-        ];
+    let allocationSupport = typologyDistribution
+      .map((x, i) => (x == 0 || x == maxErrorIndex ? [0, i] : [1, i]))
+      .filter((x) => x[0] == 1)
+      .map((x) => x[1]);
+    allocationSupport.forEach((i) => {
+      let tmpDistribution = [...newTypologyDistribution];
+      tmpDistribution[i] = newTypologyDistribution[i] - sign * step;
+      let tmpTypology = {
+        biochar: tmpDistribution[0] / 100,
+        dac: tmpDistribution[1] / 100,
+        nbsAvoidance: tmpDistribution[2] / 100,
+        nbsRemoval: tmpDistribution[3] / 100,
+      };
+      let tmpOutput = runBudgetAlgorithm({ ...input, typology: tmpTypology });
+      let tmpCosts = [
+        tmpOutput.cost_biochar,
+        tmpOutput.cost_dac,
+        tmpOutput.cost_nbs_avoidance,
+        tmpOutput.cost_nbs_removal,
+      ];
 
-        let tmpErrors = computeSolutionError(tmpDistribution, tmpCosts, targetCoeff);
-        let tmpError = tmpErrors.reduce((a, b) => a + b);
-        let tmpErrorDiff = currentError - tmpError;
-        // console.log(' ', i, tmpDistribution, tmpError.toFixed(0), tmpErrorDiff.toFixed(0));
-        if (tmpErrorDiff > 0 && tmpErrorDiff > errorDiff) {
-          errorDiff = tmpErrorDiff;
-          maxTypologyDistribution = [...tmpDistribution];
-          newTypology = { ...tmpTypology };
-          newOutput = { ...tmpOutput };
-          newErrors = [...tmpErrors];
-          newCosts = [...tmpCosts];
-        }
+      let tmpErrors = computeSolutionError(tmpDistribution, tmpCosts, targetCoeff);
+      let tmpError = tmpErrors.reduce((a, b) => a + b);
+      let tmpErrorDiff = currentError - tmpError;
+      if (tmpErrorDiff > 0 && tmpErrorDiff > errorDiff) {
+        errorDiff = tmpErrorDiff;
+        maxTypologyDistribution = [...tmpDistribution];
+        newOutput = { ...tmpOutput };
+        newErrors = [...tmpErrors];
+        newCosts = [...tmpCosts];
       }
-    }
+    });
+
     newTypologyDistribution = [...maxTypologyDistribution];
 
     console.log(
@@ -211,6 +210,7 @@ export const adviceBudgetTypology = (
   console.log(deltaOptimal.toFixed(), numLoops);
   console.log(typologyDistribution, newTypologyDistribution);
   console.log(newCosts.reduce((a, b) => a + b).toFixed(0), newOutput.total_cost_medium.toFixed(0));
+  // todo: discrepancy between costs and total cost
   console.log(
     'newCoeffs ',
     newCosts.map((x) => (x / newCosts.reduce((a, b) => a + b)).toFixed(2)),
@@ -249,6 +249,8 @@ const getMinStep = (values: Array<number>): number => {
   return Math.min(minDecrease, maxIncrease);
 };
 
+// TODO: computeSolutionCost and minimize it
+// find cost-based solution: minimize cost, maximize impact, maximize cost efficiency, etc
 const computeSolutionError = (
   distribution: Array<number>,
   costs: Array<number>,
