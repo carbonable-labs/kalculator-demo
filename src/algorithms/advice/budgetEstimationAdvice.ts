@@ -1,17 +1,12 @@
-import { TimeConstraint, BudgetAlgorithmInput, BudgetOutputData } from '@/types/types';
+import {
+  TimeConstraint,
+  BudgetAlgorithmInput,
+  BudgetOutputData,
+  Advice,
+  Financing,
+} from '@/types/types';
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
 import { deltaExAnte } from '@/constants/forecasts';
-
-export interface Advice {
-  change: boolean;
-  tip?: BudgetAdvice;
-}
-
-export interface BudgetAdvice {
-  advicePhrase: string;
-  smartTip: string;
-  budgetDelta: string;
-}
 
 export const adviceBudgetTimeline = (
   input: BudgetAlgorithmInput,
@@ -31,31 +26,31 @@ export const adviceBudgetTimeline = (
     } else if (deltaFiveYear > deltaFlexible) {
       return {
         change: true,
-        tip: {
-          advicePhrase: 'You should consider a more flexible timeframe.',
-          smartTip: 'Go Five Year',
-          budgetDelta: deltaFiveYear.toFixed(2),
-        },
+        adviceType: 'timeline',
+        tipPhrase: 'You should consider a more flexible timeframe.',
+        actionText: 'Go Five Year',
+        budgetDelta: deltaFiveYear,
+        tip: TimeConstraint.FiveYear,
       };
     } else {
       return {
         change: true,
-        tip: {
-          advicePhrase: 'You should consider a more flexible timeframe.',
-          smartTip: 'Go Flexible',
-          budgetDelta: deltaFlexible.toFixed(2),
-        },
+        adviceType: 'timeline',
+        tipPhrase: 'You should consider a more flexible timeframe.',
+        actionText: 'Go Flexible',
+        budgetDelta: deltaFlexible,
+        tip: TimeConstraint.NoConstraint,
       };
     }
   } else if (input.timeConstraints === TimeConstraint.FiveYear) {
     if (deltaFlexible > minProfit) {
       return {
         change: true,
-        tip: {
-          advicePhrase: 'You should consider a more flexible timeframe.',
-          smartTip: 'Go Flexible',
-          budgetDelta: deltaFlexible.toFixed(2),
-        },
+        adviceType: 'timeline',
+        tipPhrase: 'You should consider a more flexible timeframe.',
+        actionText: 'Go Flexible',
+        budgetDelta: deltaFlexible,
+        tip: TimeConstraint.NoConstraint,
       };
     }
   }
@@ -68,18 +63,18 @@ export const adviceBudgetFinancing = (
   output: BudgetOutputData,
 ): Advice => {
   if (input.financing.financingExAnte <= 0.88) {
-    let newInput = { ...input.financing, financingExAnte: 0.88 };
-    let newOutput: BudgetOutputData = runBudgetAlgorithm({ ...input, financing: newInput });
-    let delta = newOutput.total_cost_medium - output.total_cost_medium;
+    let newFinancing: Financing = { financingExAnte: 0.88, financingExPost: 0.12 };
+    let newOutput: BudgetOutputData = runBudgetAlgorithm({ ...input, financing: newFinancing });
+    let delta = output.total_cost_medium - newOutput.total_cost_medium;
     const minProfit = output.total_cost_medium * 0.005; // 0.5% profit margin
     if (delta > minProfit) {
       return {
         change: true,
-        tip: {
-          advicePhrase: 'You should consider increasing Forward financing.',
-          smartTip: 'Go Forward',
-          budgetDelta: delta.toFixed(2),
-        },
+        adviceType: 'financing',
+        tipPhrase: 'You should increase Forward financing.',
+        actionText: 'Go Forward',
+        budgetDelta: delta,
+        tip: newFinancing,
       };
     }
   }
@@ -108,7 +103,7 @@ export const adviceBudgetTypology = (
   );
   let prevTypologyDistribution = [...typologyDistribution];
   let newTypologyDistribution = [...typologyDistribution];
-  let costs = [
+  const costs = [
     output.cost_biochar,
     output.cost_dac,
     output.cost_nbs_avoidance,
@@ -120,16 +115,15 @@ export const adviceBudgetTypology = (
   let step = Math.round(getMinStep(typologyDistribution) / 2);
 
   let newOutput: BudgetOutputData = output;
-  let prevBudget = output.total_cost_medium;
+  let newTypology = input.typology;
   let numLoops: number = 0;
-  while (step > 0 && numLoops < 55) {
+  while (step > 0 && numLoops < 155) {
     numLoops++;
     let errors = computeSolutionError(prevTypologyDistribution, prevCosts, targetCoeff);
     let totalCost =
       prevCosts.reduce((a, b) => a + b) *
       (output.financing.ex_post + output.financing.ex_ante * deltaExAnte);
     let costCoeffs = prevCosts.map((x) => x / totalCost);
-    console.log('costs:', totalCost.toFixed(0), newOutput.total_cost_medium.toFixed(0));
 
     let maxErrorIndex = errors.indexOf(Math.max(...errors));
     let sign = Math.sign(targetCoeff - costCoeffs[maxErrorIndex]);
@@ -173,24 +167,25 @@ export const adviceBudgetTypology = (
         newOutput = { ...tmpOutput };
         newErrors = [...tmpErrors];
         newCosts = [...tmpCosts];
+        newTypology = { ...tmpTypology };
       }
     });
 
     newTypologyDistribution = [...maxTypologyDistribution];
 
-    console.log(
-      numLoops,
-      prevTypologyDistribution,
-      newTypologyDistribution,
-      errors.map((x) => x.toFixed(0)),
-      newErrors.map((x) => x.toFixed(0)),
-      // prevCosts.map((x) => x.toFixed(0)),
-      // newCosts.map((x) => x.toFixed(0)),
-      sign,
-      step,
-      errorDiff.toFixed(1),
-      costCoeffs.map((x) => x.toFixed(2)),
-    );
+    // console.log(
+    //   numLoops,
+    //   prevTypologyDistribution,
+    //   newTypologyDistribution,
+    //   errors.map((x) => (100 * x).toFixed(3)),
+    //   newErrors.map((x) => (100 * x).toFixed(3)),
+    //   // prevCosts.map((x) => x.toFixed(0)),
+    //   // newCosts.map((x) => x.toFixed(0)),
+    //   sign,
+    //   step,
+    //   errorDiff.toFixed(5),
+    //   costCoeffs.map((x) => x.toFixed(2)),
+    // );
 
     if (errorDiff <= 0) {
       step = Math.round((step - 0.5) / 2);
@@ -204,38 +199,26 @@ export const adviceBudgetTypology = (
 
   let minProfit = output.total_cost_medium * 0.005;
   let deltaOptimal = output.total_cost_medium - newOutput.total_cost_medium;
-  // newTypologyDistribution = newTypologyDistribution.map((x) => Math.round(x));
   // todo adjust off by one if necessary
 
   console.log(deltaOptimal.toFixed(), numLoops);
   console.log(typologyDistribution, newTypologyDistribution);
-  console.log(newCosts.reduce((a, b) => a + b).toFixed(0), newOutput.total_cost_medium.toFixed(0));
+  console.log(newCosts.reduce((a, b) => a + b).toFixed(3), newOutput.total_cost_medium.toFixed(3));
   // todo: discrepancy between costs and total cost
   console.log(
     'newCoeffs ',
     newCosts.map((x) => (x / newCosts.reduce((a, b) => a + b)).toFixed(2)),
   );
-  console.log(
-    'oldCoeffs ',
-    costs.map((x) => (x / costs.reduce((a, b) => a + b)).toFixed(2)),
-  );
-  console.log(
-    'oldCoeffs2',
-    costs.map((x) => (x / output.total_cost_medium).toFixed(2)),
-  );
-  console.log(
-    'prevCoeffs2',
-    prevCosts.map((x) => (x / prevCosts.reduce((a, b) => a + b)).toFixed(2)),
-  );
+
   if (deltaOptimal > minProfit) {
     if (newTypologyDistribution != typologyDistribution) {
       return {
         change: true,
-        tip: {
-          advicePhrase: 'You should consider changing your typology.',
-          smartTip: `Change Typology to biochar: ${newTypologyDistribution[0]}%, dac: ${newTypologyDistribution[1]}%, nbsAvoidance: ${newTypologyDistribution[2]}%, nbsRemoval: ${newTypologyDistribution[3]}%`,
-          budgetDelta: deltaOptimal.toFixed(2),
-        },
+        adviceType: 'typology',
+        tipPhrase: 'You should consider changing your typology.',
+        actionText: 'Change Typology',
+        budgetDelta: deltaOptimal,
+        tip: [newTypology],
       };
     }
   }
@@ -257,10 +240,14 @@ const computeSolutionError = (
   target: number,
 ): Array<number> => {
   let sumCosts = costs.reduce((a, b) => a + b);
+  let normalizedCosts = costs.map((x) => x * x); // todo: normalize costs based on initial total cost
+  // return normalizedCosts;
   let errors = costs
     .map((ci, i) => (distribution[i] == 0 ? target : (100 * ci) / sumCosts)) // Discard typologies with 0% allocation;
     .map((x) => Math.pow(x - target, 2)); // Compute the squared distance to optimal cost
-  return errors;
+  let sumErrors = errors.reduce((a, b) => a + b);
+  let normalizedErrors = errors.map((x) => x / Math.pow(100 - target, 2));
+  return normalizedErrors;
 };
 export const adviceBudgetGeography = (
   input: BudgetAlgorithmInput,
