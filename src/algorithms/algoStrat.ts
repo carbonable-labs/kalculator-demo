@@ -169,10 +169,10 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     cost_africa: regionCosts.africa,
     cost_asia: regionCosts.asia,
     cost_oceania: regionCosts.oceania,
-    advice_timeline: '',
-    advice_financing: '',
-    advice_typo: '',
-    advice_geography: '',
+    advice_timeline: { change: false },
+    advice_financing: { change: false },
+    advice_typo: { change: false },
+    advice_geography: { change: false },
     strategies: strategies,
   };
   return res;

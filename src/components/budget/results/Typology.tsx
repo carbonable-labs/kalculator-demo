@@ -19,7 +19,7 @@ export default function Typology() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips text={budgetResults?.advice_typo} />
+          <Tips advice={budgetResults?.advice_typo} />
         </div>
       </div>
     </>

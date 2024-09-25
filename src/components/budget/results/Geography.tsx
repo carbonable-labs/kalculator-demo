@@ -19,7 +19,7 @@ export default function Geography() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips text={budgetResults?.advice_geography} />
+          <Tips advice={budgetResults?.advice_geography} />
         </div>
       </div>
     </>
