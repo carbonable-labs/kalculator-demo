@@ -19,7 +19,7 @@ export default function Financing() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips text={budgetResults?.advice_financing} />
+          <Tips advice={budgetResults?.advice_financing} />
         </div>
       </div>
     </>

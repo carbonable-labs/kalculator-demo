@@ -27,7 +27,7 @@ export default function BudgetResults() {
         <CostChart />
       </div>
       <div className="mt-4">
-        <Tips text={budgetResults.advice_timeline} isFullWidth={true} />
+        <Tips advice={budgetResults.advice_timeline} isFullWidth={true} />
       </div>
       <div className="mt-12">
         <Financing />
@@ -43,10 +43,13 @@ export default function BudgetResults() {
       </div>
       <div className="mt-12">
         <Tips
-          text="Do you wish to fine-tune the above strategy?"
+          advice={{
+            change: true,
+            tipPhrase: 'Do you wish to fine-tune the above strategy?',
+            actionText: 'Optimize',
+          }}
           isFullWidth={true}
           isGradient={false}
-          buttonText="Let's fine-tune !"
           title="Optimizer"
         />
       </div>

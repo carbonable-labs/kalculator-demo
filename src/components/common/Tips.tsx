@@ -1,27 +1,72 @@
+import { useBudget } from '@/context/BudgetContext';
+import { Advice, Financing, RegionAllocation, TimeConstraint, Typology } from '@/types/types';
 import Image from 'next/image';
 
 interface TipsProps {
   text?: string;
-  buttonText?: string;
+  advice?: Advice;
   onClick?: () => void;
-  value?: string;
   isFullWidth?: boolean;
   isGradient?: boolean;
   title?: string;
 }
 
 export const Tips: React.FC<TipsProps> = ({
-  text,
-  buttonText,
+  advice,
   onClick,
-  value,
   isFullWidth = false,
   isGradient = true,
   title = 'Tips',
 }) => {
-  if (!text) {
+  if (advice == null || !advice.change || advice.tip == null) {
     return null;
   }
+
+  const { setTimeConstraints, setFinancing, setTypology, setRegionAllocation, budgetResults } =
+    useBudget();
+  if (!budgetResults) {
+    return null;
+  }
+
+  switch (advice.adviceType) {
+    case 'timeline':
+      onClick = () => {
+        console.log('set time constraints');
+        setTimeConstraints(advice.tip as TimeConstraint);
+      };
+      break;
+    case 'financing':
+      onClick = () => {
+        setFinancing(advice.tip as Financing);
+      };
+      break;
+    case 'typology':
+      onClick = () => {
+        if (advice.tip) {
+          let tip = advice.tip as Typology[];
+          if (tip.length > 0) {
+            setTypology(tip[0] as Typology);
+          }
+        }
+      };
+      break;
+    case 'geography':
+      onClick = () => {
+        console.log('set geography');
+        if (advice.tip) {
+          let tip = advice.tip as RegionAllocation[];
+          if (tip.length > 0) {
+            setRegionAllocation(tip[0] as RegionAllocation);
+          }
+        }
+      };
+      break;
+    default:
+  }
+
+  let text = advice.tipPhrase;
+  let buttonText = advice.actionText;
+  let value = advice.budgetDelta ? `$${advice.budgetDelta.toFixed(0)}` : '';
 
   if (!buttonText) {
     return (

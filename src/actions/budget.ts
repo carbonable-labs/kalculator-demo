@@ -1,6 +1,6 @@
 'use server';
 
-import { Advice, computeBudgetAdvice } from '@/algorithms/advice/budgetEstimationAdvice';
+import { computeBudgetAdvice } from '@/algorithms/advice/budgetEstimationAdvice';
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
 import { BudgetAlgorithmInput, BudgetOutputData } from '@/types/types';
 
@@ -12,27 +12,15 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   }
 
   let computedAdvice = computeBudgetAdvice(input, algoRes);
-  let formattedTips = computedAdvice.map(formatTip);
+  // console.log(computedAdvice);
 
   algoRes = {
     ...algoRes,
-    advice_timeline: formattedTips[0],
-    advice_financing: formattedTips[1],
-    advice_typo: formattedTips[2],
-    advice_geography: formattedTips[3],
+    advice_timeline: computedAdvice[0],
+    advice_financing: computedAdvice[1],
+    advice_typo: computedAdvice[2],
+    advice_geography: computedAdvice[3],
   };
 
   return algoRes;
-}
-
-function formatTip(someAdvice: Advice): string {
-  let result: string = '';
-  if (someAdvice.change) {
-    let someTip = someAdvice.tip;
-    let phrase = someTip ? someTip.advicePhrase : '';
-    let option = someTip ? someTip.smartTip : '';
-    let delta = someTip ? someTip.budgetDelta : '';
-    result = `${phrase} ${option} and save $${delta}`;
-  }
-  return result;
 }
