@@ -18,12 +18,13 @@ export const Tips: React.FC<TipsProps> = ({
   isGradient = true,
   title = 'Tips',
 }) => {
+  const { setTimeConstraints, setFinancing, setTypology, setRegionAllocation, budgetResults } =
+    useBudget();
+
   if (advice == null || !advice.change || advice.tip == null) {
     return null;
   }
 
-  const { setTimeConstraints, setFinancing, setTypology, setRegionAllocation, budgetResults } =
-    useBudget();
   if (!budgetResults) {
     return null;
   }
@@ -81,15 +82,17 @@ export const Tips: React.FC<TipsProps> = ({
       <div className="flex flex-wrap items-center justify-between">
         <div className={`${isFullWidth ? 'md:w-8/12' : 'w-full'}`}>{text}</div>
         <div
-          className={`flex items-center rounded-full bg-neutral-900 px-2 py-1 ${isFullWidth ? 'md:w-fit' : 'w-full'}`}
+          className={`flex flex-wrap items-center bg-neutral-900 ${isFullWidth ? 'md:w-fit rounded-full pl-2 pr-4 py-1' : 'w-full rounded-lg px-2 mt-2 py-2'}`}
         >
           <div
-            className="w-fit cursor-pointer rounded-full border border-greenish-500 px-2 py-1 font-thin text-greenish-500 hover:brightness-125"
+            className={`cursor-pointer border border-greenish-500 px-2 py-1 font-thin text-greenish-500 hover:brightness-125 ${isFullWidth ? 'order-1 rounded-full w-fit' : 'order-2 rounded-lg mt-2 w-full text-center'}`}
             onClick={onClick}
           >
             {buttonText}
           </div>
-          {value && <div className="ml-12 font-bold">{value}</div>}
+          {value && (
+            <div className={`font-bold ${isFullWidth ? 'order-2 ml-12' : 'order-1 text-center mx-auto'}`}>{value}</div>
+          )}
         </div>
       </div>
     </TipsBackground>
