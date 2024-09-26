@@ -103,14 +103,14 @@ export const adviceBudgetTypology = (
   );
   let prevTypologyDistribution = [...typologyDistribution];
   let newTypologyDistribution = [...typologyDistribution];
-  const costs = [
+
+  let prevCosts = [
     output.cost_biochar,
     output.cost_dac,
     output.cost_nbs_avoidance,
     output.cost_nbs_removal,
   ];
-  let prevCosts = [...costs];
-  let newCosts = [...costs];
+  let newCosts = [...prevCosts];
 
   let step = Math.round(getMinStep(typologyDistribution) / 2);
 
@@ -201,15 +201,6 @@ export const adviceBudgetTypology = (
   let deltaOptimal = output.total_cost_medium - newOutput.total_cost_medium;
   // todo adjust off by one if necessary
 
-  console.log(deltaOptimal.toFixed(), numLoops);
-  console.log(typologyDistribution, newTypologyDistribution);
-  console.log(newCosts.reduce((a, b) => a + b).toFixed(3), newOutput.total_cost_medium.toFixed(3));
-  // todo: discrepancy between costs and total cost
-  console.log(
-    'newCoeffs ',
-    newCosts.map((x) => (x / newCosts.reduce((a, b) => a + b)).toFixed(2)),
-  );
-
   if (deltaOptimal > minProfit) {
     if (newTypologyDistribution != typologyDistribution) {
       return {
@@ -253,7 +244,127 @@ export const adviceBudgetGeography = (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
 ): Advice => {
-  // TODO
+  let pctEU = input.regionAllocation.europe;
+  let pctAF = input.regionAllocation.africa;
+  let pctAS = input.regionAllocation.asia;
+  let pctOC = input.regionAllocation.oceania;
+  let pctNA = input.regionAllocation.northAmerica;
+  let pctSA = input.regionAllocation.southAmerica;
+  let allocations = [pctEU, pctAF, pctAS, pctOC, pctNA, pctSA];
+
+  let isPresent = (n: number): number => {
+    return n > 0 ? 100 : 0;
+  };
+  let targetCoeff = 1 / allocations.map(isPresent).reduce((a, b) => a + b);
+  targetCoeff = targetCoeff * 100;
+
+  // 0: EU, 1: AF, 2: AS, 3: OC, 4: NA, 5: SA
+  const regionDistribution = allocations.map((x) => Math.round(x * 100));
+  let prevRegionDistribution = [...regionDistribution];
+  let newRegionDistribution = [...regionDistribution];
+
+  let prevCosts = [
+    output.cost_europe,
+    output.cost_africa,
+    output.cost_asia,
+    output.cost_oceania,
+    output.cost_north_america,
+    output.cost_south_america,
+  ];
+  let newCosts = [...prevCosts];
+
+  let step = Math.round(getMinStep(regionDistribution) / 2);
+
+  let newOutput: BudgetOutputData = output;
+  let newRegions = input.regionAllocation;
+  let numLoops: number = 0;
+
+  while (step > 0 && numLoops < 155) {
+    numLoops++;
+    let errors = computeSolutionError(prevRegionDistribution, prevCosts, targetCoeff);
+    let totalCost =
+      prevCosts.reduce((a, b) => a + b) *
+      (newOutput.financing.ex_post + newOutput.financing.ex_ante * deltaExAnte);
+    let costCoeffs = prevCosts.map((x) => x / totalCost);
+
+    let maxErrorIndex = errors.indexOf(Math.max(...errors));
+    let sign = Math.sign(targetCoeff - costCoeffs[maxErrorIndex]);
+    newRegionDistribution[maxErrorIndex] = prevRegionDistribution[maxErrorIndex] + sign * step;
+
+    // Find change that lowers error the most
+    let currentError = errors.reduce((a, b) => a + b);
+    let errorDiff = 0;
+    let maxRegionDistribution = [...prevRegionDistribution];
+    let newErrors: Array<number> = errors;
+    newCosts = prevCosts;
+    // todo: remove typology with 0% allocation
+    // for each with filetered typology?
+    let allocationSupport = regionDistribution
+      .map((x, i) => (x == 0 || x == maxErrorIndex ? [0, i] : [1, i]))
+      .filter((x) => x[0] == 1)
+      .map((x) => x[1]);
+    allocationSupport.forEach((i) => {
+      let tmpDistribution = [...newRegionDistribution];
+      tmpDistribution[i] = newRegionDistribution[i] - sign * step;
+      let tmpRegions = {
+        europe: tmpDistribution[0] / 100,
+        africa: tmpDistribution[1] / 100,
+        asia: tmpDistribution[2] / 100,
+        oceania: tmpDistribution[3] / 100,
+        northAmerica: tmpDistribution[4] / 100,
+        southAmerica: tmpDistribution[5] / 100,
+      };
+      let tmpOutput = runBudgetAlgorithm({ ...input, regionAllocation: tmpRegions });
+      let tmpCosts = [
+        tmpOutput.cost_europe,
+        tmpOutput.cost_africa,
+        tmpOutput.cost_asia,
+        tmpOutput.cost_oceania,
+        tmpOutput.cost_north_america,
+        tmpOutput.cost_south_america,
+      ];
+
+      let tmpErrors = computeSolutionError(tmpDistribution, tmpCosts, targetCoeff);
+      let tmpError = tmpErrors.reduce((a, b) => a + b);
+      let tmpErrorDiff = currentError - tmpError;
+      if (tmpErrorDiff > 0 && tmpErrorDiff > errorDiff) {
+        errorDiff = tmpErrorDiff;
+        maxRegionDistribution = [...tmpDistribution];
+        newOutput = { ...tmpOutput };
+        newErrors = [...tmpErrors];
+        newCosts = [...tmpCosts];
+        newRegions = { ...tmpRegions };
+      }
+    });
+
+    newRegionDistribution = [...maxRegionDistribution];
+
+    if (errorDiff <= 0) {
+      step = Math.round((step - 0.5) / 2);
+      step = Math.min(step, Math.round(getMinStep(newRegionDistribution) / 2));
+    } else {
+      prevRegionDistribution = [...newRegionDistribution];
+      errors = [...newErrors];
+      prevCosts = [...newCosts];
+    }
+  }
+
+  let minProfit = output.total_cost_medium * 0.005;
+  let deltaOptimal = output.total_cost_medium - newOutput.total_cost_medium;
+  // todo adjust off by one if necessary
+
+  if (deltaOptimal > minProfit) {
+    if (newRegionDistribution != regionDistribution) {
+      return {
+        change: true,
+        adviceType: 'geography',
+        tipPhrase: 'You should modify region allocations.',
+        actionText: 'Change Geography',
+        budgetDelta: deltaOptimal,
+        tip: [newRegions],
+      };
+    }
+  }
   return { change: false };
 };
 
@@ -268,3 +379,8 @@ export const computeBudgetAdvice = (
 
   return [computedTimelineTip, computedFinancingTip, computedTypologyTip, computedGeographyTip];
 };
+
+// TODO: implement general optimization algorithm
+type Algo = (input: BudgetAlgorithmInput) => BudgetOutputData;
+type ScoreFunction = (output: BudgetOutputData) => number;
+const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => {};
