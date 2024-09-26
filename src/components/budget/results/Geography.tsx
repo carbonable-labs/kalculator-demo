@@ -1,12 +1,16 @@
 'use client';
 import Title from '@/components/form/Title';
 import Quantity from './geography/Quantity';
-import { Tips } from '@/components/common/Tips';
 import { useBudget } from '@/context/BudgetContext';
 import Cost from './geography/Cost';
+import BudgetAdvice from './BudgetAdvice';
 
 export default function Geography() {
   const { budgetResults } = useBudget();
+
+  if (budgetResults === null) {
+    return null;
+  }
 
   return (
     <>
@@ -19,7 +23,11 @@ export default function Geography() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips advice={budgetResults?.advice_geography} />
+          <BudgetAdvice
+            advice={budgetResults.advice_geography}
+            isFullWidth={false}
+            isGradient={true}
+          />
         </div>
       </div>
     </>

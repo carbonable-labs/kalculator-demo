@@ -1,73 +1,35 @@
-import { useBudget } from '@/context/BudgetContext';
-import { Advice, Financing, RegionAllocation, TimeConstraint, Typology } from '@/types/types';
+import { Advice } from '@/types/types';
+import { formatLargeNumber } from '@/utils/output';
 import Image from 'next/image';
 
 interface TipsProps {
-  text?: string;
   advice?: Advice;
-  onClick?: () => void;
   isFullWidth?: boolean;
   isGradient?: boolean;
   title?: string;
+  onAdviceApply: (advice: Advice) => void;
+  shouldRender: boolean;
 }
 
-export const Tips: React.FC<TipsProps> = ({
+export const TipsComponent: React.FC<TipsProps> = ({
   advice,
-  onClick,
   isFullWidth = false,
   isGradient = true,
   title = 'Tips',
+  onAdviceApply,
+  shouldRender,
 }) => {
-  const { setTimeConstraints, setFinancing, setTypology, setRegionAllocation, budgetResults } =
-    useBudget();
-
-  if (advice == null || !advice.change || advice.tip == null) {
+  if (!shouldRender || advice == null || !advice.change || advice.tip == null) {
     return null;
   }
 
-  if (!budgetResults) {
-    return null;
-  }
+  const text = advice.tipPhrase;
+  const buttonText = advice.actionText;
+  const value = advice.budgetDelta ? `$${formatLargeNumber(advice.budgetDelta)}` : '';
 
-  switch (advice.adviceType) {
-    case 'timeline':
-      onClick = () => {
-        console.log('set time constraints');
-        setTimeConstraints(advice.tip as TimeConstraint);
-      };
-      break;
-    case 'financing':
-      onClick = () => {
-        setFinancing(advice.tip as Financing);
-      };
-      break;
-    case 'typology':
-      onClick = () => {
-        if (advice.tip) {
-          let tip = advice.tip as Typology[];
-          if (tip.length > 0) {
-            setTypology(tip[0] as Typology);
-          }
-        }
-      };
-      break;
-    case 'geography':
-      onClick = () => {
-        console.log('set geography');
-        if (advice.tip) {
-          let tip = advice.tip as RegionAllocation[];
-          if (tip.length > 0) {
-            setRegionAllocation(tip[0] as RegionAllocation);
-          }
-        }
-      };
-      break;
-    default:
-  }
-
-  let text = advice.tipPhrase;
-  let buttonText = advice.actionText;
-  let value = advice.budgetDelta ? `$${advice.budgetDelta.toFixed(0)}` : '';
+  const onClick = () => {
+    onAdviceApply(advice);
+  };
 
   if (!buttonText) {
     return (
@@ -82,16 +44,20 @@ export const Tips: React.FC<TipsProps> = ({
       <div className="flex flex-wrap items-center justify-between">
         <div className={`${isFullWidth ? 'md:w-8/12' : 'w-full'}`}>{text}</div>
         <div
-          className={`flex flex-wrap items-center bg-neutral-900 ${isFullWidth ? 'md:w-fit rounded-full pl-2 pr-4 py-1' : 'w-full rounded-lg px-2 mt-2 py-2'}`}
+          className={`flex flex-wrap items-center bg-neutral-900 ${isFullWidth ? 'rounded-full py-1 pl-2 pr-4 md:w-fit' : 'mt-2 w-full rounded-lg px-2 py-2'}`}
         >
           <div
-            className={`cursor-pointer border border-greenish-500 px-2 py-1 font-thin text-greenish-500 hover:brightness-125 ${isFullWidth ? 'order-1 rounded-full w-fit' : 'order-2 rounded-lg mt-2 w-full text-center'}`}
+            className={`cursor-pointer border border-greenish-500 px-2 py-1 font-thin text-greenish-500 hover:brightness-125 ${isFullWidth ? 'order-1 w-fit rounded-full' : 'order-2 mt-2 w-full rounded-lg text-center'}`}
             onClick={onClick}
           >
             {buttonText}
           </div>
           {value && (
-            <div className={`font-bold ${isFullWidth ? 'order-2 ml-12' : 'order-1 text-center mx-auto'}`}>{value}</div>
+            <div
+              className={`font-bold ${isFullWidth ? 'order-2 ml-12' : 'order-1 mx-auto text-center'}`}
+            >
+              {value}
+            </div>
           )}
         </div>
       </div>

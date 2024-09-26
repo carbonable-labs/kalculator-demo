@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { runBudgetAlgo } from '@/actions/budget';
 import { useBudget } from '@/context/BudgetContext';
 import { GreenButton } from '@/components/form/Button';
 
 export default function CalculateBudget() {
-  const [isLoading, setIsLoading] = useState(false);
   const [canCalculate, setCanCalculate] = useState(false);
-  const { financing, regionAllocation, timeConstraints, typology, setBudgetResults } = useBudget();
+  const { financing, regionAllocation, timeConstraints, typology, isCalculating, calculateBudget } =
+    useBudget();
 
   useEffect(() => {
     if (financing && regionAllocation && timeConstraints !== null && typology) {
@@ -18,28 +17,8 @@ export default function CalculateBudget() {
     }
   }, [financing, regionAllocation, timeConstraints, typology]);
 
-  const handleClick = async () => {
-    setIsLoading(true);
-
-    if (financing === null || !regionAllocation || !timeConstraints || !typology) {
-      setIsLoading(false);
-      return;
-    }
-
-    const budgetResults = await runBudgetAlgo({
-      financing,
-      regionAllocation,
-      timeConstraints,
-      typology,
-    });
-
-    setBudgetResults(budgetResults);
-
-    setIsLoading(false);
-  };
-
   return (
-    <GreenButton disabled={!canCalculate} isLoading={isLoading} onClick={handleClick}>
+    <GreenButton disabled={!canCalculate} isLoading={isCalculating} onClick={calculateBudget}>
       Calculate
     </GreenButton>
   );

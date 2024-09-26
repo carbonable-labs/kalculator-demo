@@ -4,11 +4,11 @@ import { useBudget } from '@/context/BudgetContext';
 import Title from '../form/Title';
 import CostTable from './results/CostTable';
 import CostChart from './results/CostChart';
-import { Tips } from '../common/Tips';
 import Financing from './results/Financing';
 import Typology from './results/Typology';
 import Geography from './results/Geography';
 import PurchaseRecoTable from './results/PurchaseRecoTable';
+import BudgetAdvice from './results/BudgetAdvice';
 
 export default function BudgetResults() {
   const { budgetResults } = useBudget();
@@ -27,7 +27,7 @@ export default function BudgetResults() {
         <CostChart />
       </div>
       <div className="mt-4">
-        <Tips advice={budgetResults.advice_timeline} isFullWidth={true} />
+        <BudgetAdvice advice={budgetResults.advice_timeline} isFullWidth={true} isGradient={true} />
       </div>
       <div className="mt-12">
         <Financing />
@@ -42,7 +42,7 @@ export default function BudgetResults() {
         <PurchaseRecoTable />
       </div>
       <div className="mt-12">
-        <Tips
+        <BudgetAdvice
           advice={{
             change: true,
             tipPhrase: 'Do you wish to fine-tune the above strategy?',

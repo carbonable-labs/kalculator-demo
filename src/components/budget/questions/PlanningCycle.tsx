@@ -13,7 +13,7 @@ const planningCycleOptions = [
 
 export default function PlanningCycle() {
   const [selected, setSelected] = useState<string | null>(null);
-  const { setTimeConstraints } = useBudget();
+  const { timeConstraints, setTimeConstraints } = useBudget();
 
   useEffect(() => {
     setTimeConstraints(selected ? parseInt(selected) : null);
@@ -26,7 +26,11 @@ export default function PlanningCycle() {
         subtitle="Is your budget aligned with yearly, multi-year or open timelines?"
       />
       <div className="mt-8">
-        <RadioButtons values={planningCycleOptions} setSelected={setSelected} />
+        <RadioButtons
+          values={planningCycleOptions}
+          setSelected={setSelected}
+          selected={timeConstraints ? timeConstraints.toString() : null}
+        />
       </div>
     </>
   );

@@ -1,0 +1,78 @@
+'use client';
+import React, { useCallback } from 'react';
+import { useBudget } from '@/context/BudgetContext';
+import { Advice, Financing, RegionAllocation, TimeConstraint, Typology } from '@/types/types';
+import { TipsComponent } from '@/components/common/Tips';
+
+interface budgetAdviceProps {
+  advice: Advice;
+  isFullWidth: boolean;
+  isGradient: boolean;
+  title?: string;
+}
+
+const BudgetAdvice: React.FC<budgetAdviceProps> = ({
+  advice,
+  isFullWidth,
+  isGradient,
+  title = 'Tips',
+}) => {
+  const {
+    budgetResults,
+    setTimeConstraints,
+    setFinancing,
+    setTypology,
+    setRegionAllocation,
+    calculateBudget,
+  } = useBudget();
+
+  const handleAdvice = useCallback(
+    (advice: Advice) => {
+      switch (advice.adviceType) {
+        case 'timeline':
+          console.log('set time constraints');
+          setTimeConstraints(advice.tip as TimeConstraint);
+          break;
+        case 'financing':
+          setFinancing(advice.tip as Financing);
+          break;
+        case 'typology':
+          if (advice.tip) {
+            const tip = advice.tip as Typology[];
+            if (tip.length > 0) {
+              setTypology(tip[0]);
+            }
+          }
+          break;
+        case 'geography':
+          console.log('set geography');
+          if (advice.tip) {
+            const tip = advice.tip as RegionAllocation[];
+            if (tip.length > 0) {
+              setRegionAllocation(tip[0]);
+            }
+          }
+          break;
+        default:
+          console.log('Unknown advice type:', advice.adviceType);
+      }
+
+      // Call calculateBudget after handling the specific advice
+      calculateBudget();
+    },
+    [setTimeConstraints, setFinancing, setTypology, setRegionAllocation, calculateBudget],
+  );
+
+  return (
+    <TipsComponent
+      advice={advice}
+      onAdviceApply={handleAdvice}
+      shouldRender={!!budgetResults}
+      isFullWidth={isFullWidth}
+      isGradient={isGradient}
+      title={title}
+    />
+  );
+};
+
+export default BudgetAdvice;
