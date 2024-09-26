@@ -6,13 +6,13 @@ import { continents } from '@/utils/configuration';
 import { useMemo } from 'react';
 
 export default function Cost() {
-  const { startegyResults } = useStrategy();
+  const { strategyResults } = useStrategy();
 
   const percentages = useMemo(() => {
-    if (!startegyResults) return null;
+    if (!strategyResults) return null;
 
     const totalCost = continents.reduce(
-      (sum, continent) => sum + (startegyResults as any)[`cost_${continent}`],
+      (sum, continent) => sum + (strategyResults as any)[`cost_${continent}`],
       0,
     );
 
@@ -20,12 +20,12 @@ export default function Cost() {
 
     return continents.reduce(
       (result, continent) => {
-        result[continent] = calculatePercentage((startegyResults as any)[`cost_${continent}`]);
+        result[continent] = calculatePercentage((strategyResults as any)[`cost_${continent}`]);
         return result;
       },
       {} as Record<string, number>,
     );
-  }, [startegyResults]);
+  }, [strategyResults]);
 
   if (!percentages) {
     return null;

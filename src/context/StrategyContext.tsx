@@ -1,12 +1,13 @@
 'use client';
 
+import { runStratAlgo } from '@/actions/strat';
 import { Financing, RegionAllocation, StratOutputData, Typology } from '@/types/types';
 import {
   DEFAULT_FINANCING,
   DEFAULT_GEOGRAPHICAL_AREA,
   DEFAULT_TYPOLGY,
 } from '@/utils/configuration';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 interface StrategyContextType {
   budget: number;
@@ -19,8 +20,11 @@ interface StrategyContextType {
   setTypology: (value: Typology) => void;
   regionAllocation: RegionAllocation;
   setRegionAllocation: (value: RegionAllocation) => void;
-  startegyResults: StratOutputData | null;
+  strategyResults: StratOutputData | null;
   setStrategyResults: (value: StratOutputData | null) => void;
+  isCalculating: boolean;
+  setIsCalculating: (value: boolean) => void;
+  calculateStrategy: () => void;
 }
 
 const StrategyContext = createContext<StrategyContextType | undefined>(undefined);
@@ -32,7 +36,33 @@ export const StrategyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLGY);
   const [regionAllocation, setRegionAllocation] =
     useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
-  const [startegyResults, setStrategyResults] = useState<StratOutputData | null>(null);
+  const [strategyResults, setStrategyResults] = useState<StratOutputData | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+
+  const calculateStrategy = useCallback(async () => {
+    if (!financing || !regionAllocation || timeConstraints === null || !typology) {
+      return;
+    }
+
+    setIsCalculating(true);
+
+    try {
+      const results = await runStratAlgo({
+        financing,
+        regionAllocation,
+        timeConstraints,
+        typology,
+        budget,
+      });
+
+      setStrategyResults(results);
+    } catch (error) {
+      console.error('Error calculating budget:', error);
+      // You might want to set an error state here
+    } finally {
+      setIsCalculating(false);
+    }
+  }, [financing, regionAllocation, timeConstraints, typology, budget]);
 
   return (
     <StrategyContext.Provider
@@ -47,8 +77,11 @@ export const StrategyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setTypology,
         regionAllocation,
         setRegionAllocation,
-        startegyResults,
+        strategyResults,
         setStrategyResults,
+        isCalculating,
+        setIsCalculating,
+        calculateStrategy,
       }}
     >
       {children}

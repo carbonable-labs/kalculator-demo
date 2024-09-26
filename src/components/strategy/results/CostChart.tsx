@@ -8,7 +8,7 @@ import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'rec
 
 export default function CostChart() {
   const [graphData, setGraphData] = useState([{}]);
-  const { startegyResults } = useStrategy();
+  const { strategyResults } = useStrategy();
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -32,11 +32,11 @@ export default function CostChart() {
   };
 
   useEffect(() => {
-    if (!startegyResults) {
+    if (!strategyResults) {
       return;
     }
 
-    const data = startegyResults?.strategies.map((strategy: YearlyStrategy) => {
+    const data = strategyResults?.strategies.map((strategy: YearlyStrategy) => {
       return {
         year: strategy.year,
         low: strategy.cost_low,
@@ -45,7 +45,7 @@ export default function CostChart() {
       };
     });
     setGraphData(data);
-  }, [startegyResults]);
+  }, [strategyResults]);
 
   return (
     <div className="min-h-[400px] w-full">

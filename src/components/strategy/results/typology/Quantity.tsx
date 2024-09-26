@@ -4,25 +4,25 @@ import { ChartTitle } from '@/components/form/Title';
 import { useStrategy } from '@/context/StrategyContext';
 
 export default function Quantity() {
-  const { startegyResults } = useStrategy();
+  const { strategyResults } = useStrategy();
 
-  if (startegyResults === undefined || startegyResults?.typologies === undefined) {
+  if (strategyResults === undefined || strategyResults?.typologies === undefined) {
     return null;
   }
 
   const total =
-    startegyResults.typologies.nbs_avoidance +
-    startegyResults.typologies.nbs_removal +
-    startegyResults.typologies.dac +
-    startegyResults.typologies.biochar;
+    strategyResults.typologies.nbs_avoidance +
+    strategyResults.typologies.nbs_removal +
+    strategyResults.typologies.dac +
+    strategyResults.typologies.biochar;
 
-  const nbsPercentage = Math.round((startegyResults.typologies.nbs_removal / total) * 100);
+  const nbsPercentage = Math.round((strategyResults.typologies.nbs_removal / total) * 100);
 
-  const renewablePercentage = Math.round((startegyResults.typologies.nbs_avoidance / total) * 100);
+  const renewablePercentage = Math.round((strategyResults.typologies.nbs_avoidance / total) * 100);
 
-  const biocharPercentage = Math.round((startegyResults.typologies.biochar / total) * 100);
+  const biocharPercentage = Math.round((strategyResults.typologies.biochar / total) * 100);
 
-  const dacPercentage = Math.round((startegyResults.typologies.dac / total) * 100);
+  const dacPercentage = Math.round((strategyResults.typologies.dac / total) * 100);
 
   return (
     <div>

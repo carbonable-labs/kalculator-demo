@@ -4,22 +4,22 @@ import { useStrategy } from '@/context/StrategyContext';
 import Title from '../form/Title';
 import CostTable from './results/CostTable';
 import CostChart from './results/CostChart';
-import { Tips } from '../common/Tips';
 import Financing from './results/Financing';
 import Typology from './results/Typology';
 import Geography from './results/Geography';
 import { ResultAnalysis } from './results/ResultAnalysis';
 import { ACCEPTABLE_DELTA } from '@/utils/configuration';
+import StrategyAdvice from './results/StrategyAdvice';
 
 export default function StrategyResults() {
-  const { startegyResults } = useStrategy();
+  const { strategyResults } = useStrategy();
 
-  if (startegyResults === null) {
+  if (strategyResults === null) {
     return null;
   }
 
   const isStrategyOk =
-    startegyResults.user_budget > startegyResults.total_cost_medium * ACCEPTABLE_DELTA;
+    strategyResults.user_budget > strategyResults.total_cost_medium * ACCEPTABLE_DELTA;
 
   return (
     <>
@@ -36,7 +36,11 @@ export default function StrategyResults() {
         <CostChart />
       </div>
       <div className="mt-4">
-        <Tips text={startegyResults.advice_timeline} isFullWidth={true} />
+        <StrategyAdvice
+          advice={strategyResults.advice_timeline}
+          isFullWidth={true}
+          isGradient={true}
+        />
       </div>
       <div className="mt-12">
         <Financing />
