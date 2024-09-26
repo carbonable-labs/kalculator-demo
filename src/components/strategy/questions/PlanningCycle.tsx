@@ -13,7 +13,7 @@ const planningCycleOptions = [
 
 export default function PlanningCycle() {
   const [selected, setSelected] = useState<string | null>(null);
-  const { setTimeConstraints } = useStrategy();
+  const { timeConstraints, setTimeConstraints } = useStrategy();
 
   useEffect(() => {
     setTimeConstraints(selected ? parseInt(selected) : null);
@@ -23,7 +23,11 @@ export default function PlanningCycle() {
     <>
       <Title title="2. Financial Planning" />
       <div className="mt-8">
-        <RadioButtons values={planningCycleOptions} setSelected={setSelected} />
+        <RadioButtons
+          values={planningCycleOptions}
+          setSelected={setSelected}
+          selected={timeConstraints ? timeConstraints.toString() : null}
+        />
       </div>
       {selected === '-1' && (
         <div className="mt-4 text-sm text-neutral-200">

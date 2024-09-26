@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useBudget } from '@/context/BudgetContext';
 import { DEFAULT_FINANCING } from '@/utils/configuration';
 import Title from '@/components/form/Title';
