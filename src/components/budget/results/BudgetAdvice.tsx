@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useBudget } from '@/context/BudgetContext';
 import { Advice, Financing, RegionAllocation, TimeConstraint, Typology } from '@/types/types';
 import { TipsComponent } from '@/components/common/Tips';
@@ -24,7 +24,13 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
     setTypology,
     setRegionAllocation,
     calculateBudget,
+    financing,
+    typology,
+    regionAllocation,
+    timeConstraints,
   } = useBudget();
+
+  const [canCalculate, setCanCalculate] = useState(false);
 
   const handleAdvice = useCallback(
     (advice: Advice) => {
@@ -57,11 +63,17 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
           console.log('Unknown advice type:', advice.adviceType);
       }
 
-      // Call calculateBudget after handling the specific advice
-      calculateBudget();
+      setCanCalculate(true);
     },
-    [setTimeConstraints, setFinancing, setTypology, setRegionAllocation, calculateBudget],
+    [advice],
   );
+
+  useEffect(() => {
+    if (financing && regionAllocation && timeConstraints && typology && canCalculate) {
+      calculateBudget();
+      setCanCalculate(false);
+    }
+  }, [financing && regionAllocation && timeConstraints && typology && canCalculate]);
 
   return (
     <TipsComponent

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useBudget } from '@/context/BudgetContext';
 import { DEFAULT_FINANCING } from '@/utils/configuration';
 import Title from '@/components/form/Title';
@@ -9,26 +9,28 @@ import DontKnowCheckbox from '@/components/form/DontKnowCheckbox';
 import { tooltip } from '@/components/common/tootips/InvestmentStrategyTooltip';
 
 export default function InvestmentStrategy() {
-  const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(50);
-  const [formattedInvestmentStrategy, setFormattedInvestmentStrategy] = useState<number>(50);
+  const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(
+    DEFAULT_FINANCING.financingExAnte * 100,
+  );
   const [isDontKnowSelected, setIsDontKnowSelected] = useState<boolean>(false);
-  const { setFinancing } = useBudget();
-
-  useEffect(() => {
-    setFormattedInvestmentStrategy(investmentStrategy as number);
-  }, [investmentStrategy]);
+  const { financing, setFinancing } = useBudget();
 
   useEffect(() => {
     if (isDontKnowSelected) {
       setFinancing(DEFAULT_FINANCING);
-      setFormattedInvestmentStrategy(DEFAULT_FINANCING.financingExAnte * 100);
     } else {
       setFinancing({
-        financingExAnte: formattedInvestmentStrategy / 100,
-        financingExPost: (100 - formattedInvestmentStrategy) / 100,
+        financingExAnte: (investmentStrategy as number) / 100,
+        financingExPost: (100 - (investmentStrategy as number)) / 100,
       });
     }
-  }, [isDontKnowSelected, formattedInvestmentStrategy]);
+  }, [isDontKnowSelected, investmentStrategy]);
+
+  useEffect(() => {
+    if (financing) {
+      setInvestmentStrategy(financing.financingExAnte * 100);
+    }
+  }, [financing]);
 
   return (
     <>
@@ -39,7 +41,7 @@ export default function InvestmentStrategy() {
       />
       <div className="mt-8 w-full">
         <SliderComponent
-          value={formattedInvestmentStrategy}
+          value={investmentStrategy as number}
           label="Investment Strategy"
           maxValue={100}
           minValue={0}
@@ -51,10 +53,10 @@ export default function InvestmentStrategy() {
         />
         <div className="flex justify-between text-sm uppercase">
           <div className={`text-primary ${isDontKnowSelected ? 'opacity-50' : ''}`}>
-            {formattedInvestmentStrategy}% Forward
+            {investmentStrategy as number}% Forward
           </div>
           <div className={`text-secondary ${isDontKnowSelected ? 'opacity-50' : ''}`}>
-            {100 - formattedInvestmentStrategy}% Spot
+            {100 - (investmentStrategy as number)}% Spot
           </div>
         </div>
         <div className="mt-8 flex items-center">

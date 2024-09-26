@@ -22,7 +22,7 @@ interface BudgetContextType {
   setBudgetResults: (value: BudgetOutputData | null) => void;
   isCalculating: boolean;
   setIsCalculating: (value: boolean) => void;
-  calculateBudget: () => void;
+  calculateBudget: () => Promise<void>;
 }
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
