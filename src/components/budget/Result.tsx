@@ -9,12 +9,25 @@ import Typology from './results/Typology';
 import Geography from './results/Geography';
 import PurchaseRecoTable from './results/PurchaseRecoTable';
 import BudgetAdvice from './results/BudgetAdvice';
+import { formatLargeNumber } from '@/utils/output';
+import { title } from 'process';
 
 export default function BudgetResults() {
-  const { budgetResults } = useBudget();
+  const { budgetResults, history } = useBudget();
 
   if (budgetResults === null) {
     return null;
+  }
+
+  let savings = 0;
+  let title: string = 'Optimizer';
+  if (history.length > 1) {
+    const first = history[0];
+    const last = history[history.length - 1];
+    savings = first[0] - last[0];
+  }
+  if (savings > 0) {
+    title = `Kudos! You already saved ${formatLargeNumber(savings)}`;
   }
 
   return (
@@ -50,7 +63,7 @@ export default function BudgetResults() {
           }}
           isFullWidth={true}
           isGradient={false}
-          title="Optimizer"
+          title={title}
         />
       </div>
     </>
