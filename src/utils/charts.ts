@@ -1,7 +1,10 @@
 export const PERCENTAGE_MAX_VALUE = 100;
 
 export const displayedNames: Record<string, string> = {
-  nbs: 'NbS',
+  nbs: 'NbS - ARR',
+  nbsRemoval: 'NbS - ARR',
+  renewable: 'NbS - REDD',
+  nbsAvoidance: 'NbS - REDD',
   biochar: 'Biochar',
   dac: 'DAC',
   africa: 'Africa',
@@ -12,8 +15,6 @@ export const displayedNames: Record<string, string> = {
   oceania: 'Oceania',
   south_america: 'Latin America',
   southAmerica: 'Latin America',
-  nbsAvoidance: 'Renewable Energy',
-  nbsRemoval: 'NbS',
 };
 
 export const displayedMethodology: Record<string, string> = {
