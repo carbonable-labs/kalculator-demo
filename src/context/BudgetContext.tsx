@@ -1,7 +1,14 @@
 'use client';
 
 import { runBudgetAlgo } from '@/actions/budget';
-import { BudgetOutputData, Financing, RegionAllocation, Typology } from '@/types/types';
+import { useBudgetHistory } from '@/hooks/useBudgetHistory';
+import {
+  BudgetAlgorithmInput,
+  BudgetOutputData,
+  Financing,
+  RegionAllocation,
+  Typology,
+} from '@/types/types';
 import {
   DEFAULT_FINANCING,
   DEFAULT_GEOGRAPHICAL_AREA,
@@ -23,6 +30,8 @@ interface BudgetContextType {
   isCalculating: boolean;
   setIsCalculating: (value: boolean) => void;
   calculateBudget: () => Promise<void>;
+  setHistory: (value: Array<[number, BudgetAlgorithmInput]>) => void;
+  history: Array<[number, BudgetAlgorithmInput]>;
 }
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
@@ -35,6 +44,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
   const [budgetResults, setBudgetResults] = useState<BudgetOutputData | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [history, setHistory] = useBudgetHistory();
 
   const calculateBudget = useCallback(async () => {
     if (!financing || !regionAllocation || timeConstraints === null || !typology) {
@@ -52,6 +62,10 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
 
       setBudgetResults(results);
+      setHistory([
+        ...history,
+        [results.total_cost_medium, { financing, regionAllocation, timeConstraints, typology }],
+      ]);
     } catch (error) {
       console.error('Error calculating budget:', error);
       // You might want to set an error state here
@@ -76,6 +90,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         isCalculating,
         setIsCalculating,
         calculateBudget,
+        setHistory,
+        history,
       }}
     >
       {children}
