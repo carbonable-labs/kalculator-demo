@@ -11,6 +11,7 @@ import PurchaseRecoTable from './results/PurchaseRecoTable';
 import BudgetAdvice from './results/BudgetAdvice';
 import { formatLargeNumber } from '@/utils/output';
 import { title } from 'process';
+import { Advice } from '@/types/types';
 
 export default function BudgetResults() {
   const { budgetResults, history } = useBudget();
@@ -19,15 +20,31 @@ export default function BudgetResults() {
     return null;
   }
 
+  let canOptimize =
+    budgetResults.advice_timeline.change ||
+    budgetResults.advice_financing.change ||
+    budgetResults.advice_typo.change ||
+    budgetResults.advice_geography.change;
+
+  let advice: Advice = {
+    change: true,
+    actionText: 'Optimize',
+    tipPhrase: canOptimize
+      ? 'You should apply the suggested tips to save more.'
+      : "Let's fine-tune this stratregy.",
+  };
+
   let savings = 0;
-  let title: string = 'Optimizer';
   if (history.length > 1) {
     const first = history[0];
     const last = history[history.length - 1];
     savings = first[0] - last[0];
   }
   if (savings > 0) {
-    title = `Kudos! You already saved ${formatLargeNumber(savings)}`;
+    let saving_text = `Kudos! You already saved ${formatLargeNumber(savings)}`;
+    let action_text = canOptimize ? ', and you can save more.' : ". Let's fine-tune now.";
+
+    advice.tipPhrase = saving_text + action_text;
   }
 
   return (
@@ -52,19 +69,10 @@ export default function BudgetResults() {
         <Geography />
       </div>
       <div className="mt-12">
-        <PurchaseRecoTable />
+        <BudgetAdvice advice={advice} isFullWidth={true} isGradient={false} title="Optimizer" />
       </div>
       <div className="mt-12">
-        <BudgetAdvice
-          advice={{
-            change: true,
-            tipPhrase: 'Do you wish to fine-tune the above strategy?',
-            actionText: 'Optimize',
-          }}
-          isFullWidth={true}
-          isGradient={false}
-          title={title}
-        />
+        <PurchaseRecoTable />
       </div>
     </>
   );
