@@ -15,7 +15,7 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
   advice,
   isFullWidth,
   isGradient,
-  title = 'Tips',
+  title = 'Tip',
 }) => {
   const {
     budgetResults,
@@ -36,7 +36,6 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
     (advice: Advice) => {
       switch (advice.adviceType) {
         case 'timeline':
-          console.log('set time constraints');
           setTimeConstraints(advice.tip as TimeConstraint);
           break;
         case 'financing':
@@ -51,7 +50,6 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
           }
           break;
         case 'geography':
-          console.log('set geography');
           if (advice.tip) {
             const tip = advice.tip as RegionAllocation[];
             if (tip.length > 0) {

@@ -6,12 +6,20 @@ import { GreenButton } from '@/components/form/Button';
 
 export default function CalculateBudget() {
   const [canCalculate, setCanCalculate] = useState(false);
-  const { financing, regionAllocation, timeConstraints, typology, isCalculating, calculateBudget } =
-    useBudget();
+  const {
+    financing,
+    regionAllocation,
+    timeConstraints,
+    typology,
+    isCalculating,
+    calculateBudget,
+    setHistory,
+  } = useBudget();
 
   useEffect(() => {
     if (financing && regionAllocation && timeConstraints !== null && typology) {
       setCanCalculate(true);
+      setHistory([]);
     } else {
       setCanCalculate(false);
     }
