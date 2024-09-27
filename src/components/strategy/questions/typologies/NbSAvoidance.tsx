@@ -28,7 +28,7 @@ export default function NbSAvoidance({ isDontKnowSelected }: NbSProps) {
 
   return (
     <SliderWithInput
-      inputLabel="Renewable Energy"
+      inputLabel="NbS - REDD"
       size="sm"
       step={1}
       minValue={0}

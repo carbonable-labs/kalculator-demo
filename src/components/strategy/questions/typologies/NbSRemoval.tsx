@@ -26,7 +26,7 @@ export default function NbSRemoval({ isDontKnowSelected }: NbSProps) {
 
   return (
     <SliderWithInput
-      inputLabel="Nature Based Solutions"
+      inputLabel="NbS - ARR"
       size="sm"
       step={1}
       minValue={0}
