@@ -19,14 +19,20 @@ export const TipsComponent: React.FC<TipsProps> = ({
   onAdviceApply,
   shouldRender,
 }) => {
-  if (!shouldRender || advice == null || !advice.change) {
+  if (!shouldRender || advice == null) {
     return null;
+  }
+
+  if (!advice.change) {
+    advice = {
+      change: true,
+      tipPhrase: 'Great job! This is a good strategy.',
+    };
   }
 
   const text = advice.tipPhrase;
   const buttonText = advice.actionText;
   const value = advice.budgetDelta ? `$${formatLargeNumber(advice.budgetDelta)}` : '';
-
   const onClick = () => {
     onAdviceApply(advice);
   };
