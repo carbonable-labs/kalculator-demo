@@ -19,7 +19,7 @@ export const TipsComponent: React.FC<TipsProps> = ({
   onAdviceApply,
   shouldRender,
 }) => {
-  if (!shouldRender || advice == null || !advice.change || advice.tip == null) {
+  if (!shouldRender || advice == null || !advice.change) {
     return null;
   }
 
