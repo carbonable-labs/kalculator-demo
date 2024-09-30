@@ -28,7 +28,6 @@ export default function BudgetResults() {
 
   let advice: Advice = {
     change: true,
-    actionText: 'Optimize',
     tipPhrase: canOptimize
       ? 'You should apply the suggested tips to save more.'
       : "Let's fine-tune this stratregy.",
@@ -42,9 +41,9 @@ export default function BudgetResults() {
   }
   if (savings > 0) {
     let saving_text = `Kudos! You already saved ${formatLargeNumber(savings)}`;
-    let action_text = canOptimize ? ', and you can save more.' : ". Let's fine-tune now.";
+    let description_text = canOptimize ? ', and you can save more.' : ". Let's fine-tune now.";
 
-    advice.tipPhrase = saving_text + action_text;
+    advice.tipPhrase = saving_text + description_text;
   }
 
   return (
