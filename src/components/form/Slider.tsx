@@ -1,4 +1,4 @@
-import { cn, Slider } from '@nextui-org/react';
+import { Slider } from '@nextui-org/react';
 
 interface SliderProps {
   size: Size;

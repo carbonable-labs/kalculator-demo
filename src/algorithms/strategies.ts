@@ -13,7 +13,7 @@ export const yearlyAlgo = (
   totalBudgetHigh: number;
   strategies: YearlyStrategy[];
 } => {
-  const percentageToOffset = timeConstraints / duration;
+  const percentageToOffset = timeConstraints / duration;  // TODO: should be adapted to needs for that period/year
   let quantityToOffset = Math.ceil(percentageToOffset * carbonToOffset);
 
   let totalCostLow = 0.0;
@@ -232,7 +232,7 @@ export const noAlgo = (
         types_purchased: typesPurchased,
       },
     ];
-    if (totalCostMedium < totalBudgetMedium) {
+    if (totalCostMedium < totalBudgetMedium) {  /// todo renaming
       totalBudgetLow = totalCostLow;
       totalBudgetMedium = totalCostMedium;
       totalBudgetHigh = totalCostHigh;

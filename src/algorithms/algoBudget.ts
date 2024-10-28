@@ -66,7 +66,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     ));
   }
 
-  const notAdjustedBudget = totalBudgetMedium;
+  const notAdjustedBudget = totalBudgetMedium;  // todo: review naming
 
   if (financing.financingExAnte > 0) {
     const exAnteCostMedium = totalBudgetMedium * financing.financingExAnte * deltaExAnte;
@@ -79,22 +79,22 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     totalBudgetHigh = exAnteCostHigh + totalBudgetHigh * financing.financingExPost;
   }
 
-  const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
-  const regionCosts: RegionCosts = getCostPerRegions(strategies);
+  const typologyCosts: TypologyCosts = getCostPerTypes(strategies); // Todo: naming
+  const regionCosts: RegionCosts = getCostPerRegions(strategies);   // Todo: naming
 
   let financingData: FinancingData = {
     ex_ante: financing.financingExAnte,
     ex_post: financing.financingExPost,
   };
 
-  let typologiesData: TypologiesData = {
+  let typologiesData: TypologiesData = {    //TODO: refacto
     nbs_removal: nbsRemoval,
     nbs_avoidance: nbsAvoidance,
     biochar: biochar,
     dac: dac,
   };
 
-  let regionsData: RegionsData = {
+  let regionsData: RegionsData = {        // todo: refacto
     north_america: regionAllocation.northAmerica,
     south_america: regionAllocation.southAmerica,
     europe: regionAllocation.europe,

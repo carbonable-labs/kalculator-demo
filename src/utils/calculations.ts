@@ -53,7 +53,7 @@ export const checkPriceExPost = (
   };
 
   // Filter out options where available quantity is 0 or less
-  const validOptions = Object.entries(options).filter(
+  const validOptions = Object.entries(options).filter(   // todo, try to understand and see if it's useful
     ([_, [availableQuantity]]) => availableQuantity > 0,
   );
 
@@ -61,7 +61,6 @@ export const checkPriceExPost = (
   if (validOptions.length === 0) {
     return [0, 0, 0, 0, []];
   }
-
   // Sort options by price (ascending)
   const sortedOptions = validOptions.sort(([, [, priceA]], [, [, priceB]]) => priceA - priceB);
 
@@ -114,6 +113,8 @@ export const checkPriceExPost = (
     }
   }
 
+  console.log("types purchased", typesPurchased)
+  console.log("\n\n")
   return [totalQuantityUsed, totalCostLow, totalCostMedium, totalCostHigh, typesPurchased];
 };
 
