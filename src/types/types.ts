@@ -19,7 +19,7 @@ export interface Financing {
   financingExAnte: number;
 }
 
-export enum TimeConstraint {  // TODO: maybe change typing
+export enum TimeConstraint { // TODO: maybe change typing
   Yearly = 1,
   FiveYear = 5,
   NoConstraint = 0,
@@ -107,8 +107,8 @@ export interface RegionCosts {
 export interface TypePurchased {
   typology: string;
   quantity: number;
-  regions: RegionPurchase[];  // todo bug fix: apparently we always have a len of 1
-  price_per_ton: number;  // todo: average ?
+  regions: RegionPurchase[]; // todo bug fix: apparently we always have a len of 1
+  price_per_ton: number; // todo: average ?
 }
 
 export interface TypologyCosts {
@@ -129,9 +129,9 @@ export interface TypesPurchasedPriceExPost {
 export interface YearlyStrategy {
   year: number;
   quantity_purchased: number;
-  cost_low: number;   // todo: Average cost of all the assets ?
-  cost_medium: number;  // ""
-  cost_high: number;    // ""
+  cost_low: number; // todo: Average cost of all the assets ?
+  cost_medium: number; // ""
+  cost_high: number; // ""
   types_purchased: TypePurchased[];
 }
 

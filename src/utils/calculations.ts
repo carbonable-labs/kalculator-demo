@@ -53,7 +53,8 @@ export const checkPriceExPost = (
   };
 
   // Filter out options where available quantity is 0 or less
-  const validOptions = Object.entries(options).filter(   // todo, try to understand and see if it's useful
+  const validOptions = Object.entries(options).filter(
+    // todo, try to understand and see if it's useful
     ([_, [availableQuantity]]) => availableQuantity > 0,
   );
 
@@ -113,8 +114,8 @@ export const checkPriceExPost = (
     }
   }
 
-  console.log("types purchased", typesPurchased)
-  console.log("\n\n")
+  console.log('types purchased', typesPurchased);
+  console.log('\n\n');
   return [totalQuantityUsed, totalCostLow, totalCostMedium, totalCostHigh, typesPurchased];
 };
 

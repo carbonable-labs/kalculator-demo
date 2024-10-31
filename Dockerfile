@@ -7,7 +7,7 @@ COPY . .
 # RUN yarn install --frozen-lockfile
 
 # If using npm with a `package-lock.json` comment out above and use below instead
-RUN npm ci
+RUN npm install
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
