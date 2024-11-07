@@ -22,7 +22,7 @@ export interface Financing {
 export enum TimeConstraint { // TODO: maybe change typing
   Yearly = 1,
   FiveYear = 5,
-  NoConstraint = 0,
+  NoConstraint = -1,
 }
 
 export type ProjectConfig = {
@@ -135,6 +135,15 @@ export interface YearlyStrategy {
   types_purchased: TypePurchased[];
 }
 
+export interface Advice {
+  change: boolean;
+  adviceType?: string;
+  tipPhrase?: string;
+  actionText?: string;
+  budgetDelta?: number;
+  tip?: TimeConstraint | Financing | Array<Typology> | Array<RegionAllocation>;
+}
+
 export interface BudgetOutputData {
   financing: FinancingData;
   typologies: TypologiesData;
@@ -162,10 +171,10 @@ export interface BudgetOutputData {
   cost_africa: number;
   cost_asia: number;
   cost_oceania: number;
-  advice_timeline: string;
-  advice_financing: string;
-  advice_typo: string;
-  advice_geography: string;
+  advice_timeline: Advice;
+  advice_financing: Advice;
+  advice_typo: Advice;
+  advice_geography: Advice;
   strategies: YearlyStrategy[];
 }
 
@@ -201,10 +210,10 @@ export interface StratOutputData {
   cost_africa: number;
   cost_asia: number;
   cost_oceania: number;
-  advice_timeline: string;
-  advice_financing: string;
-  advice_typo: string;
-  advice_geography: string;
+  advice_timeline: Advice;
+  advice_financing: Advice;
+  advice_typo: Advice;
+  advice_geography: Advice;
   strategies: YearlyStrategy[];
 }
 

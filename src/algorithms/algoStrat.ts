@@ -1,7 +1,4 @@
 import {
-  RegionAllocation,
-  Typology,
-  Financing,
   StratAlgorithmInput,
   YearlyStrategy,
   StratOutputData,
@@ -11,11 +8,10 @@ import {
   RegionsData,
   TypologiesData,
 } from '@/types/types';
-import { checkPriceExPost, getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
+import { getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
 import { deltaExAnte } from '@/constants/forecasts';
 import { carbonToOffset } from '@/constants/user';
-import { Advice, advice_financing, advice_geography, advice_timeline, advice_typo } from './advice';
 import { fiveYearAlgo, noAlgo, yearlyAlgo } from './strategies';
 
 export const runStratAlgorithm = (input: StratAlgorithmInput) => {
@@ -141,11 +137,6 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     oceania: regionAllocation.oceania,
   };
 
-  let adv_timeline: Advice = advice_timeline(timeConstraints);
-  let adv_financing: Advice = advice_financing(financing);
-  let adv_typo: Advice = advice_typo(typology, typologyCosts);
-  let adv_geography: Advice = advice_geography(regionAllocation, regionCosts);
-
   let res: StratOutputData = {
     financing: financingData,
     typologies: typologiesData,
@@ -178,10 +169,10 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     cost_africa: regionCosts.africa,
     cost_asia: regionCosts.asia,
     cost_oceania: regionCosts.oceania,
-    advice_timeline: adv_timeline.change ? adv_timeline.advice : 'No advice needed.',
-    advice_financing: adv_financing.change ? adv_financing.advice : 'No advice needed.',
-    advice_typo: adv_typo.change ? adv_typo.advice : 'No advice needed.',
-    advice_geography: adv_geography.change ? adv_geography.advice : 'No advice needed.',
+    advice_timeline: { change: false },
+    advice_financing: { change: false },
+    advice_typo: { change: false },
+    advice_geography: { change: false },
     strategies: strategies,
   };
   return res;

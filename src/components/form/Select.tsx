@@ -1,7 +1,5 @@
-'use client';
-
 import { Select, SelectItem } from '@nextui-org/react';
-import { use, useState } from 'react';
+import { useState } from 'react';
 
 interface SelectComponentProps {
   question: string;

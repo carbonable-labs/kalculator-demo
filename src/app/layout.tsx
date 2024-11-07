@@ -12,8 +12,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Carbonable Carculator',
-  description: 'Estimate and plan your projects investments',
+  title: 'Carbonable Kalculator',
+  description: 'Estimate and plan project investments',
 };
 
 export default function RootLayout({

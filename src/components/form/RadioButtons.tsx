@@ -1,13 +1,19 @@
 import { cn, Radio, RadioGroup } from '@nextui-org/react';
+import { useEffect } from 'react';
 
 interface RadioButtonsProps {
   values: { value: string; text: string }[];
   setSelected: (value: string | null) => void;
+  selected: string | null;
 }
 
-export default function RadioButtons({ values, setSelected }: RadioButtonsProps) {
+export default function RadioButtons({ values, setSelected, selected }: RadioButtonsProps) {
+  useEffect(() => {
+    setSelected(selected);
+  }, [selected]);
+
   return (
-    <RadioGroup onValueChange={setSelected}>
+    <RadioGroup onValueChange={setSelected} value={selected}>
       <div className="flex w-full items-center justify-start gap-x-4">
         {values.map((value) => (
           <CustomRadio key={value.value} value={value.value}>

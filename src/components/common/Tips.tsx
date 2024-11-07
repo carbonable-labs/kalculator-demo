@@ -1,27 +1,41 @@
+import { Advice } from '@/types/types';
+import { formatLargeNumber } from '@/utils/output';
 import Image from 'next/image';
 
 interface TipsProps {
-  text?: string;
-  buttonText?: string;
-  onClick?: () => void;
-  value?: string;
+  advice?: Advice;
   isFullWidth?: boolean;
   isGradient?: boolean;
   title?: string;
+  onAdviceApply: (advice: Advice) => void;
+  shouldRender: boolean;
 }
 
-export const Tips: React.FC<TipsProps> = ({
-  text,
-  buttonText,
-  onClick,
-  value,
+export const TipsComponent: React.FC<TipsProps> = ({
+  advice,
   isFullWidth = false,
   isGradient = true,
   title = 'Tips',
+  onAdviceApply,
+  shouldRender,
 }) => {
-  if (!text) {
+  if (!shouldRender || advice == null) {
     return null;
   }
+
+  if (!advice.change) {
+    advice = {
+      change: true,
+      tipPhrase: 'Great job! This is a good strategy.',
+    };
+  }
+
+  const text = advice.tipPhrase;
+  const buttonText = advice.actionText;
+  const value = advice.budgetDelta ? `$${formatLargeNumber(advice.budgetDelta)}` : '';
+  const onClick = () => {
+    onAdviceApply(advice);
+  };
 
   if (!buttonText) {
     return (
@@ -36,15 +50,21 @@ export const Tips: React.FC<TipsProps> = ({
       <div className="flex flex-wrap items-center justify-between">
         <div className={`${isFullWidth ? 'md:w-8/12' : 'w-full'}`}>{text}</div>
         <div
-          className={`flex items-center rounded-full bg-neutral-900 px-2 py-1 ${isFullWidth ? 'md:w-fit' : 'w-full'}`}
+          className={`flex flex-wrap items-center bg-neutral-900 ${isFullWidth ? 'rounded-full py-1 pl-2 pr-4 md:w-fit' : 'mt-2 w-full rounded-lg px-2 py-2'}`}
         >
           <div
-            className="w-fit cursor-pointer rounded-full border border-greenish-500 px-2 py-1 font-thin text-greenish-500 hover:brightness-125"
+            className={`cursor-pointer border border-greenish-500 px-2 py-1 font-thin text-greenish-500 hover:brightness-125 ${isFullWidth ? 'order-1 w-fit rounded-full' : 'order-2 mt-2 w-full rounded-lg text-center'}`}
             onClick={onClick}
           >
             {buttonText}
           </div>
-          {value && <div className="ml-12 font-bold">{value}</div>}
+          {value && (
+            <div
+              className={`font-bold ${isFullWidth ? 'order-2 ml-12' : 'order-1 mx-auto text-center'}`}
+            >
+              {value}
+            </div>
+          )}
         </div>
       </div>
     </TipsBackground>

@@ -1,41 +1,38 @@
-# Install dependencies only when needed
-FROM node:20-alpine AS builder
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
+# use the official Bun image
+# see all versions at https://hub.docker.com/r/oven/bun/tags
+FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
+
+# install dependencies into temp directory
+# this will cache them and speed up future builds
+FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lockb /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
+
+# install with --production (exclude devDependencies)
+RUN mkdir -p /temp/prod
+COPY package.json bun.lockb /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
+
+# copy node_modules from temp directory
+# then copy all (non-ignored) project files into the image
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
-# RUN yarn install --frozen-lockfile
 
-# If using npm with a `package-lock.json` comment out above and use below instead
-RUN npm install
+# [optional] tests & build
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+# RUN bun test
+RUN bun run build
 
-ENV NEXT_TELEMETRY_DISABLED 1
+# copy production dependencies and source code into final image
+FROM base AS release
+COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=prerelease /usr/src/app .
 
-# Add `ARG` instructions below if you need `NEXT_PUBLIC_` variables
-# then put the value on your fly.toml
-# Example:
-# ARG NEXT_PUBLIC_EXAMPLE="value here"
-
-# RUN yarn build
-
-# If using npm comment out above and use below instead
-RUN npm run build
-
-# Production image, copy all the files and run next
-FROM node:20-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app ./
-
-USER nextjs
-
-# CMD ["yarn", "start"]
-
-# If using npm comment out above and use below instead
-CMD ["npm", "run", "start"]
+# run the app
+USER bun
+EXPOSE 3000/tcp
+ENTRYPOINT [ "bun", "start" ]

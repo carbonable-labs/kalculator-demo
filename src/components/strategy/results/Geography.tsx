@@ -1,12 +1,16 @@
 'use client';
 import Title from '@/components/form/Title';
 import Quantity from './geography/Quantity';
-import { Tips } from '@/components/common/Tips';
 import Cost from './geography/Cost';
 import { useStrategy } from '@/context/StrategyContext';
+import StrategyAdvice from './StrategyAdvice';
 
 export default function Geography() {
-  const { startegyResults } = useStrategy();
+  const { strategyResults } = useStrategy();
+
+  if (strategyResults === null) {
+    return null;
+  }
 
   return (
     <>
@@ -19,7 +23,11 @@ export default function Geography() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips text={startegyResults?.advice_geography} />
+          <StrategyAdvice
+            advice={strategyResults.advice_geography}
+            isFullWidth={false}
+            isGradient={true}
+          />
         </div>
       </div>
     </>

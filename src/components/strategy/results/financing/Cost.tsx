@@ -5,14 +5,14 @@ import { useStrategy } from '@/context/StrategyContext';
 import { PERCENTAGE_MAX_VALUE } from '@/utils/charts';
 
 export default function Cost() {
-  const { startegyResults } = useStrategy();
+  const { strategyResults } = useStrategy();
 
-  if (startegyResults === null) {
+  if (strategyResults === null) {
     return null;
   }
 
   const exPostPercentage = Math.round(
-    (startegyResults.cost_ex_post / (startegyResults.cost_ex_post + startegyResults.cost_ex_ante)) *
+    (strategyResults.cost_ex_post / (strategyResults.cost_ex_post + strategyResults.cost_ex_ante)) *
       100,
   );
 

@@ -1,12 +1,16 @@
 'use client';
 import Title from '@/components/form/Title';
 import Quantity from './typology/Quantity';
-import { Tips } from '@/components/common/Tips';
 import Cost from './typology/Cost';
 import { useStrategy } from '@/context/StrategyContext';
+import StrategyAdvice from './StrategyAdvice';
 
 export default function Typology() {
-  const { startegyResults } = useStrategy();
+  const { strategyResults } = useStrategy();
+
+  if (strategyResults === null) {
+    return null;
+  }
 
   return (
     <>
@@ -19,7 +23,11 @@ export default function Typology() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips text={startegyResults?.advice_typo} />
+          <StrategyAdvice
+            advice={strategyResults.advice_typo}
+            isFullWidth={false}
+            isGradient={true}
+          />
         </div>
       </div>
     </>

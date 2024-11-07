@@ -1,12 +1,16 @@
 'use client';
 import Title from '@/components/form/Title';
 import Quantity from './typology/Quantity';
-import { Tips } from '@/components/common/Tips';
 import { useBudget } from '@/context/BudgetContext';
 import Cost from './typology/Cost';
+import BudgetAdvice from './BudgetAdvice';
 
 export default function Typology() {
   const { budgetResults } = useBudget();
+
+  if (budgetResults === null) {
+    return null;
+  }
 
   return (
     <>
@@ -19,7 +23,7 @@ export default function Typology() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips text={budgetResults?.advice_typo} />
+          <BudgetAdvice advice={budgetResults.advice_typo} isFullWidth={false} isGradient={true} />
         </div>
       </div>
     </>

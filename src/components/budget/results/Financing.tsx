@@ -1,12 +1,16 @@
 'use client';
 import Title from '@/components/form/Title';
 import Quantity from './financing/Quantity';
-import { Tips } from '@/components/common/Tips';
 import { useBudget } from '@/context/BudgetContext';
 import Cost from './financing/Cost';
+import BudgetAdvice from './BudgetAdvice';
 
 export default function Financing() {
   const { budgetResults } = useBudget();
+
+  if (budgetResults === null) {
+    return null;
+  }
 
   return (
     <>
@@ -19,7 +23,11 @@ export default function Financing() {
           <Cost />
         </div>
         <div className="w-full pb-4 md:w-2/12">
-          <Tips text={budgetResults?.advice_financing} />
+          <BudgetAdvice
+            advice={budgetResults.advice_financing}
+            isFullWidth={false}
+            isGradient={true}
+          />
         </div>
       </div>
     </>

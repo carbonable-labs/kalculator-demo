@@ -4,25 +4,25 @@ import { ChartTitle } from '@/components/form/Title';
 import { useStrategy } from '@/context/StrategyContext';
 
 export default function Cost() {
-  const { startegyResults } = useStrategy();
+  const { strategyResults } = useStrategy();
 
-  if (startegyResults === null) {
+  if (strategyResults === null) {
     return null;
   }
 
   const total =
-    startegyResults.cost_nbs_avoidance +
-    startegyResults.cost_nbs_removal +
-    startegyResults.cost_dac +
-    startegyResults.cost_biochar;
+    strategyResults.cost_nbs_avoidance +
+    strategyResults.cost_nbs_removal +
+    strategyResults.cost_dac +
+    strategyResults.cost_biochar;
 
-  const nbsPercentage = Math.round((startegyResults.cost_nbs_avoidance / total) * 100);
+  const nbsPercentage = Math.round((strategyResults.cost_nbs_avoidance / total) * 100);
 
-  const renewablePercentage = Math.round((startegyResults.cost_nbs_removal / total) * 100);
+  const renewablePercentage = Math.round((strategyResults.cost_nbs_removal / total) * 100);
 
-  const biocharPercentage = Math.round((startegyResults.cost_biochar / total) * 100);
+  const biocharPercentage = Math.round((strategyResults.cost_biochar / total) * 100);
 
-  const dacPercentage = Math.round((startegyResults.cost_dac / total) * 100);
+  const dacPercentage = Math.round((strategyResults.cost_dac / total) * 100);
 
   return (
     <div>
