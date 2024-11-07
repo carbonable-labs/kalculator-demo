@@ -113,9 +113,6 @@ export const checkPriceExPost = (
       }
     }
   }
-
-  console.log('types purchased', typesPurchased);
-  console.log('\n\n');
   return [totalQuantityUsed, totalCostLow, totalCostMedium, totalCostHigh, typesPurchased];
 };
 

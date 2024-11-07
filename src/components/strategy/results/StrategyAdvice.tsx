@@ -30,7 +30,6 @@ const StrategyAdvice: React.FC<strategyAdviceProps> = ({
     (advice: Advice) => {
       switch (advice.adviceType) {
         case 'timeline':
-          console.log('set time constraints');
           setTimeConstraints(advice.tip as TimeConstraint);
           break;
         case 'financing':
@@ -45,7 +44,6 @@ const StrategyAdvice: React.FC<strategyAdviceProps> = ({
           }
           break;
         case 'geography':
-          console.log('set geography');
           if (advice.tip) {
             const tip = advice.tip as RegionAllocation[];
             if (tip.length > 0) {

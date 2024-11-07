@@ -19,7 +19,6 @@ export const adviceBudgetTimeline = (
   let deltaFiveYear = output.total_cost_medium - fiveYearOutput.total_cost_medium;
   let deltaFlexible = output.total_cost_medium - flexibleOutput.total_cost_medium;
   const minProfit = output.total_cost_medium * 0.005; // 0.5% profit margin
-
   if (input.timeConstraints === TimeConstraint.Yearly) {
     if (Math.max(deltaFiveYear, deltaFlexible) < minProfit) {
       return { change: false };
