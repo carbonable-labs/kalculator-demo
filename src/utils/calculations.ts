@@ -20,7 +20,6 @@ import {
   TypologiesData,
   UserPreferences,
   typologyMapping,
-  
 } from '@/types/types';
 
 export const calculateTypologyScores = (preferences: UserPreferences): TypologiesData => {
@@ -52,7 +51,6 @@ export const normalizeScoresToPercentages = (scores: TypologiesData): Typology =
     // blueCarbon: (scores.blue_carbon / total) * 100,
   };
 };
-
 
 export const checkPriceExPost = (
   year: number,
@@ -181,7 +179,7 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
     costNbsAvoidance,
     costBiochar,
     costDac,
-    costRenewableEnergy
+    costRenewableEnergy,
   };
 };
 

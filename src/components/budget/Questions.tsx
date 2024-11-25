@@ -3,11 +3,15 @@ import GeographicalArea from './questions/GeographicalArea';
 import InvestmentStrategy from './questions/InvestmentStrategy';
 import PlanningCycle from './questions/PlanningCycle';
 import ProjectTypology from './questions/ProjectTypology';
+import CarbonUnitNeeds from './questions/CarbonUnitNeeds';
 
 export default function BudgetQuestions() {
   return (
     <div>
       <div>
+        <CarbonUnitNeeds />
+      </div>
+      <div className="mt-16">
         <PlanningCycle />
       </div>
       <div className="mt-16">

@@ -30,8 +30,10 @@ interface BudgetContextType {
   isCalculating: boolean;
   setIsCalculating: (value: boolean) => void;
   calculateBudget: () => Promise<void>;
-  setHistory: (value: Array<[number, BudgetAlgorithmInput]>) => void;
   history: Array<[number, BudgetAlgorithmInput]>;
+  setHistory: (value: Array<[number, BudgetAlgorithmInput]>) => void;
+  carbonUnitNeeds: { [year: string]: number };
+  setCarbonUnitNeeds: (value: { [year: string]: number }) => void;
 }
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
@@ -45,6 +47,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [budgetResults, setBudgetResults] = useState<BudgetOutputData | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [history, setHistory] = useBudgetHistory();
+  const [carbonUnitNeeds, setCarbonUnitNeeds] = useState<{ [year: string]: number }>({});
 
   const calculateBudget = useCallback(async () => {
     if (!financing || !regionAllocation || timeConstraints === null || !typology) {
@@ -90,8 +93,10 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         isCalculating,
         setIsCalculating,
         calculateBudget,
-        setHistory,
         history,
+        setHistory,
+        carbonUnitNeeds,
+        setCarbonUnitNeeds,
       }}
     >
       {children}

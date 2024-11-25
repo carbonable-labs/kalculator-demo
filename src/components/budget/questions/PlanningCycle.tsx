@@ -22,7 +22,7 @@ export default function PlanningCycle() {
   return (
     <>
       <Title
-        title="1. Financial Planning Cycle"
+        title="2. Financial Planning Cycle"
         subtitle="Is your budget aligned with yearly, multi-year or open timelines?"
       />
       <div className="mt-8">

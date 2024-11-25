@@ -149,7 +149,7 @@ export const adviceBudgetTypology = (
         dac: tmpDistribution[1] / 100,
         nbsAvoidance: tmpDistribution[2] / 100,
         nbsRemoval: tmpDistribution[3] / 100,
-        renewableEnergy: 0
+        renewableEnergy: 0,
       };
       let tmpOutput = runBudgetAlgorithm({ ...input, typology: tmpTypology });
       let tmpCosts = [

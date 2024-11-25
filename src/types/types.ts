@@ -65,11 +65,11 @@ export const typologyMapping = {
 
 // Represents the typology repartition, expressed as percentages of total carbon credit invest
 export interface Typology {
-  nbsRemoval: number;       // NbS ARR (Afforestation, Reforestation, and Restoration)
-  nbsAvoidance: number;     // NbS REDD (Reducing Emissions from Deforestation and Forest Degradation)
-  biochar: number;          // Biochar projects for carbon sequestration
-  dac: number;              // Direct Air Capture technology
-  renewableEnergy: number;  // Renewable energy projects (e.g., solar, wind)
+  nbsRemoval: number; // NbS ARR (Afforestation, Reforestation, and Restoration)
+  nbsAvoidance: number; // NbS REDD (Reducing Emissions from Deforestation and Forest Degradation)
+  biochar: number; // Biochar projects for carbon sequestration
+  dac: number; // Direct Air Capture technology
+  renewableEnergy: number; // Renewable energy projects (e.g., solar, wind)
   // blueCarbon: number;       // Blue Carbon projects (e.g., coastal and marine ecosystems)
 }
 
@@ -85,10 +85,10 @@ export enum TimeConstraint { // TODO: maybe change typing
 }
 
 export type ProjectConfig = {
-  nbs_removal: number;      // NbS ARR project weight
-  biochar: number;          // Biochar project weight
-  dac: number;              // DAC project weight
-  nbs_avoidance: number;    // NbS REDD project weight
+  nbs_removal: number; // NbS ARR project weight
+  biochar: number; // Biochar project weight
+  dac: number; // DAC project weight
+  nbs_avoidance: number; // NbS REDD project weight
   renewable_energy: number; // Renewable Energy project weight
 };
 

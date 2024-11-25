@@ -44,7 +44,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
             nbsAvoidance,
             biochar,
             dac,
-            renewableEnergy
+            renewableEnergy,
           },
         ));
         break;
@@ -58,7 +58,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
             nbsAvoidance,
             biochar,
             dac,
-            renewableEnergy
+            renewableEnergy,
           },
         ));
         break;
@@ -106,7 +106,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         nbs_avoidance: nbsAvoidance,
         biochar: biochar,
         dac: dac,
-        renewable_energy: renewableEnergy
+        renewable_energy: renewableEnergy,
       };
 
       let regionsData: RegionsData = {

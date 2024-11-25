@@ -23,7 +23,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     nbsAvoidance,
     biochar,
     dac,
-    renewableEnergy
+    renewableEnergy,
   ];
 
   let notAdjustedBudget = NaN;
@@ -54,7 +54,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
           nbsAvoidance,
           biochar,
           dac,
-          renewableEnergy
+          renewableEnergy,
         },
       ));
     } else if (timeConstraints === 5) {
@@ -67,7 +67,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
           nbsAvoidance,
           biochar,
           dac,
-          renewableEnergy
+          renewableEnergy,
         },
       ));
     } else {
@@ -91,7 +91,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
       nbsAvoidance,
       biochar,
       dac,
-      renewableEnergy
+      renewableEnergy,
     ];
 
     // TODO: obvious errors here, but will be deleted anyway
@@ -111,8 +111,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
       const adjustment = Math.min(0.01 * carbonToOffset, renewableEnergy);
       nbsRemoval -= adjustment;
       nbsAvoidance += adjustment;
-    }
-    else {
+    } else {
       budget_not_compatible = true;
     }
   }
@@ -122,7 +121,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     prevNbsAvoidance,
     prevBiochar,
     prevDac,
-    prevRenewableEnergy
+    prevRenewableEnergy,
   ];
 
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
@@ -138,7 +137,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     nbs_avoidance: nbsAvoidance,
     biochar: biochar,
     dac: dac,
-    renewable_energy: renewableEnergy
+    renewable_energy: renewableEnergy,
   };
 
   let regionsData: RegionsData = {

@@ -49,7 +49,8 @@ export const adviceTimeline = (timeConstraints: TimeConstraint): Advice => {
   return { change: false, advice: '' };
 };
 
-export const adviceTypo = (typology: Typology, typoCosts: TypologyCosts): Advice => {   // TODO: Update advice considering non used pct.
+export const adviceTypo = (typology: Typology, typoCosts: TypologyCosts): Advice => {
+  // TODO: Update advice considering non used pct.
   let totalCost =
     typoCosts.costBiochar +
     typoCosts.costDac +

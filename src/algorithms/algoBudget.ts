@@ -37,7 +37,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
         nbsAvoidance,
         biochar,
         dac,
-        renewableEnergy
+        renewableEnergy,
       },
     ));
   } else if (timeConstraints === 5) {
@@ -50,7 +50,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
         nbsAvoidance,
         biochar,
         dac,
-        renewableEnergy
+        renewableEnergy,
       },
     ));
   } else {
@@ -63,7 +63,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
         nbsAvoidance,
         biochar,
         dac,
-        renewableEnergy
+        renewableEnergy,
       },
       regionAllocation,
     ));

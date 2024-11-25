@@ -42,10 +42,10 @@ export const biodiversityConfigs = [
 ];
 
 export const projectMakerConfigs = [
-  { renewable_energy: 0, nbs_removal: 0.35, biochar: 0.15, dac: 0.05, nbs_avoidance: 0.45},
-  { renewable_energy: 0, nbs_removal: 0.4, biochar: 0.15, dac: 0, nbs_avoidance: 0.45},
+  { renewable_energy: 0, nbs_removal: 0.35, biochar: 0.15, dac: 0.05, nbs_avoidance: 0.45 },
+  { renewable_energy: 0, nbs_removal: 0.4, biochar: 0.15, dac: 0, nbs_avoidance: 0.45 },
   { renewable_energy: 0, nbs_removal: 0.4, biochar: 0.1, dac: 0, nbs_avoidance: 0.5 },
-  { renewable_energy: 0, nbs_removal: 0.45, biochar: 0.05, dac: 0, nbs_avoidance: 0.5, },
+  { renewable_energy: 0, nbs_removal: 0.45, biochar: 0.05, dac: 0, nbs_avoidance: 0.5 },
   { renewable_energy: 0, nbs_removal: 0.5, biochar: 0, dac: 0, nbs_avoidance: 0.5 },
 ];
 

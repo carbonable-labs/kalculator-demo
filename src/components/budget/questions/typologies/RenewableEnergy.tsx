@@ -10,7 +10,9 @@ interface NbSProps {
 }
 
 export default function RenewableEnergy({ isDontKnowSelected }: NbSProps) {
-  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(DEFAULT_TYPOLOGY.renewableEnergy * 100);
+  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(
+    DEFAULT_TYPOLOGY.renewableEnergy * 100,
+  );
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {
