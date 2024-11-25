@@ -9,32 +9,32 @@ interface NbSProps {
   isDontKnowSelected: boolean;
 }
 
-export default function NbSRemoval({ isDontKnowSelected }: NbSProps) {
-  const [nbs, setNbs] = useState<number | number[]>(DEFAULT_TYPOLOGY.nbsRemoval * 100);
+export default function RenewableEnergy({ isDontKnowSelected }: NbSProps) {
+  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(DEFAULT_TYPOLOGY.renewableEnergy * 100);
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {
     setTypology({
       ...typology,
-      nbsRemoval: Math.round(nbs as number) / 100,
+      renewableEnergy: Math.round(renewableEnergy as number) / 100,
     });
-  }, [nbs]);
+  }, [renewableEnergy]);
 
   useEffect(() => {
-    setNbs(typology.nbsRemoval * 100);
-  }, [typology.nbsRemoval]);
+    setRenewableEnergy(typology.renewableEnergy * 100);
+  }, [typology.renewableEnergy]);
 
   return (
     <SliderWithInput
-      inputLabel="NbS - ARR"
+      inputLabel="Renewable Energy"
       size="sm"
       step={1}
       minValue={0}
       maxValue={100}
-      label="NbS"
-      value={nbs as number}
-      onChange={setNbs}
-      displayedValue={nbs as number}
+      label="RenewableEnergy"
+      value={renewableEnergy as number}
+      onChange={setRenewableEnergy}
+      displayedValue={renewableEnergy as number}
       isDisabled={isDontKnowSelected}
     />
   );

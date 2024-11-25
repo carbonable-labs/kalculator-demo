@@ -49,16 +49,18 @@ export const adviceTimeline = (timeConstraints: TimeConstraint): Advice => {
   return { change: false, advice: '' };
 };
 
-export const adviceTypo = (typology: Typology, typoCosts: TypologyCosts): Advice => {
+export const adviceTypo = (typology: Typology, typoCosts: TypologyCosts): Advice => {   // TODO: Update advice considering non used pct.
   let totalCost =
     typoCosts.costBiochar +
     typoCosts.costDac +
     typoCosts.costNbsAvoidance +
-    typoCosts.costNbsRemoval;
+    typoCosts.costNbsRemoval +
+    typoCosts.costRenewableEnergy;
   let pctBiochar = typoCosts.costBiochar / totalCost;
   let pctDac = typoCosts.costDac / totalCost;
   let pctNbsAvoidance = typoCosts.costNbsAvoidance / totalCost;
   let pctNbsRemoval = typoCosts.costNbsRemoval / totalCost;
+  let pctRenewable = typoCosts.costRenewableEnergy / totalCost;
 
   // console.log({
   //   bio: pctBiochar / typology.biochar,

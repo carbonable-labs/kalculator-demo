@@ -28,6 +28,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
     const biochar = config.biochar * carbonToOffset;
     const dac = config.dac * carbonToOffset;
     const nbsAvoidance = config.nbs_avoidance * carbonToOffset;
+    const renewableEnergy = config.renewable_energy * carbonToOffset;
 
     let strategies: YearlyStrategy[];
     let totalBudgetLow: number, totalBudgetMedium: number, totalBudgetHigh: number;
@@ -43,6 +44,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
             nbsAvoidance,
             biochar,
             dac,
+            renewableEnergy
           },
         ));
         break;
@@ -56,6 +58,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
             nbsAvoidance,
             biochar,
             dac,
+            renewableEnergy
           },
         ));
         break;
@@ -64,7 +67,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
           currentYear,
           targetYear,
           carbonToOffset,
-          { nbsRemoval, nbsAvoidance, biochar, dac },
+          { nbsRemoval, nbsAvoidance, biochar, dac, renewableEnergy },
           regionAllocation,
         ));
         break;
@@ -103,6 +106,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         nbs_avoidance: nbsAvoidance,
         biochar: biochar,
         dac: dac,
+        renewable_energy: renewableEnergy
       };
 
       let regionsData: RegionsData = {
@@ -158,7 +162,7 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
   // If no configuration fits the user's constraints, return default values
   return {
     financing: { ex_ante: 0, ex_post: 0 },
-    typologies: { nbs_removal: 0, nbs_avoidance: 0, biochar: 0, dac: 0 },
+    typologies: { nbs_removal: 0, nbs_avoidance: 0, biochar: 0, dac: 0, renewable_energy: 0 },
     regions: { north_america: 0, south_america: 0, europe: 0, africa: 0, asia: 0, oceania: 0 },
     carbon_offset: 0,
     user_budget: 0,

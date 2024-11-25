@@ -11,16 +11,17 @@ import Biochar from './typologies/Biochar';
 import ImpactPreference from './typologies/ImpactPreference';
 import NbSPreference from './typologies/NbSPreference';
 import {
-  BIODIVERSITY_AVOIDANCE_TYPOLGY,
-  BIODIVERSITY_NO_IDEA_TYPOLGY,
-  BIODIVERSITY_REMOVAL_TYPOLGY,
-  CLIMATE_AVOIDANCE_TYPOLGY,
-  CLIMATE_NO_IDEA_TYPOLGY,
-  CLIMATE_REMOVAL_TYPOLGY,
-  DEFAULT_TYPOLGY,
+  BIODIVERSITY_AVOIDANCE_TYPOLOGY,
+  BIODIVERSITY_NO_IDEA_TYPOLOGY,
+  BIODIVERSITY_REMOVAL_TYPOLOGY,
+  CLIMATE_AVOIDANCE_TYPOLOGY,
+  CLIMATE_NO_IDEA_TYPOLOGY,
+  CLIMATE_REMOVAL_TYPOLOGY,
+  DEFAULT_TYPOLOGY,
   TYPOLOGY_PREFERENCE,
 } from '@/utils/configuration';
 import { Typology } from '@/types/types';
+import RenewableEnergy from './typologies/RenewableEnergy';
 
 export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);
@@ -30,7 +31,7 @@ export default function ProjectTypology() {
   const { typology, setTypology } = useBudget();
 
   const reset = () => {
-    setTypology(DEFAULT_TYPOLGY);
+    setTypology(DEFAULT_TYPOLOGY);
   };
 
   useEffect(() => {
@@ -44,14 +45,14 @@ export default function ProjectTypology() {
 
     const typologyMap: Record<string, Record<string, Typology>> = {
       [TYPOLOGY_PREFERENCE.CLIMATE_IMPACT]: {
-        [TYPOLOGY_PREFERENCE.NBS_AVOIDANCE]: CLIMATE_AVOIDANCE_TYPOLGY,
-        [TYPOLOGY_PREFERENCE.NBS_REMOVAL]: CLIMATE_REMOVAL_TYPOLGY,
-        [TYPOLOGY_PREFERENCE.NO_IDEA]: CLIMATE_NO_IDEA_TYPOLGY,
+        [TYPOLOGY_PREFERENCE.NBS_AVOIDANCE]: CLIMATE_AVOIDANCE_TYPOLOGY,
+        [TYPOLOGY_PREFERENCE.NBS_REMOVAL]: CLIMATE_REMOVAL_TYPOLOGY,
+        [TYPOLOGY_PREFERENCE.NO_IDEA]: CLIMATE_NO_IDEA_TYPOLOGY,
       },
       [TYPOLOGY_PREFERENCE.BIODIVERSITY_IMPACT]: {
-        [TYPOLOGY_PREFERENCE.NBS_AVOIDANCE]: BIODIVERSITY_AVOIDANCE_TYPOLGY,
-        [TYPOLOGY_PREFERENCE.NBS_REMOVAL]: BIODIVERSITY_REMOVAL_TYPOLGY,
-        [TYPOLOGY_PREFERENCE.NO_IDEA]: BIODIVERSITY_NO_IDEA_TYPOLGY,
+        [TYPOLOGY_PREFERENCE.NBS_AVOIDANCE]: BIODIVERSITY_AVOIDANCE_TYPOLOGY,
+        [TYPOLOGY_PREFERENCE.NBS_REMOVAL]: BIODIVERSITY_REMOVAL_TYPOLOGY,
+        [TYPOLOGY_PREFERENCE.NO_IDEA]: BIODIVERSITY_NO_IDEA_TYPOLOGY,
       },
     };
 
@@ -78,6 +79,9 @@ export default function ProjectTypology() {
       </div>
       <div className="mt-8 w-full">
         <Biochar isDontKnowSelected={isDontKnowSelected} />
+      </div>
+      <div className="mt-8 w-full">
+        <RenewableEnergy isDontKnowSelected={isDontKnowSelected} />
       </div>
       {!isTypologyFull && (
         <div className="mt-6 rounded-lg bg-red-800 px-4 py-2 text-sm">

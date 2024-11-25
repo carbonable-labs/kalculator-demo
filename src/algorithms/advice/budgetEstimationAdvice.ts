@@ -7,6 +7,7 @@ import {
 } from '@/types/types';
 import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
 import { deltaExAnte } from '@/constants/forecasts';
+import RenewableEnergy from '@/components/budget/questions/typologies/RenewableEnergy';
 
 export const adviceBudgetTimeline = (
   input: BudgetAlgorithmInput,
@@ -148,6 +149,7 @@ export const adviceBudgetTypology = (
         dac: tmpDistribution[1] / 100,
         nbsAvoidance: tmpDistribution[2] / 100,
         nbsRemoval: tmpDistribution[3] / 100,
+        renewableEnergy: 0
       };
       let tmpOutput = runBudgetAlgorithm({ ...input, typology: tmpTypology });
       let tmpCosts = [

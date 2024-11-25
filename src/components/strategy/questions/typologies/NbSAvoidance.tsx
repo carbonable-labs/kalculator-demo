@@ -2,7 +2,7 @@
 
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useStrategy } from '@/context/StrategyContext';
-import { DEFAULT_TYPOLGY } from '@/utils/configuration';
+import { DEFAULT_TYPOLOGY } from '@/utils/configuration';
 import { useEffect, useState } from 'react';
 
 interface NbSProps {
@@ -11,7 +11,7 @@ interface NbSProps {
 
 export default function NbSAvoidance({ isDontKnowSelected }: NbSProps) {
   const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(
-    DEFAULT_TYPOLGY.nbsAvoidance * 100,
+    DEFAULT_TYPOLOGY.nbsAvoidance * 100,
   );
   const { typology, setTypology } = useStrategy();
 

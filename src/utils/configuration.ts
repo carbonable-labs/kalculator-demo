@@ -13,11 +13,12 @@ export const DEFAULT_FINANCING: Financing = {
   financingExPost: 0.5,
 };
 
-export const DEFAULT_TYPOLGY: Typology = {
+export const DEFAULT_TYPOLOGY: Typology = {
   nbsRemoval: 0.6,
   nbsAvoidance: 0.2,
   biochar: 0.1,
   dac: 0.1,
+  renewableEnergy: 0
 };
 
 export const DEFAULT_GEOGRAPHICAL_AREA = {
@@ -29,46 +30,60 @@ export const DEFAULT_GEOGRAPHICAL_AREA = {
   oceania: 0.1,
 };
 
-export const CLIMATE_AVOIDANCE_TYPOLGY: Typology = {
+export const CLIMATE_AVOIDANCE_TYPOLOGY: Typology = {
   nbsRemoval: 0.1,
   nbsAvoidance: 0.2,
   dac: 0.2,
   biochar: 0.5,
+  renewableEnergy: 0
 };
 
-export const CLIMATE_REMOVAL_TYPOLGY: Typology = {
+export const CLIMATE_REMOVAL_TYPOLOGY: Typology = {
   nbsRemoval: 0.2,
   nbsAvoidance: 0.1,
   dac: 0.2,
   biochar: 0.5,
+  renewableEnergy: 0
 };
 
-export const CLIMATE_NO_IDEA_TYPOLGY: Typology = {
+export const CLIMATE_NO_IDEA_TYPOLOGY: Typology = {
   nbsRemoval: 0.15,
   nbsAvoidance: 0.15,
   dac: 0.2,
   biochar: 0.5,
+  renewableEnergy: 0
 };
 
-export const BIODIVERSITY_NO_IDEA_TYPOLGY: Typology = {
+export const BIODIVERSITY_NO_IDEA_TYPOLOGY: Typology = {
   nbsRemoval: 0.4,
   nbsAvoidance: 0.3,
   dac: 0.1,
   biochar: 0.2,
+  renewableEnergy: 0
 };
 
-export const BIODIVERSITY_AVOIDANCE_TYPOLGY: Typology = {
+export const BIODIVERSITY_AVOIDANCE_TYPOLOGY: Typology = {
   nbsRemoval: 0.2,
   nbsAvoidance: 0.6,
   dac: 0,
   biochar: 0.2,
+  renewableEnergy: 0
 };
 
-export const BIODIVERSITY_REMOVAL_TYPOLGY: Typology = {
+export const BIODIVERSITY_REMOVAL_TYPOLOGY: Typology = {
   nbsRemoval: 0.6,
   nbsAvoidance: 0.0,
   dac: 0.2,
   biochar: 0.2,
+  renewableEnergy: 0
+};
+
+export const RENEWABLE_ENERGY_TYPOLOGY: Typology = {
+  nbsRemoval: 0.6,
+  nbsAvoidance: 0.0,
+  dac: 0.2,
+  biochar: 0.2,
+  renewableEnergy: 0
 };
 
 export const continents = ['africa', 'asia', 'europe', 'north_america', 'oceania', 'south_america'];

@@ -17,7 +17,42 @@ import {
   YearlyStrategy,
   TypePurchased,
   Typology,
+  TypologiesData,
+  UserPreferences,
+  typologyMapping,
+  
 } from '@/types/types';
+
+export const calculateTypologyScores = (preferences: UserPreferences): TypologiesData => {
+  const scores: Partial<TypologiesData> = {};
+
+  Object.entries(typologyMapping).forEach(([typology, attributes]) => {
+    const score =
+      preferences.biodiversity * attributes.biodiversity +
+      preferences.durability * attributes.durability +
+      preferences.removal * attributes.removal +
+      preferences.pricing * attributes.pricing +
+      preferences.reputation * attributes.reputation;
+
+    scores[typology as keyof TypologiesData] = score;
+  });
+
+  return scores as TypologiesData;
+};
+
+export const normalizeScoresToPercentages = (scores: TypologiesData): Typology => {
+  const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
+
+  return {
+    nbsRemoval: (scores.nbs_removal / total) * 100,
+    nbsAvoidance: (scores.nbs_avoidance / total) * 100,
+    biochar: (scores.biochar / total) * 100,
+    dac: (scores.dac / total) * 100,
+    renewableEnergy: (scores.renewable_energy / total) * 100,
+    // blueCarbon: (scores.blue_carbon / total) * 100,
+  };
+};
+
 
 export const checkPriceExPost = (
   year: number,
@@ -121,6 +156,7 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
   let costNbsAvoidance = 0;
   let costBiochar = 0;
   let costDac = 0;
+  let costRenewableEnergy = 0;
 
   strategies.forEach((strategy) => {
     strategy.types_purchased.forEach((type) => {
@@ -134,6 +170,8 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
         costBiochar += totalCostForType;
       } else if (type.typology === 'dac') {
         costDac += totalCostForType;
+      } else if (type.typology === 'renewableEnergy') {
+        costRenewableEnergy += totalCostForType;
       }
     });
   });
@@ -143,6 +181,7 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
     costNbsAvoidance,
     costBiochar,
     costDac,
+    costRenewableEnergy
   };
 };
 

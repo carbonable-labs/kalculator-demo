@@ -17,12 +17,13 @@ import { fiveYearAlgo, noAlgo, yearlyAlgo } from './strategies';
 export const runStratAlgorithm = (input: StratAlgorithmInput) => {
   const { timeConstraints, budget, financing, typology, regionAllocation } = input;
 
-  let { nbsRemoval, nbsAvoidance, biochar, dac } = typology;
-  let [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac] = [
+  let { nbsRemoval, nbsAvoidance, biochar, dac, renewableEnergy } = typology;
+  let [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac, prevRenewableEnergy] = [
     nbsRemoval,
     nbsAvoidance,
     biochar,
     dac,
+    renewableEnergy
   ];
 
   let notAdjustedBudget = NaN;
@@ -35,6 +36,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
   nbsAvoidance *= carbonToOffset;
   biochar *= carbonToOffset;
   dac *= carbonToOffset;
+  renewableEnergy *= carbonToOffset;
 
   let upperBound = budget * 1.03;
   totalBudgetLow = Infinity;
@@ -52,6 +54,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
           nbsAvoidance,
           biochar,
           dac,
+          renewableEnergy
         },
       ));
     } else if (timeConstraints === 5) {
@@ -64,6 +67,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
           nbsAvoidance,
           biochar,
           dac,
+          renewableEnergy
         },
       ));
     } else {
@@ -71,7 +75,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
         currentYear,
         targetYear,
         carbonToOffset,
-        { nbsRemoval, nbsAvoidance, biochar, dac },
+        { nbsRemoval, nbsAvoidance, biochar, dac, renewableEnergy },
         regionAllocation,
       ));
     }
@@ -82,13 +86,15 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
       totalBudgetMedium = exAnteCost + totalBudgetMedium * financing.financingExPost;
     }
 
-    [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac] = [
+    [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac, prevRenewableEnergy] = [
       nbsRemoval,
       nbsAvoidance,
       biochar,
       dac,
+      renewableEnergy
     ];
 
+    // TODO: obvious errors here, but will be deleted anyway
     if (dac > 0) {
       const adjustment = Math.min(0.01 * carbonToOffset, dac);
       dac -= adjustment;
@@ -101,16 +107,22 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
       const adjustment = Math.min(0.01 * carbonToOffset, nbsRemoval);
       nbsRemoval -= adjustment;
       nbsAvoidance += adjustment;
-    } else {
+    } else if (renewableEnergy > 0) {
+      const adjustment = Math.min(0.01 * carbonToOffset, renewableEnergy);
+      nbsRemoval -= adjustment;
+      nbsAvoidance += adjustment;
+    }
+    else {
       budget_not_compatible = true;
     }
   }
 
-  [nbsRemoval, nbsAvoidance, biochar, dac] = [
+  [nbsRemoval, nbsAvoidance, biochar, dac, renewableEnergy] = [
     prevNbsRemoval,
     prevNbsAvoidance,
     prevBiochar,
     prevDac,
+    prevRenewableEnergy
   ];
 
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
@@ -126,6 +138,7 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     nbs_avoidance: nbsAvoidance,
     biochar: biochar,
     dac: dac,
+    renewable_energy: renewableEnergy
   };
 
   let regionsData: RegionsData = {

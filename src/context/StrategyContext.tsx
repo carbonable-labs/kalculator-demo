@@ -5,7 +5,7 @@ import { Financing, RegionAllocation, StratOutputData, Typology } from '@/types/
 import {
   DEFAULT_FINANCING,
   DEFAULT_GEOGRAPHICAL_AREA,
-  DEFAULT_TYPOLGY,
+  DEFAULT_TYPOLOGY,
 } from '@/utils/configuration';
 import { createContext, useCallback, useContext, useState } from 'react';
 
@@ -33,7 +33,7 @@ export const StrategyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [budget, setBudget] = useState<number>(0);
   const [timeConstraints, setTimeConstraints] = useState<number | null>(null);
   const [financing, setFinancing] = useState<Financing>(DEFAULT_FINANCING);
-  const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLGY);
+  const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLOGY);
   const [regionAllocation, setRegionAllocation] =
     useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
   const [strategyResults, setStrategyResults] = useState<StratOutputData | null>(null);

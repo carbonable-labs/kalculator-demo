@@ -2,7 +2,7 @@
 
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useStrategy } from '@/context/StrategyContext';
-import { DEFAULT_TYPOLGY } from '@/utils/configuration';
+import { DEFAULT_TYPOLOGY } from '@/utils/configuration';
 import { useEffect, useState } from 'react';
 
 interface NbSProps {
@@ -10,7 +10,7 @@ interface NbSProps {
 }
 
 export default function DAC({ isDontKnowSelected }: NbSProps) {
-  const [dac, setDac] = useState<number | number[]>(DEFAULT_TYPOLGY.dac * 100);
+  const [dac, setDac] = useState<number | number[]>(DEFAULT_TYPOLOGY.dac * 100);
   const { typology, setTypology } = useStrategy();
 
   useEffect(() => {

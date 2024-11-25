@@ -17,7 +17,7 @@ import { fiveYearAlgo, noAlgo, yearlyAlgo } from './strategies';
 export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputData => {
   const { regionAllocation, typology, financing, timeConstraints } = input;
 
-  let { nbsRemoval, nbsAvoidance, biochar, dac } = typology;
+  let { nbsRemoval, nbsAvoidance, biochar, dac, renewableEnergy } = typology;
   let strategies: YearlyStrategy[];
   let totalBudgetLow: number, totalBudgetMedium: number, totalBudgetHigh: number;
 
@@ -25,6 +25,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
   nbsAvoidance *= carbonToOffset;
   biochar *= carbonToOffset;
   dac *= carbonToOffset;
+  renewableEnergy *= carbonToOffset;
 
   if (timeConstraints === 1) {
     ({ totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = yearlyAlgo(
@@ -36,6 +37,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
         nbsAvoidance,
         biochar,
         dac,
+        renewableEnergy
       },
     ));
   } else if (timeConstraints === 5) {
@@ -48,6 +50,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
         nbsAvoidance,
         biochar,
         dac,
+        renewableEnergy
       },
     ));
   } else {
@@ -60,6 +63,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
         nbsAvoidance,
         biochar,
         dac,
+        renewableEnergy
       },
       regionAllocation,
     ));
@@ -92,6 +96,7 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     nbs_avoidance: nbsAvoidance,
     biochar: biochar,
     dac: dac,
+    renewable_energy: renewableEnergy,
   };
 
   let regionsData: RegionsData = {
