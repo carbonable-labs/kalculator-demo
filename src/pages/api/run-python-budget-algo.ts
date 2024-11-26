@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const scriptPath = path.join(process.cwd(), 'src/python-scripts', 'algo_budget.py');
+    const scriptPath = path.join(process.cwd(), 'src/python-scripts', 'algo_budget', 'main.py');
     
     const inputData = req.body as BudgetAlgorithmInput;
 
