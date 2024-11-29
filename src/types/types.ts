@@ -128,8 +128,8 @@ export interface TypoAlgorithmInput {
 // Algos output
 
 export interface FinancingData {
-  ex_ante: number;
-  ex_post: number;
+  exAnte: number;
+  exPost: number;
 }
 
 export interface TypologiesData {
@@ -173,6 +173,16 @@ export interface TypePurchased {
   price_per_ton: number; // todo: average ?
 }
 
+// Returned by python algo, array of purchase entries
+export interface PurchaseEntry {
+  year: number;
+  quantity: number;
+  typology: string;
+  region: string;
+  price: number;
+  type: string; // 'ex-ante' or 'ex-post'
+}
+
 export interface TypologyCosts {
   costNbsRemoval: number;
   costNbsAvoidance: number;
@@ -195,7 +205,20 @@ export interface YearlyStrategy {
   cost_low: number; // todo: Average cost of all the assets ?
   cost_medium: number; // ""
   cost_high: number; // ""
-  types_purchased: TypePurchased[];
+  types_purchased: TypePurchasedByType[];
+}
+
+export interface TypePurchasedByType {
+  typology: string;
+  ex_ante: TypePurchasedDetails; // Details for ex-ante
+  ex_post: TypePurchasedDetails; // Details for ex-post
+}
+
+export interface TypePurchasedDetails {
+  quantity: number;
+  regions: RegionPurchase[];
+  price_per_ton: number; // Average price per ton
+  cost: number; // Total cost for this typology and type
 }
 
 export interface Advice {
@@ -206,7 +229,12 @@ export interface Advice {
   budgetDelta?: number;
   tip?: TimeConstraint | Financing | Array<Typology> | Array<RegionAllocation>;
 }
-
+export interface BudgetPythonResponse {
+  totalBudgetLow: number;
+  totalBudgetMedium: number;
+  totalBudgetHigh: number;
+  strategies: YearlyStrategy[];
+}
 export interface BudgetOutputData {
   financing: FinancingData;
   typologies: TypologiesData;
