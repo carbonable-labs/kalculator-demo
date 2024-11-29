@@ -4,7 +4,7 @@ import { computeBudgetAdvice } from '@/algorithms/advice/budgetEstimationAdvice'
 import { deltaExAnte } from '@/constants/forecasts';
 import { duration } from '@/constants/time';
 import { carbonToOffset } from '@/constants/user';
-import { BudgetAlgorithmInput, BudgetOutputData, BudgetPythonResponse, FinancingData, PurchaseEntry, RegionCosts, RegionsData, TypologiesData, TypologyCosts } from '@/types/types';
+import { BudgetAlgorithmInput, BudgetOutputData, BudgetPythonResponse, Financing, PurchaseEntry, RegionCosts, RegionAllocation, Typology, TypologyCosts } from '@/types/types';
 import { getCostPerTypes, getCostPerRegions } from '@/utils/calculations';
 
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
@@ -55,7 +55,6 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
       }
   
       const result = await response.json(); // Parse JSON response
-      console.log("result:", result);
       return result; // Return the entire object
     } catch (error) {
       console.error('Error:', error);
@@ -69,13 +68,7 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   if (!totalBudgetMedium || !totalBudgetLow ||!totalBudgetHigh ||!strategies) {
     throw new Error('Failed to fetch budget or strategies data from backend.');
   }
-  
-  // Utilisez totalBudgetLow, totalBudgetMedium, totalBudgetHigh et strategies
-  console.log('Low Budget:', totalBudgetLow);
-  console.log('Medium Budget:', totalBudgetMedium);
-  console.log('High Budget:', totalBudgetHigh);
-  console.log('Strategies:', strategies);
-  
+    
   // console.log(computedAdvice);
   
 
@@ -84,19 +77,10 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies); // Todo: naming
   const regionCosts: RegionCosts = getCostPerRegions(strategies); // Todo: naming
   
-  let typologiesData: TypologiesData = {
-    //TODO: refacto
-    nbs_removal: typology.nbsRemoval,
-    nbs_avoidance: typology.nbsAvoidance,
-    biochar: typology.biochar,
-    dac: typology.dac,
-    renewable_energy: typology.renewableEnergy,
-  };
-
-  let regionsData: RegionsData = {
+  let regionsData: RegionAllocation = {
     // todo: refacto
-    north_america: regionAllocation.northAmerica,
-    south_america: regionAllocation.southAmerica,
+    northAmerica: regionAllocation.northAmerica,
+    southAmerica: regionAllocation.southAmerica,
     europe: regionAllocation.europe,
     africa: regionAllocation.africa,
     asia: regionAllocation.asia,
@@ -105,7 +89,7 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   
   let algoRes: BudgetOutputData = {
     financing: financingData,
-    typologies: typologiesData,
+    typologies: typology,
     regions: regionsData,
     carbon_offset: carbonToOffset,
     total_cost_low: totalBudgetLow,

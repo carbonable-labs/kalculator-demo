@@ -62,8 +62,8 @@ export const adviceBudgetFinancing = (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
 ): Advice => {
-  if (input.financing.financingExAnte <= 0.88) {
-    let newFinancing: Financing = { financingExAnte: 0.88, financingExPost: 0.12 };
+  if (input.financing.exAnte <= 0.88) {
+    let newFinancing: Financing = { exAnte: 0.88, exPost: 0.12 };
     let newOutput: BudgetOutputData = runBudgetAlgorithm({ ...input, financing: newFinancing });
     let delta = output.total_cost_medium - newOutput.total_cost_medium;
     const minProfit = output.total_cost_medium * 0.005; // 0.5% profit margin
@@ -122,7 +122,7 @@ export const adviceBudgetTypology = (
     let errors = computeSolutionError(prevTypologyDistribution, prevCosts, targetCoeff);
     let totalCost =
       prevCosts.reduce((a, b) => a + b) *
-      (output.financing.ex_post + output.financing.ex_ante * deltaExAnte);
+      (output.financing.exPost + output.financing.exAnte * deltaExAnte);
     let costCoeffs = prevCosts.map((x) => x / totalCost);
 
     let maxErrorIndex = errors.indexOf(Math.max(...errors));
@@ -285,7 +285,7 @@ export const adviceBudgetGeography = (
     let errors = computeSolutionError(prevRegionDistribution, prevCosts, targetCoeff);
     let totalCost =
       prevCosts.reduce((a, b) => a + b) *
-      (newOutput.financing.ex_post + newOutput.financing.ex_ante * deltaExAnte);
+      (newOutput.financing.exPost + newOutput.financing.exAnte * deltaExAnte);
     let costCoeffs = prevCosts.map((x) => x / totalCost);
 
     let maxErrorIndex = errors.indexOf(Math.max(...errors));

@@ -1,6 +1,13 @@
 import { PythonShell } from 'python-shell';
 import path from 'path';
-import { BudgetAlgorithmInput, PurchaseEntry, YearlyStrategy } from '@/types/types';
+import {
+  BudgetAlgorithmInput,
+  PurchaseEntry,
+  YearlyStrategy,
+  TypologyFinancingBreakdown,
+  FinancingPurchaseDetails,
+  RegionPurchase,
+} from '@/types/types';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -19,15 +26,19 @@ export default async function handler(req, res) {
     };
 
     const data = await PythonShell.run(scriptPath, options);
-    console.log("not parsed:", data);
     const parsedData = JSON.parse(data[0]);
-    console.log("parsed:", data);
+    console.log("parsedData:", parsedData);
     const parsedResults: PurchaseEntry[] = parsedData.results;
-    const yearlyStrategiesMap = new Map<number, YearlyStrategy>();
-    let totalBudgetMedium: number = 0;
-    parsedResults.forEach((entry) => {
-      const { year, quantity, typology, region, price } = entry;
 
+    const yearlyStrategiesMap = new Map<number, YearlyStrategy>();
+    let totalBudgetLow: number = 0;
+    let totalBudgetMedium: number = 0;
+    let totalBudgetHigh: number = 0;
+
+    parsedResults.forEach((entry) => {
+      const { year, quantity, typology, region, price, type } = entry;
+
+      // Find or create the YearlyStrategy for the year
       let yearlyStrategy = yearlyStrategiesMap.get(year);
       if (!yearlyStrategy) {
         yearlyStrategy = {
@@ -36,46 +47,80 @@ export default async function handler(req, res) {
           cost_low: 0,
           cost_medium: 0,
           cost_high: 0,
-          types_purchased: []
+          types_purchased: [],
         };
         yearlyStrategiesMap.set(year, yearlyStrategy);
       }
 
       yearlyStrategy.quantity_purchased += quantity;
-      yearlyStrategy.cost_medium += quantity * price;
 
-      let typePurchased = yearlyStrategy.types_purchased.find(tp => tp.typology === typology);
-      if (!typePurchased) {
-        typePurchased = {
+      // For simplicity, assuming cost_low = 0.9 * price, cost_high = 1.1 * price
+      const cost = quantity * price;
+      const costLow = quantity * price * 0.9;
+      const costHigh = quantity * price * 1.1;
+
+      yearlyStrategy.cost_medium += cost;
+      yearlyStrategy.cost_low += costLow;
+      yearlyStrategy.cost_high += costHigh;
+
+      totalBudgetMedium += cost;
+      totalBudgetLow += costLow;
+      totalBudgetHigh += costHigh;
+
+      // Find or create the TypologyFinancingBreakdown for the typology
+      let typologyBreakdown = yearlyStrategy.types_purchased.find(tp => tp.typology === typology);
+      if (!typologyBreakdown) {
+        typologyBreakdown = {
           typology,
-          quantity: 0,
-          regions: [],
-          price_per_ton: 0
+          exAnte: {
+            quantity: 0,
+            regions: [],
+            price_per_ton: 0,
+            cost: 0,
+          },
+          exPost: {
+            quantity: 0,
+            regions: [],
+            price_per_ton: 0,
+            cost: 0,
+          },
         };
-        yearlyStrategy.types_purchased.push(typePurchased);
+        yearlyStrategy.types_purchased.push(typologyBreakdown);
       }
 
-      typePurchased.quantity += quantity;
+      // Select the correct FinancingPurchaseDetails based on the type
+      let financingDetails: FinancingPurchaseDetails;
+      if (type === 'ex-ante') {
+        financingDetails = typologyBreakdown.exAnte;
+      } else if (type === 'ex-post') {
+        financingDetails = typologyBreakdown.exPost;
+      } else {
+        throw new Error(`Unknown financing type: ${type}`);
+      }
 
-      let regionPurchase = typePurchased.regions.find(rp => rp.region === region);
+      financingDetails.quantity += quantity;
+      financingDetails.cost += cost;
+
+      // Update average price per ton
+      financingDetails.price_per_ton = financingDetails.cost / financingDetails.quantity;
+
+      // Find or create the RegionPurchase
+      let regionPurchase = financingDetails.regions.find(rp => rp.region === region);
       if (!regionPurchase) {
         regionPurchase = {
           region,
           quantity: 0,
-          region_factor: 1,
-          cost: 0
+          region_factor: 1, // Assuming region_factor is 1; adjust if needed
+          cost: 0,
         };
-        typePurchased.regions.push(regionPurchase);
+        financingDetails.regions.push(regionPurchase);
       }
+
       regionPurchase.quantity += quantity;
-      regionPurchase.cost += quantity * price;
-      totalBudgetMedium += quantity * price;
+      regionPurchase.cost += cost;
+
     });
 
-    console.log("totalBudgetMedium", totalBudgetMedium)
-
-    let totalBudgetLow  = totalBudgetMedium;
-    let totalBudgetHigh = totalBudgetMedium;
     const sortedStrategies = Array.from(yearlyStrategiesMap.values()).sort((a, b) => a.year - b.year);
 
     res.status(200).json({

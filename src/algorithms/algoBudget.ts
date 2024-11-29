@@ -1,9 +1,9 @@
 import {
   BudgetAlgorithmInput,
   BudgetOutputData,
-  FinancingData,
-  TypologiesData,
-  RegionsData,
+  Financing,
+  Typology,
+  RegionAllocation,
   TypologyCosts,
   RegionCosts,
   YearlyStrategy,
@@ -71,38 +71,38 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
 
   const notAdjustedBudget = totalBudgetMedium; // todo: review naming
 
-  if (financing.financingExAnte > 0) {
-    const exAnteCostMedium = totalBudgetMedium * financing.financingExAnte * deltaExAnte;
-    totalBudgetMedium = exAnteCostMedium + totalBudgetMedium * financing.financingExPost;
+  if (financing.exAnte > 0) {
+    const exAnteCostMedium = totalBudgetMedium * financing.exAnte * deltaExAnte;
+    totalBudgetMedium = exAnteCostMedium + totalBudgetMedium * financing.exPost;
 
-    const exAnteCostLow = totalBudgetLow * financing.financingExAnte * deltaExAnte;
-    totalBudgetLow = exAnteCostLow + totalBudgetLow * financing.financingExPost;
+    const exAnteCostLow = totalBudgetLow * financing.exAnte * deltaExAnte;
+    totalBudgetLow = exAnteCostLow + totalBudgetLow * financing.exPost;
 
-    const exAnteCostHigh = totalBudgetHigh * financing.financingExAnte * deltaExAnte;
-    totalBudgetHigh = exAnteCostHigh + totalBudgetHigh * financing.financingExPost;
+    const exAnteCostHigh = totalBudgetHigh * financing.exAnte * deltaExAnte;
+    totalBudgetHigh = exAnteCostHigh + totalBudgetHigh * financing.exPost;
   }
 
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies); // Todo: naming
   const regionCosts: RegionCosts = getCostPerRegions(strategies); // Todo: naming
 
-  let financingData: FinancingData = {
-    ex_ante: financing.financingExAnte,
-    ex_post: financing.financingExPost,
+  let financingData: Financing = {
+    exAnte: financing.exAnte,
+    exPost: financing.exPost,
   };
 
-  let typologiesData: TypologiesData = {
+  let typologiesData: Typology = {
     //TODO: refacto
-    nbs_removal: nbsRemoval,
-    nbs_avoidance: nbsAvoidance,
+    nbsRemoval: nbsRemoval,
+    nbsAvoidance: nbsAvoidance,
     biochar: biochar,
     dac: dac,
-    renewable_energy: renewableEnergy,
+    renewableEnergy: renewableEnergy,
   };
 
-  let regionsData: RegionsData = {
+  let regionsData: RegionAllocation = {
     // todo: refacto
-    north_america: regionAllocation.northAmerica,
-    south_america: regionAllocation.southAmerica,
+    northAmerica: regionAllocation.northAmerica,
+    southAmerica: regionAllocation.southAmerica,
     europe: regionAllocation.europe,
     africa: regionAllocation.africa,
     asia: regionAllocation.asia,
@@ -124,8 +124,8 @@ export const runBudgetAlgorithm = (input: BudgetAlgorithmInput): BudgetOutputDat
     average_price_per_ton_medium: totalBudgetMedium / carbonToOffset,
     average_price_per_ton_high: totalBudgetHigh / carbonToOffset,
     total_cost_flexible: totalBudgetMedium,
-    cost_ex_post: totalBudgetMedium * financing.financingExPost,
-    cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financing.financingExPost,
+    cost_ex_post: totalBudgetMedium * financing.exPost,
+    cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financing.exPost,
     cost_nbs_removal: typologyCosts.costNbsRemoval,
     cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
     cost_biochar: typologyCosts.costBiochar,

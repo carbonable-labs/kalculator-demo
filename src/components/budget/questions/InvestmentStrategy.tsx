@@ -10,7 +10,7 @@ import { tooltip } from '@/components/common/tootips/InvestmentStrategyTooltip';
 
 export default function InvestmentStrategy() {
   const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(
-    DEFAULT_FINANCING.financingExAnte * 100,
+    DEFAULT_FINANCING.exAnte * 100,
   );
   const [isDontKnowSelected, setIsDontKnowSelected] = useState<boolean>(false);
   const { financing, setFinancing } = useBudget();
@@ -20,15 +20,15 @@ export default function InvestmentStrategy() {
       setFinancing(DEFAULT_FINANCING);
     } else {
       setFinancing({
-        financingExAnte: (investmentStrategy as number) / 100,
-        financingExPost: (100 - (investmentStrategy as number)) / 100,
+        exAnte: (investmentStrategy as number) / 100,
+        exPost: (100 - (investmentStrategy as number)) / 100,
       });
     }
   }, [isDontKnowSelected, investmentStrategy]);
 
   useEffect(() => {
     if (financing) {
-      setInvestmentStrategy(financing.financingExAnte * 100);
+      setInvestmentStrategy(financing.exAnte * 100);
     }
   }, [financing]);
 

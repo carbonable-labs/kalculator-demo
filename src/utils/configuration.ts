@@ -9,8 +9,8 @@ export enum TYPOLOGY_PREFERENCE {
 }
 
 export const DEFAULT_FINANCING: Financing = {
-  financingExAnte: 0.5,
-  financingExPost: 0.5,
+  exAnte: 0.5,
+  exPost: 0.5,
 };
 
 export const DEFAULT_TYPOLOGY: Typology = {
@@ -86,6 +86,6 @@ export const RENEWABLE_ENERGY_TYPOLOGY: Typology = {
   renewableEnergy: 0,
 };
 
-export const continents = ['africa', 'asia', 'europe', 'north_america', 'oceania', 'south_america'];
+export const continents = ['africa', 'asia', 'europe', 'northAmerica', 'oceania', 'southAmerica'];
 
 export const ACCEPTABLE_DELTA = 0.95;

@@ -10,8 +10,8 @@ export enum ConfigType {
 
 const InputForm = () => {
   const [timeConstraints, setTimeConstraints] = useState<number>(1);
-  const [financingExPost, setFinancingExPost] = useState<number>(0.5);
-  const [financingExAnte, setFinancingExAnte] = useState<number>(0.5);
+  const [exPost, setFinancingExPost] = useState<number>(0.5);
+  const [exAnte, setFinancingExAnte] = useState<number>(0.5);
   const [budget, setBudget] = useState<number>(100000); // Budget input
   const [regionAllocation, setRegionAllocation] = useState({
     northAmerica: 0.4,
@@ -39,8 +39,8 @@ const InputForm = () => {
     const inputData = {
       timeConstraints,
       financing: {
-        financingExPost,
-        financingExAnte,
+        exPost,
+        exAnte,
       },
       regionAllocation,
       budget, // Include budget in input data
@@ -91,7 +91,7 @@ const InputForm = () => {
           <input
             type="number"
             step="0.01"
-            value={financingExPost}
+            value={exPost}
             onChange={(e) => setFinancingExPost(Number(e.target.value))}
             className="mt-1 w-full rounded border p-2"
           />
@@ -102,7 +102,7 @@ const InputForm = () => {
           <input
             type="number"
             step="0.01"
-            value={financingExAnte}
+            value={exAnte}
             onChange={(e) => setFinancingExAnte(Number(e.target.value))}
             className="mt-1 w-full rounded border p-2"
           />

@@ -4,9 +4,9 @@ import {
   StratOutputData,
   RegionCosts,
   TypologyCosts,
-  FinancingData,
-  RegionsData,
-  TypologiesData,
+  Financing,
+  RegionAllocation,
+  Typology,
 } from '@/types/types';
 import { getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
 import { currentYear, targetYear, duration } from '@/constants/time';
@@ -81,9 +81,9 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     }
 
     notAdjustedBudget = totalBudgetMedium;
-    if (financing.financingExAnte > 0) {
-      const exAnteCost = totalBudgetMedium * financing.financingExAnte * deltaExAnte;
-      totalBudgetMedium = exAnteCost + totalBudgetMedium * financing.financingExPost;
+    if (financing.exAnte > 0) {
+      const exAnteCost = totalBudgetMedium * financing.exAnte * deltaExAnte;
+      totalBudgetMedium = exAnteCost + totalBudgetMedium * financing.exPost;
     }
 
     [prevNbsRemoval, prevNbsAvoidance, prevBiochar, prevDac, prevRenewableEnergy] = [
@@ -127,22 +127,22 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
   const regionCosts: RegionCosts = getCostPerRegions(strategies);
 
-  let financingData: FinancingData = {
-    ex_ante: financing.financingExAnte,
-    ex_post: financing.financingExPost,
+  let financingData: Financing = {
+    exAnte: financing.exAnte,
+    exPost: financing.exPost,
   };
 
-  let typologiesData: TypologiesData = {
-    nbs_removal: nbsRemoval,
-    nbs_avoidance: nbsAvoidance,
+  let typologiesData: Typology = {
+    nbsRemoval: nbsRemoval,
+    nbsAvoidance: nbsAvoidance,
     biochar: biochar,
     dac: dac,
-    renewable_energy: renewableEnergy,
+    renewableEnergy: renewableEnergy,
   };
 
-  let regionsData: RegionsData = {
-    north_america: regionAllocation.northAmerica,
-    south_america: regionAllocation.southAmerica,
+  let regionsData: RegionAllocation = {
+    northAmerica: regionAllocation.northAmerica,
+    southAmerica: regionAllocation.southAmerica,
     europe: regionAllocation.europe,
     africa: regionAllocation.africa,
     asia: regionAllocation.asia,
@@ -169,8 +169,8 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     average_price_per_ton_medium: totalBudgetMedium / carbonToOffset,
     average_price_per_ton_high: totalBudgetHigh / carbonToOffset,
     total_cost_flexible: totalBudgetMedium, //TODO ??
-    cost_ex_post: notAdjustedBudget * financing.financingExPost,
-    cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financing.financingExPost,
+    cost_ex_post: notAdjustedBudget * financing.exPost,
+    cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financing.exPost,
     cost_nbs_removal: typologyCosts.costNbsRemoval,
     cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
     cost_biochar: typologyCosts.costBiochar,

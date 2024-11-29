@@ -10,10 +10,10 @@ export const displayedNames: Record<string, string> = {
   africa: 'Africa',
   asia: 'Asia',
   europe: 'Europe',
-  north_america: 'North America',
+  northAmerica: 'North America',
   northAmerica: 'North America',
   oceania: 'Oceania',
-  south_america: 'Latin America',
+  southAmerica: 'Latin America',
   southAmerica: 'Latin America',
 };
 

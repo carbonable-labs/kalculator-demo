@@ -19,14 +19,14 @@ export interface UserPreferences {
 
 // Maps each typology (e.g., NbS Removal, Biochar, DAC) to its scoring attributes.
 export const typologyMapping = {
-  nbs_removal: {
+  nbsRemoval: {
     biodiversity: 5,
     durability: 4,
     removal: 5,
     pricing: 4,
     reputation: 5,
   },
-  nbs_avoidance: {
+  nbsAvoidance: {
     biodiversity: 4,
     durability: 2,
     removal: 3,
@@ -47,7 +47,7 @@ export const typologyMapping = {
     pricing: 1,
     reputation: 4,
   },
-  renewable_energy: {
+  renewableEnergy: {
     biodiversity: 2,
     durability: 3,
     removal: 3,
@@ -74,8 +74,8 @@ export interface Typology {
 }
 
 export interface Financing {
-  financingExPost: number;
-  financingExAnte: number;
+  exPost: number;
+  exAnte: number;
 }
 
 export enum TimeConstraint { // TODO: maybe change typing
@@ -85,11 +85,11 @@ export enum TimeConstraint { // TODO: maybe change typing
 }
 
 export type ProjectConfig = {
-  nbs_removal: number; // NbS ARR project weight
+  nbsRemoval: number; // NbS ARR project weight
   biochar: number; // Biochar project weight
   dac: number; // DAC project weight
-  nbs_avoidance: number; // NbS REDD project weight
-  renewable_energy: number; // Renewable Energy project weight
+  nbsAvoidance: number; // NbS REDD project weight
+  renewableEnergy: number; // Renewable Energy project weight
 };
 
 export enum ConfigType {
@@ -127,33 +127,10 @@ export interface TypoAlgorithmInput {
 
 // Algos output
 
-export interface FinancingData {
-  exAnte: number;
-  exPost: number;
-}
-
-export interface TypologiesData {
-  nbs_removal: number;
-  nbs_avoidance: number;
-  biochar: number;
-  dac: number;
-  renewable_energy: number;
-  // blue_carbon: number;
-}
-
-export interface RegionsData {
-  north_america: number;
-  south_america: number;
-  europe: number;
-  africa: number;
-  asia: number;
-  oceania: number;
-}
-
 export interface RegionPurchase {
   region: string;
   quantity: number;
-  region_factor: number;
+  region_factor: number;  // todo camel case
   cost: number;
 }
 
@@ -166,7 +143,7 @@ export interface RegionCosts {
   oceania: number;
 }
 
-export interface TypePurchased {
+export interface TypologyPurchaseSummary {
   typology: string;
   quantity: number;
   regions: RegionPurchase[]; // todo bug fix: apparently we always have a len of 1
@@ -191,30 +168,22 @@ export interface TypologyCosts {
   costRenewableEnergy: number;
 }
 
-export interface TypesPurchasedPriceExPost {
-  typology: string;
-  quantity: number;
-  region: RegionPurchase;
-  price: number;
-  coefficient: number;
-}
-
 export interface YearlyStrategy {
   year: number;
-  quantity_purchased: number;
+  quantity_purchased: number; // todo: totalQuantityPurchased
   cost_low: number; // todo: Average cost of all the assets ?
   cost_medium: number; // ""
   cost_high: number; // ""
-  types_purchased: TypePurchasedByType[];
+  types_purchased: TypologyFinancingBreakdown[];  // todo types_purchased -> rename typologyBreakdown
 }
 
-export interface TypePurchasedByType {
+export interface TypologyFinancingBreakdown {
   typology: string;
-  ex_ante: TypePurchasedDetails; // Details for ex-ante
-  ex_post: TypePurchasedDetails; // Details for ex-post
+  exAnte: FinancingPurchaseDetails; // Details for ex-ante
+  exPost: FinancingPurchaseDetails; // Details for ex-post
 }
 
-export interface TypePurchasedDetails {
+export interface FinancingPurchaseDetails {
   quantity: number;
   regions: RegionPurchase[];
   price_per_ton: number; // Average price per ton
@@ -236,9 +205,9 @@ export interface BudgetPythonResponse {
   strategies: YearlyStrategy[];
 }
 export interface BudgetOutputData {
-  financing: FinancingData;
-  typologies: TypologiesData;
-  regions: RegionsData;
+  financing: Financing;
+  typologies: Typology;
+  regions: RegionAllocation;
   carbon_offset: number;
   total_cost_low: number;
   total_cost_medium: number;
@@ -270,10 +239,10 @@ export interface BudgetOutputData {
 }
 
 export interface StratOutputData {
-  financing: FinancingData;
-  typologies: TypologiesData;
-  regions: RegionsData;
-  otherTypologiesPossible: TypologiesData[];
+  financing: Financing;
+  typologies: Typology;
+  regions: RegionAllocation;
+  otherTypologiesPossible: Typology[];
   carbon_offset: number;
   user_budget: number;
   money_saving: number;
@@ -309,9 +278,9 @@ export interface StratOutputData {
 }
 
 export interface TypoOutputData {
-  financing: FinancingData;
-  typologies: TypologiesData;
-  regions: RegionsData;
+  financing: Financing;
+  typologies: Typology;
+  regions: RegionAllocation;
   carbon_offset: number;
   user_budget: number;
   money_saving: number;

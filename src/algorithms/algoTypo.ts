@@ -4,10 +4,10 @@ import {
   TypoAlgorithmInput,
   TypoOutputData,
   YearlyStrategy,
-  FinancingData,
+  Financing,
   RegionCosts,
-  RegionsData,
-  TypologiesData,
+  RegionAllocation,
+  Typology,
   TypologyCosts,
 } from '@/types/types';
 import { getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
@@ -24,11 +24,11 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
   for (const config of projectConfig) {
     // Loop through each type repartition, from the most aligned to the least
     // Access values from the config object
-    const nbsRemoval = config.nbs_removal * carbonToOffset;
+    const nbsRemoval = config.nbsRemoval * carbonToOffset;
     const biochar = config.biochar * carbonToOffset;
     const dac = config.dac * carbonToOffset;
-    const nbsAvoidance = config.nbs_avoidance * carbonToOffset;
-    const renewableEnergy = config.renewable_energy * carbonToOffset;
+    const nbsAvoidance = config.nbsAvoidance * carbonToOffset;
+    const renewableEnergy = config.renewableEnergy * carbonToOffset;
 
     let strategies: YearlyStrategy[];
     let totalBudgetLow: number, totalBudgetMedium: number, totalBudgetHigh: number;
@@ -78,15 +78,15 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
     }
 
     const notAdjustedBudget = totalBudgetMedium;
-    if (financing.financingExAnte > 0) {
-      const exAnteCostMedium = totalBudgetMedium * financing.financingExAnte * deltaExAnte;
-      totalBudgetMedium = exAnteCostMedium + totalBudgetMedium * financing.financingExPost;
+    if (financing.exAnte > 0) {
+      const exAnteCostMedium = totalBudgetMedium * financing.exAnte * deltaExAnte;
+      totalBudgetMedium = exAnteCostMedium + totalBudgetMedium * financing.exPost;
 
-      const exAnteCostLow = totalBudgetLow * financing.financingExAnte * deltaExAnte;
-      totalBudgetLow = exAnteCostLow + totalBudgetLow * financing.financingExPost;
+      const exAnteCostLow = totalBudgetLow * financing.exAnte * deltaExAnte;
+      totalBudgetLow = exAnteCostLow + totalBudgetLow * financing.exPost;
 
-      const exAnteCostHigh = totalBudgetHigh * financing.financingExAnte * deltaExAnte;
-      totalBudgetHigh = exAnteCostHigh + totalBudgetHigh * financing.financingExPost;
+      const exAnteCostHigh = totalBudgetHigh * financing.exAnte * deltaExAnte;
+      totalBudgetHigh = exAnteCostHigh + totalBudgetHigh * financing.exPost;
     }
     // If the budget fits the user's constraints, return the results. If not, try the next configuration
     let budget_not_compatible;
@@ -96,22 +96,22 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
       const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
       const regionCosts: RegionCosts = getCostPerRegions(strategies);
 
-      let financingData: FinancingData = {
-        ex_ante: financing.financingExAnte,
-        ex_post: financing.financingExPost,
+      let financingData: Financing = {
+        exAnte: financing.exAnte,
+        exPost: financing.exPost,
       };
 
-      let typologiesData: TypologiesData = {
-        nbs_removal: nbsRemoval,
-        nbs_avoidance: nbsAvoidance,
+      let typologiesData: Typology = {
+        nbsRemoval: nbsRemoval,
+        nbsAvoidance: nbsAvoidance,
         biochar: biochar,
         dac: dac,
-        renewable_energy: renewableEnergy,
+        renewableEnergy: renewableEnergy,
       };
 
-      let regionsData: RegionsData = {
-        north_america: regionAllocation.northAmerica,
-        south_america: regionAllocation.southAmerica,
+      let regionsData: RegionAllocation = {
+        northAmerica: regionAllocation.northAmerica,
+        southAmerica: regionAllocation.southAmerica,
         europe: regionAllocation.europe,
         africa: regionAllocation.africa,
         asia: regionAllocation.asia,
@@ -137,8 +137,8 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
         average_price_per_ton_medium: totalBudgetMedium / carbonToOffset,
         average_price_per_ton_high: totalBudgetHigh / carbonToOffset,
         total_cost_flexible: totalBudgetMedium, //TODO
-        cost_ex_post: notAdjustedBudget * financing.financingExPost,
-        cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financing.financingExPost,
+        cost_ex_post: notAdjustedBudget * financing.exPost,
+        cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financing.exPost,
         cost_nbs_removal: typologyCosts.costNbsRemoval,
         cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
         cost_biochar: typologyCosts.costBiochar,
@@ -161,9 +161,9 @@ export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
 
   // If no configuration fits the user's constraints, return default values
   return {
-    financing: { ex_ante: 0, ex_post: 0 },
-    typologies: { nbs_removal: 0, nbs_avoidance: 0, biochar: 0, dac: 0, renewable_energy: 0 },
-    regions: { north_america: 0, south_america: 0, europe: 0, africa: 0, asia: 0, oceania: 0 },
+    financing: { exAnte: 0, exPost: 0 },
+    typologies: { nbsRemoval: 0, nbsAvoidance: 0, biochar: 0, dac: 0, renewableEnergy: 0 },
+    regions: { northAmerica: 0, southAmerica: 0, europe: 0, africa: 0, asia: 0, oceania: 0 },
     carbon_offset: 0,
     user_budget: 0,
     money_saving: 0,

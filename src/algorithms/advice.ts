@@ -15,19 +15,19 @@ export interface Advice {
 }
 
 // export interface AdviceFinancing {
-//     financingExPost: number;
-//     financingExAnte: number;
+//     exPost: number;
+//     exAnte: number;
 //     advicePhrase: string;
 // }
 
 export const adviceFinancing = (financing: Financing): Advice => {
-  if (financing.financingExPost > 0.2) {
+  if (financing.exPost > 0.2) {
     return {
       change: true,
       advice: 'You should consider reducing ex-post financing.',
       // advice: {
-      //     financingExPost: financing.financingExPost - 0.1,
-      //     financingExAnte: financing.financingExAnte + 0.1,
+      //     exPost: financing.exPost - 0.1,
+      //     exAnte: financing.exAnte + 0.1,
       //     advice_phrase: "You should consider reducing ex-post financing."
       // }
     };

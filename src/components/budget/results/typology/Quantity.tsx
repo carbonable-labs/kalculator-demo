@@ -11,14 +11,14 @@ export default function Quantity() {
   }
 
   const total =
-    budgetResults.typologies.nbs_avoidance +
-    budgetResults.typologies.nbs_removal +
+    budgetResults.typologies.nbsAvoidance +
+    budgetResults.typologies.nbsRemoval +
     budgetResults.typologies.dac +
     budgetResults.typologies.biochar;
 
-  const nbsPercentage = Math.round((budgetResults.typologies.nbs_removal / total) * 100);
+  const nbsPercentage = Math.round((budgetResults.typologies.nbsRemoval / total) * 100);
 
-  const renewablePercentage = Math.round((budgetResults.typologies.nbs_avoidance / total) * 100);
+  const renewablePercentage = Math.round((budgetResults.typologies.nbsAvoidance / total) * 100);
 
   const biocharPercentage = Math.round((budgetResults.typologies.biochar / total) * 100);
 

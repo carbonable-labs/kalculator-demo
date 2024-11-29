@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 
 const InputForm = () => {
   const [timeConstraints, setTimeConstraints] = useState<number>(1);
-  const [financingExPost, setFinancingExPost] = useState<number>(0.5);
-  const [financingExAnte, setFinancingExAnte] = useState<number>(0.5);
+  const [exPost, setFinancingExPost] = useState<number>(0.5);
+  const [exAnte, setFinancingExAnte] = useState<number>(0.5);
   const [nbsRemoval, setNbsRemoval] = useState<number>(0.4);
   const [nbsAvoidance, setNbsAvoidance] = useState<number>(0.3);
   const [biochar, setBiochar] = useState<number>(0.2);
@@ -27,8 +27,8 @@ const InputForm = () => {
     const inputData = {
       timeConstraints,
       financing: {
-        financingExPost,
-        financingExAnte,
+        exPost,
+        exAnte,
       },
       typology: {
         nbsRemoval,
@@ -73,7 +73,7 @@ const InputForm = () => {
           <input
             type="number"
             step="0.01"
-            value={financingExPost}
+            value={exPost}
             onChange={(e) => setFinancingExPost(Number(e.target.value))}
             className="mt-1 w-full rounded border p-2"
           />
@@ -84,7 +84,7 @@ const InputForm = () => {
           <input
             type="number"
             step="0.01"
-            value={financingExAnte}
+            value={exAnte}
             onChange={(e) => setFinancingExAnte(Number(e.target.value))}
             className="mt-1 w-full rounded border p-2"
           />

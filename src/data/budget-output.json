@@ -1,17 +1,17 @@
 {
   "financing": {
-    "ex_ante": 0.5,
-    "ex_post": 0.5
+    "exAnte": 0.5,
+    "exPost": 0.5
   },
   "typologies": {
-    "nbs_removal": 0.6,
-    "nbs_avoidance": 0.3,
+    "nbsRemoval": 0.6,
+    "nbsAvoidance": 0.3,
     "biochar": 0.05,
     "dac": 0.05
   },
   "regions": {
-    "north_america": 0.4,
-    "south_america": 0.1,
+    "northAmerica": 0.4,
+    "southAmerica": 0.1,
     "europe": 0.2,
     "africa": 0.1,
     "asia": 0.1,
@@ -53,11 +53,11 @@
       "total_cost_high": 50000,
       "types_purchased": [
         {
-          "typology": "nbs_removal",
+          "typology": "nbsRemoval",
           "quantity": 400,
           "regions": [
             {
-              "region": "north_america",
+              "region": "northAmerica",
               "quantity": 160,
               "region_factor": 2.16,
               "cost": 55555
@@ -116,11 +116,11 @@
       "total_cost_high": 58000,
       "types_purchased": [
         {
-          "typology": "nbs_removal",
+          "typology": "nbsRemoval",
           "quantity": 650,
           "regions": [
             {
-              "region": "north_america",
+              "region": "northAmerica",
               "quantity": 260,
               "region_factor": 2.16,
               "cost": 5555
@@ -134,11 +134,11 @@
           ]
         },
         {
-          "typology": "nbs_avoidance",
+          "typology": "nbsAvoidance",
           "quantity": 200,
           "regions": [
             {
-              "region": "south_america",
+              "region": "southAmerica",
               "quantity": 100,
               "region_factor": 0.29,
               "cost": 5555
@@ -173,11 +173,11 @@
       "total_cost_high": 64000,
       "types_purchased": [
         {
-          "typology": "nbs_removal",
+          "typology": "nbsRemoval",
           "quantity": 770,
           "regions": [
             {
-              "region": "north_america",
+              "region": "northAmerica",
               "quantity": 308,
               "region_factor": 2.16,
               "cost": 5555
@@ -191,11 +191,11 @@
           ]
         },
         {
-          "typology": "nbs_avoidance",
+          "typology": "nbsAvoidance",
           "quantity": 200,
           "regions": [
             {
-              "region": "south_america",
+              "region": "southAmerica",
               "quantity": 100,
               "region_factor": 0.29,
               "cost": 5555
@@ -230,11 +230,11 @@
       "total_cost_high": 66000,
       "types_purchased": [
         {
-          "typology": "nbs_removal",
+          "typology": "nbsRemoval",
           "quantity": 790,
           "regions": [
             {
-              "region": "north_america",
+              "region": "northAmerica",
               "quantity": 316,
               "region_factor": 2.16,
               "cost": 5555
@@ -248,11 +248,11 @@
           ]
         },
         {
-          "typology": "nbs_avoidance",
+          "typology": "nbsAvoidance",
           "quantity": 200,
           "regions": [
             {
-              "region": "south_america",
+              "region": "southAmerica",
               "quantity": 100,
               "region_factor": 0.29,
               "cost": 5555
@@ -287,11 +287,11 @@
       "total_cost_high": 67000,
       "types_purchased": [
         {
-          "typology": "nbs_removal",
+          "typology": "nbsRemoval",
           "quantity": 810,
           "regions": [
             {
-              "region": "north_america",
+              "region": "northAmerica",
               "quantity": 324,
               "region_factor": 2.16,
               "cost": 5555
@@ -305,11 +305,11 @@
           ]
         },
         {
-          "typology": "nbs_avoidance",
+          "typology": "nbsAvoidance",
           "quantity": 200,
           "regions": [
             {
-              "region": "south_america",
+              "region": "southAmerica",
               "quantity": 100,
               "region_factor": 0.29,
               "cost": 5555
@@ -344,11 +344,11 @@
       "total_cost_high": 68000,
       "types_purchased": [
         {
-          "typology": "nbs_removal",
+          "typology": "nbsRemoval",
           "quantity": 830,
           "regions": [
             {
-              "region": "north_america",
+              "region": "northAmerica",
               "quantity": 332,
               "region_factor": 2.16,
               "cost": 5555
@@ -362,11 +362,11 @@
           ]
         },
         {
-          "typology": "nbs_avoidance",
+          "typology": "nbsAvoidance",
           "quantity": 200,
           "regions": [
             {
-              "region": "south_america",
+              "region": "southAmerica",
               "quantity": 100,
               "region_factor": 0.29,
               "cost": 5555
@@ -401,11 +401,11 @@
       "total_cost_high": 69000,
       "types_purchased": [
         {
-          "typology": "nbs_removal",
+          "typology": "nbsRemoval",
           "quantity": 840,
           "regions": [
             {
-              "region": "north_america",
+              "region": "northAmerica",
               "quantity": 336,
               "region_factor": 2.16,
               "cost": 5555
@@ -419,11 +419,11 @@
           ]
         },
         {
-          "typology": "nbs_avoidance",
+          "typology": "nbsAvoidance",
           "quantity": 200,
           "regions": [
             {
-              "region": "south_america",
+              "region": "southAmerica",
               "quantity": 100,
               "region_factor": 0.29,
               "cost": 5555
@@ -458,11 +458,11 @@
       "total_cost_high": 70000,
       "types_purchased": [
         {
-          "typology": "nbs_removal",
+          "typology": "nbsRemoval",
           "quantity": 800,
           "regions": [
             {
-              "region": "north_america",
+              "region": "northAmerica",
               "quantity": 320,
               "region_factor": 2.16,
               "cost": 5555

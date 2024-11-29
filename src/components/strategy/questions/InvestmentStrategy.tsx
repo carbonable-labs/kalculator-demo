@@ -21,11 +21,11 @@ export default function InvestmentStrategy() {
   useEffect(() => {
     if (isDontKnowSelected) {
       setFinancing(DEFAULT_FINANCING);
-      setFormattedInvestmentStrategy(DEFAULT_FINANCING.financingExAnte * 100);
+      setFormattedInvestmentStrategy(DEFAULT_FINANCING.exAnte * 100);
     } else {
       setFinancing({
-        financingExAnte: formattedInvestmentStrategy / 100,
-        financingExPost: (100 - formattedInvestmentStrategy) / 100,
+        exAnte: formattedInvestmentStrategy / 100,
+        exPost: (100 - formattedInvestmentStrategy) / 100,
       });
     }
   }, [isDontKnowSelected, formattedInvestmentStrategy]);

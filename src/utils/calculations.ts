@@ -15,15 +15,14 @@ import {
   RegionCosts,
   RegionPurchase,
   YearlyStrategy,
-  TypePurchased,
+  TypologyPurchaseSummary,
   Typology,
-  TypologiesData,
   UserPreferences,
   typologyMapping,
 } from '@/types/types';
 
-export const calculateTypologyScores = (preferences: UserPreferences): TypologiesData => {
-  const scores: Partial<TypologiesData> = {};
+export const calculateTypologyScores = (preferences: UserPreferences): Typology => {
+  const scores: Partial<Typology> = {};
 
   Object.entries(typologyMapping).forEach(([typology, attributes]) => {
     const score =
@@ -33,21 +32,21 @@ export const calculateTypologyScores = (preferences: UserPreferences): Typologie
       preferences.pricing * attributes.pricing +
       preferences.reputation * attributes.reputation;
 
-    scores[typology as keyof TypologiesData] = score;
+    scores[typology as keyof Typology] = score;
   });
 
-  return scores as TypologiesData;
+  return scores as Typology;
 };
 
-export const normalizeScoresToPercentages = (scores: TypologiesData): Typology => {
+export const normalizeScoresToPercentages = (scores: Typology): Typology => {
   const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
 
   return {
-    nbsRemoval: (scores.nbs_removal / total) * 100,
-    nbsAvoidance: (scores.nbs_avoidance / total) * 100,
+    nbsRemoval: (scores.nbsRemoval / total) * 100,
+    nbsAvoidance: (scores.nbsAvoidance / total) * 100,
     biochar: (scores.biochar / total) * 100,
     dac: (scores.dac / total) * 100,
-    renewableEnergy: (scores.renewable_energy / total) * 100,
+    renewableEnergy: (scores.renewableEnergy / total) * 100,
     // blueCarbon: (scores.blue_carbon / total) * 100,
   };
 };
@@ -57,7 +56,7 @@ export const checkPriceExPost = (
   quantityToOffset: number,
   typology: Typology,
   regionAllocation: RegionAllocation,
-): [number, number, number, number, TypePurchased[]] => {
+): [number, number, number, number, TypologyPurchaseSummary[]] => {
   const options = {
     nbsRemoval: [
       typology.nbsRemoval,
@@ -102,7 +101,7 @@ export const checkPriceExPost = (
   let totalCostLow = 0.0;
   let totalCostMedium = 0.0;
   let totalCostHigh = 0.0;
-  const typesPurchased: TypePurchased[] = [];
+  const typesPurchased: TypologyPurchaseSummary[] = [];
 
   for (const [
     typologyKey,

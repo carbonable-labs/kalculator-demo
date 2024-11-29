@@ -12,8 +12,8 @@ export default function Quantity() {
   }
 
   const exPostPercentage = Math.round(
-    (budgetResults.financing.ex_post /
-      (budgetResults.financing.ex_post + budgetResults.financing.ex_ante)) *
+    (budgetResults.financing.exPost /
+      (budgetResults.financing.exPost + budgetResults.financing.exAnte)) *
       100,
   );
 
