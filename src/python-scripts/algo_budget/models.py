@@ -10,7 +10,7 @@ class Typology(TypedDict):
     nbsAvoidance: int
     biochar: int
     dac: int
-    blueCarbon: int
+    renewableEnergy: int
 
 class RegionAllocation(TypedDict):
     northAmerica: int

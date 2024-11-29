@@ -8,7 +8,7 @@ from typing import TypedDict, Dict
 
 from models import Financing, Typology, RegionAllocation, TimeConstraint, CarbonNeeds
 from constants import (nbs_arrRegion, nbs_reddRegion, dacRegion, biocharRegion,
-                       blue_carbonRegion, x_coefficients, coefficients)
+                       renewableEnergyRegion, x_coefficients, coefficients)
 
 
 # TODO : Write asserts to verify that for each parameter, the sum of the entered fields equals 1
@@ -37,7 +37,7 @@ def yearlyAlgo(
             "nbsAvoidance": 0.3,
             "biochar": 0.1,
             "dac": 0.05,
-            "blueCarbon": 0.05
+            "renewableEnergy": 0.05
         }
         region_allocation = {
             "northAmerica": 0.1,
@@ -71,7 +71,7 @@ def yearlyAlgo(
         "NbS_REDD": 2,
         "DAC": 3,
         "Biochar": 4,
-        "Blue_Carbon": 5
+        "Renewable_Energy": 5
     }
 
     # Purchase variables (ex-post and ex-ante) by typology, year and region
@@ -204,16 +204,16 @@ def yearlyAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            regional_coefficients["x"]["Blue_Carbon"][region][year] *
-            x_vars["Blue_Carbon"][region][year]
+            regional_coefficients["x"]["Renewable_Energy"][region][year] *
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         ) +
         lpSum(
-            regional_coefficients["y"]["Blue_Carbon"][region][year] *
-            y_vars["Blue_Carbon"][region][year]
+            regional_coefficients["y"]["Renewable_Energy"][region][year] *
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -282,16 +282,16 @@ def yearlyAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["x"]["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["x"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         ) +
         lpSum(
-            y_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["y"]["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["y"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -331,11 +331,11 @@ def yearlyAlgo(
                 for region in regions
             ) +
 
-            # Blue_Carbon
+            # Renewable_Energy
             lpSum(
-                x_vars["Blue_Carbon"][region][year] * regional_coefficients["x"]["Blue_Carbon"][region][year] +
-                y_vars["Blue_Carbon"][region][year] * \
-                regional_coefficients["y"]["Blue_Carbon"][region][year]
+                x_vars["Renewable_Energy"][region][year] * regional_coefficients["x"]["Renewable_Energy"][region][year] +
+                y_vars["Renewable_Energy"][region][year] * \
+                regional_coefficients["y"]["Renewable_Energy"][region][year]
                 for region in regions
             ) >= z_min
         )
@@ -399,16 +399,16 @@ def yearlyAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["x"]["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["x"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         ) +
         lpSum(
-            y_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["y"]["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["y"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -448,11 +448,11 @@ def yearlyAlgo(
                 for region in regions
             ) +
 
-            # Blue_Carbon
+            # Renewable_Energy
             lpSum(
-                x_vars["Blue_Carbon"][region][year] * regional_coefficients["x"]["Blue_Carbon"][region][year] +
-                y_vars["Blue_Carbon"][region][year] * \
-                regional_coefficients["y"]["Blue_Carbon"][region][year]
+                x_vars["Renewable_Energy"][region][year] * regional_coefficients["x"]["Renewable_Energy"][region][year] +
+                y_vars["Renewable_Energy"][region][year] * \
+                regional_coefficients["y"]["Renewable_Energy"][region][year]
                 for region in regions
             ) <= z
         )
@@ -509,14 +509,14 @@ def yearlyAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         ) +
         lpSum(
-            y_vars["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -551,9 +551,9 @@ def yearlyAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -589,9 +589,9 @@ def yearlyAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            y_vars["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -635,10 +635,10 @@ def yearlyAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -684,14 +684,14 @@ def yearlyAlgo(
         ) == typology["biochar"] * total_purch_for_typo_distrib
     )
 
-    # Blue_Carbon
+    # Renewable_Energy
     Lp_prob += (
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
-        ) == typology["blueCarbon"] * total_purch_for_typo_distrib
+        ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
     ## Constraint : distribution of geographical areas##
@@ -730,10 +730,10 @@ def yearlyAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -762,8 +762,8 @@ def yearlyAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["northAmerica"][year] +
-            y_vars["Blue_Carbon"]["northAmerica"][year]
+            x_vars["Renewable_Energy"]["northAmerica"][year] +
+            y_vars["Renewable_Energy"]["northAmerica"][year]
             for year in range(26)
         )
     ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
@@ -792,8 +792,8 @@ def yearlyAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["southAmerica"][year] +
-            y_vars["Blue_Carbon"]["southAmerica"][year]
+            x_vars["Renewable_Energy"]["southAmerica"][year] +
+            y_vars["Renewable_Energy"]["southAmerica"][year]
             for year in range(26)
         )
     ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
@@ -822,8 +822,8 @@ def yearlyAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["europe"][year] +
-            y_vars["Blue_Carbon"]["europe"][year]
+            x_vars["Renewable_Energy"]["europe"][year] +
+            y_vars["Renewable_Energy"]["europe"][year]
             for year in range(26)
         )
     ) == region_allocation["europe"] * total_purch_for_typo_distrib
@@ -852,8 +852,8 @@ def yearlyAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["africa"][year] +
-            y_vars["Blue_Carbon"]["africa"][year]
+            x_vars["Renewable_Energy"]["africa"][year] +
+            y_vars["Renewable_Energy"]["africa"][year]
             for year in range(26)
         )
     ) == region_allocation["africa"] * total_purch_for_typo_distrib
@@ -882,8 +882,8 @@ def yearlyAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["asia"][year] +
-            y_vars["Blue_Carbon"]["asia"][year]
+            x_vars["Renewable_Energy"]["asia"][year] +
+            y_vars["Renewable_Energy"]["asia"][year]
             for year in range(26)
         )
     ) == region_allocation["asia"] * total_purch_for_typo_distrib
@@ -912,8 +912,8 @@ def yearlyAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["oceania"][year] +
-            y_vars["Blue_Carbon"]["oceania"][year]
+            x_vars["Renewable_Energy"]["oceania"][year] +
+            y_vars["Renewable_Energy"]["oceania"][year]
             for year in range(26)
         )
     ) == region_allocation["oceania"] * total_purch_for_typo_distrib
@@ -948,7 +948,7 @@ def yearlyAlgo(
                 for t in range(year_index + 1)
             ) +
             lpSum(
-                x_vars["Blue_Carbon"][region][t]
+                x_vars["Renewable_Energy"][region][t]
                 for region in regions
                 for t in range(year_index + 1)
             ) +
@@ -980,7 +980,7 @@ def yearlyAlgo(
             ) +
             lpSum(
                 coefficients["other_types"][start_index:][t] *
-                y_vars["Blue_Carbon"][region][t]
+                y_vars["Renewable_Energy"][region][t]
                 for region in regions
                 for t in range(year_index + 1)
             )
@@ -1049,7 +1049,7 @@ def fiveYearAlgo(
             "nbsAvoidance": 0.3,
             "biochar": 0.1,
             "dac": 0.05,
-            "blueCarbon": 0.05
+            "renewableEnergy": 0.05
         }
         region_allocation = {
             "northAmerica": 0.1,
@@ -1085,7 +1085,7 @@ def fiveYearAlgo(
         "NbS_REDD": 2,
         "DAC": 3,
         "Biochar": 4,
-        "Blue_Carbon": 5
+        "Renewable_Energy": 5
     }
 
     # Purchase variables (ex-post and ex-ante) by typology, year and region
@@ -1149,7 +1149,7 @@ def fiveYearAlgo(
         "NbS_REDD": [23.76730151, 26.62919538, 29.8356987, 32.61933498, 35.66268132, 38.98996836],
         "DAC": [618.970254, 449.4526759, 326.3609302, 305.6918961, 286.3318696, 268.197949],
         "Biochar": [135.7778991, 111.5772177, 91.6899995, 82.66928321, 74.53604998, 67.20298678],
-        "Blue_Carbon": [108.68, 90.01, 74.55, 65.85, 58.17, 51.39]
+        "Renewable_Energy": [108.68, 90.01, 74.55, 65.85, 58.17, 51.39]
     }
 
     # Generation of coefficients by region, project, and year
@@ -1227,16 +1227,16 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            regional_coefficients["x"]["Blue_Carbon"][region][year] *
-            x_vars["Blue_Carbon"][region][year]
+            regional_coefficients["x"]["Renewable_Energy"][region][year] *
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         ) +
         lpSum(
-            regional_coefficients["y"]["Blue_Carbon"][region][year] *
-            y_vars["Blue_Carbon"][region][year]
+            regional_coefficients["y"]["Renewable_Energy"][region][year] *
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         )
@@ -1305,16 +1305,16 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["x"]["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["x"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         ) +
         lpSum(
-            y_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["y"]["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["y"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         )
@@ -1354,11 +1354,11 @@ def fiveYearAlgo(
                 for region in regions
             ) +
 
-            # Blue_Carbon
+            # Renewable_Energy
             lpSum(
-                x_vars["Blue_Carbon"][region][year] * regional_coefficients["x"]["Blue_Carbon"][region][year] +
-                y_vars["Blue_Carbon"][region][year] * \
-                regional_coefficients["y"]["Blue_Carbon"][region][year]
+                x_vars["Renewable_Energy"][region][year] * regional_coefficients["x"]["Renewable_Energy"][region][year] +
+                y_vars["Renewable_Energy"][region][year] * \
+                regional_coefficients["y"]["Renewable_Energy"][region][year]
                 for region in regions
             ) >= z_min
         )
@@ -1422,16 +1422,16 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["x"]["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["x"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         ) +
         lpSum(
-            y_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["y"]["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["y"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         )
@@ -1471,11 +1471,11 @@ def fiveYearAlgo(
                 for region in regions
             ) +
 
-            # Blue_Carbon
+            # Renewable_Energy
             lpSum(
-                x_vars["Blue_Carbon"][region][year] * regional_coefficients["x"]["Blue_Carbon"][region][year] +
-                y_vars["Blue_Carbon"][region][year] * \
-                regional_coefficients["y"]["Blue_Carbon"][region][year]
+                x_vars["Renewable_Energy"][region][year] * regional_coefficients["x"]["Renewable_Energy"][region][year] +
+                y_vars["Renewable_Energy"][region][year] * \
+                regional_coefficients["y"]["Renewable_Energy"][region][year]
                 for region in regions
             ) <= z
         )
@@ -1532,14 +1532,14 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         ) +
         lpSum(
-            y_vars["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         )
@@ -1574,9 +1574,9 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         )
@@ -1612,9 +1612,9 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            y_vars["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         )
@@ -1658,10 +1658,10 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         )
@@ -1707,14 +1707,14 @@ def fiveYearAlgo(
         ) == typology["biochar"] * total_purch_for_typo_distrib
     )
 
-    # Blue_Carbon
+    # Renewable_Energy
     Lp_prob += (
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
-        ) == typology["blueCarbon"] * total_purch_for_typo_distrib
+        ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
     # Constraint : distribution of geographical areas
@@ -1753,10 +1753,10 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(6)
         )
@@ -1785,8 +1785,8 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["northAmerica"][year] +
-            y_vars["Blue_Carbon"]["northAmerica"][year]
+            x_vars["Renewable_Energy"]["northAmerica"][year] +
+            y_vars["Renewable_Energy"]["northAmerica"][year]
             for year in range(6)
         )
     ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
@@ -1815,8 +1815,8 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["southAmerica"][year] +
-            y_vars["Blue_Carbon"]["southAmerica"][year]
+            x_vars["Renewable_Energy"]["southAmerica"][year] +
+            y_vars["Renewable_Energy"]["southAmerica"][year]
             for year in range(6)
         )
     ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
@@ -1845,8 +1845,8 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["europe"][year] +
-            y_vars["Blue_Carbon"]["europe"][year]
+            x_vars["Renewable_Energy"]["europe"][year] +
+            y_vars["Renewable_Energy"]["europe"][year]
             for year in range(6)
         )
     ) == region_allocation["europe"] * total_purch_for_typo_distrib
@@ -1875,8 +1875,8 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["africa"][year] +
-            y_vars["Blue_Carbon"]["africa"][year]
+            x_vars["Renewable_Energy"]["africa"][year] +
+            y_vars["Renewable_Energy"]["africa"][year]
             for year in range(6)
         )
     ) == region_allocation["africa"] * total_purch_for_typo_distrib
@@ -1905,8 +1905,8 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["asia"][year] +
-            y_vars["Blue_Carbon"]["asia"][year]
+            x_vars["Renewable_Energy"]["asia"][year] +
+            y_vars["Renewable_Energy"]["asia"][year]
             for year in range(6)
         )
     ) == region_allocation["asia"] * total_purch_for_typo_distrib
@@ -1935,8 +1935,8 @@ def fiveYearAlgo(
             for year in range(6)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["oceania"][year] +
-            y_vars["Blue_Carbon"]["oceania"][year]
+            x_vars["Renewable_Energy"]["oceania"][year] +
+            y_vars["Renewable_Energy"]["oceania"][year]
             for year in range(6)
         )
     ) == region_allocation["oceania"] * total_purch_for_typo_distrib
@@ -1977,7 +1977,7 @@ def fiveYearAlgo(
                 for t in range(year_index + 1)
             ) +
             lpSum(
-                x_vars["Blue_Carbon"][region][t]
+                x_vars["Renewable_Energy"][region][t]
                 for region in regions
                 for t in range(year_index + 1)
             ) +
@@ -2009,7 +2009,7 @@ def fiveYearAlgo(
             ) +
             lpSum(
                 coefficients["other_types"][start_index:][t] *
-                y_vars["Blue_Carbon"][region][t]
+                y_vars["Renewable_Energy"][region][t]
                 for region in regions
                 for t in range(year_index + 1)
             )
@@ -2075,7 +2075,7 @@ def flexibleAlgo(
             "nbsAvoidance": 0.3,
             "biochar": 0.1,
             "dac": 0.05,
-            "blueCarbon": 0.05
+            "renewableEnergy": 0.05
         }
         region_allocation = {
             "northAmerica": 0.1,
@@ -2109,7 +2109,7 @@ def flexibleAlgo(
         "NbS_REDD": 2,
         "DAC": 3,
         "Biochar": 4,
-        "Blue_Carbon": 5
+        "Renewable_Energy": 5
     }
 
     # Purchase variables (ex-post and ex-ante) by typology, year and region
@@ -2239,16 +2239,16 @@ def flexibleAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            regional_coefficients["x"]["Blue_Carbon"][region][year] *
-            x_vars["Blue_Carbon"][region][year]
+            regional_coefficients["x"]["Renewable_Energy"][region][year] *
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         ) +
         lpSum(
-            regional_coefficients["y"]["Blue_Carbon"][region][year] *
-            y_vars["Blue_Carbon"][region][year]
+            regional_coefficients["y"]["Renewable_Energy"][region][year] *
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -2317,16 +2317,16 @@ def flexibleAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["x"]["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["x"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         ) +
         lpSum(
-            y_vars["Blue_Carbon"][region][year] * \
-            regional_coefficients["y"]["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year] * \
+            regional_coefficients["y"]["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -2366,11 +2366,11 @@ def flexibleAlgo(
                 for region in regions
             ) +
 
-            # Blue_Carbon
+            # Renewable_Energy
             lpSum(
-                x_vars["Blue_Carbon"][region][year] * regional_coefficients["x"]["Blue_Carbon"][region][year] +
-                y_vars["Blue_Carbon"][region][year] * \
-                regional_coefficients["y"]["Blue_Carbon"][region][year]
+                x_vars["Renewable_Energy"][region][year] * regional_coefficients["x"]["Renewable_Energy"][region][year] +
+                y_vars["Renewable_Energy"][region][year] * \
+                regional_coefficients["y"]["Renewable_Energy"][region][year]
                 for region in regions
             ) <= z
         )
@@ -2427,14 +2427,14 @@ def flexibleAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         ) +
         lpSum(
-            y_vars["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -2469,9 +2469,9 @@ def flexibleAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -2507,9 +2507,9 @@ def flexibleAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            y_vars["Blue_Carbon"][region][year]
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -2553,10 +2553,10 @@ def flexibleAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -2602,14 +2602,14 @@ def flexibleAlgo(
         ) == typology["biochar"] * total_purch_for_typo_distrib
     )
 
-    # Blue_Carbon
+    # Renewable_Energy
     Lp_prob += (
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
-        ) == typology["blueCarbon"] * total_purch_for_typo_distrib
+        ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
     ## Constraint : distribution of geographical areas##
@@ -2648,10 +2648,10 @@ def flexibleAlgo(
             for year in range(26)
         ) +
 
-        # Blue_Carbon
+        # Renewable_Energy
         lpSum(
-            x_vars["Blue_Carbon"][region][year] +
-            y_vars["Blue_Carbon"][region][year]
+            x_vars["Renewable_Energy"][region][year] +
+            y_vars["Renewable_Energy"][region][year]
             for region in regions
             for year in range(26)
         )
@@ -2680,8 +2680,8 @@ def flexibleAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["northAmerica"][year] +
-            y_vars["Blue_Carbon"]["northAmerica"][year]
+            x_vars["Renewable_Energy"]["northAmerica"][year] +
+            y_vars["Renewable_Energy"]["northAmerica"][year]
             for year in range(26)
         )
     ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
@@ -2710,8 +2710,8 @@ def flexibleAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["southAmerica"][year] +
-            y_vars["Blue_Carbon"]["southAmerica"][year]
+            x_vars["Renewable_Energy"]["southAmerica"][year] +
+            y_vars["Renewable_Energy"]["southAmerica"][year]
             for year in range(26)
         )
     ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
@@ -2740,8 +2740,8 @@ def flexibleAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["europe"][year] +
-            y_vars["Blue_Carbon"]["europe"][year]
+            x_vars["Renewable_Energy"]["europe"][year] +
+            y_vars["Renewable_Energy"]["europe"][year]
             for year in range(26)
         )
     ) == region_allocation["europe"] * total_purch_for_typo_distrib
@@ -2770,8 +2770,8 @@ def flexibleAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["africa"][year] +
-            y_vars["Blue_Carbon"]["africa"][year]
+            x_vars["Renewable_Energy"]["africa"][year] +
+            y_vars["Renewable_Energy"]["africa"][year]
             for year in range(26)
         )
     ) == region_allocation["africa"] * total_purch_for_typo_distrib
@@ -2800,8 +2800,8 @@ def flexibleAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["asia"][year] +
-            y_vars["Blue_Carbon"]["asia"][year]
+            x_vars["Renewable_Energy"]["asia"][year] +
+            y_vars["Renewable_Energy"]["asia"][year]
             for year in range(26)
         )
     ) == region_allocation["asia"] * total_purch_for_typo_distrib
@@ -2830,8 +2830,8 @@ def flexibleAlgo(
             for year in range(26)
         ) +
         lpSum(
-            x_vars["Blue_Carbon"]["oceania"][year] +
-            y_vars["Blue_Carbon"]["oceania"][year]
+            x_vars["Renewable_Energy"]["oceania"][year] +
+            y_vars["Renewable_Energy"]["oceania"][year]
             for year in range(26)
         )
     ) == region_allocation["oceania"] * total_purch_for_typo_distrib
@@ -2866,7 +2866,7 @@ def flexibleAlgo(
                 for t in range(year_index + 1)
             ) +
             lpSum(
-                x_vars["Blue_Carbon"][region][t]
+                x_vars["Renewable_Energy"][region][t]
                 for region in regions
                 for t in range(year_index + 1)
             ) +
@@ -2898,7 +2898,7 @@ def flexibleAlgo(
             ) +
             lpSum(
                 coefficients["other_types"][start_index:][t] *
-                y_vars["Blue_Carbon"][region][t]
+                y_vars["Renewable_Energy"][region][t]
                 for region in regions
                 for t in range(year_index + 1)
             )
