@@ -112,7 +112,7 @@ export type AlgorithmInput = BudgetAlgorithmInput | TypoAlgorithmInput | StratAl
 export interface RegionPurchase {
   region: string;
   quantity: number;
-  regionFactor: number; // todo camel case
+  regionFactor: number;
   cost: number;
 }
 

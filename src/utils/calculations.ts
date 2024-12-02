@@ -1,15 +1,4 @@
-import {
-  nbsRemovalExPostMedium,
-  nbsAvoidanceExPostMedium,
-  biocharExPostMedium,
-  dacExPostMedium,
-} from '@/constants/forecasts';
-import {
-  nbsRemovalRegion,
-  nbsAvoidanceRegion,
-  biocharRegion,
-  dacRegion,
-} from '@/constants/regions';
+
 import {
   RegionAllocation,
   RegionPurchase,
@@ -31,7 +20,6 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
     strategy.types_purchased.forEach((typeBreakdown) => {
       const { typology, exAnte, exPost } = typeBreakdown;
 
-      // Sum costs from both exAnte and exPost
       const totalCostForType = (exAnte?.cost || 0) + (exPost?.cost || 0);
 
       switch (typology) {
@@ -115,6 +103,59 @@ export const getCostPerRegions = (strategies: YearlyStrategy[]) => {
     africa: costAfrica,
     asia: costAsia,
     oceania: costOceania,
+  };
+};
+
+export const getQuantityPerRegions = (strategies: YearlyStrategy[]) => {
+  let quantityNorthAmerica = 0;
+  let quantitySouthAmerica = 0;
+  let quantityEurope = 0;
+  let quantityAfrica = 0;
+  let quantityAsia = 0;
+  let quantityOceania = 0;
+
+  strategies.forEach((strategy) => {
+    strategy.types_purchased.forEach((typeBreakdown) => {
+      const { exAnte, exPost } = typeBreakdown;
+
+      [exAnte, exPost].forEach((financingDetails) => {
+        if (financingDetails && financingDetails.regions) {
+          financingDetails.regions.forEach((regionPurchase) => {
+            switch (regionPurchase.region) {
+              case 'northAmerica':
+                quantityNorthAmerica += regionPurchase.quantity;
+                break;
+              case 'southAmerica':
+                quantitySouthAmerica += regionPurchase.quantity;
+                break;
+              case 'europe':
+                quantityEurope += regionPurchase.quantity;
+                break;
+              case 'africa':
+                quantityAfrica += regionPurchase.quantity;
+                break;
+              case 'asia':
+                quantityAsia += regionPurchase.quantity;
+                break;
+              case 'oceania':
+                quantityOceania += regionPurchase.quantity;
+                break;
+              default:
+                break;
+            }
+          });
+        }
+      });
+    });
+  });
+
+  return {
+    northAmerica: quantityNorthAmerica,
+    southAmerica: quantitySouthAmerica,
+    europe: quantityEurope,
+    africa: quantityAfrica,
+    asia: quantityAsia,
+    oceania: quantityOceania,
   };
 };
 

@@ -2,25 +2,25 @@
 import PieChartComponent from '@/components/common/charts/PieChart';
 import { ChartTitle } from '@/components/form/Title';
 import { useBudget } from '@/context/BudgetContext';
-import { continents } from '@/utils/configuration';
+import { getQuantityPerRegions } from '@/utils/calculations';
 import { useMemo } from 'react';
 
 export default function Quantity() {
   const { budgetResults } = useBudget();
 
   const percentages = useMemo(() => {
-    if (!budgetResults) return null;
+    if (!budgetResults || !budgetResults.strategies) return null;
 
-    const totalCost = continents.reduce(
-      (sum, continent) => sum + (budgetResults.regions as any)[continent],
-      0,
-    );
+    const quantities = getQuantityPerRegions(budgetResults.strategies);
 
-    const calculatePercentage = (cost: number) => Math.round((cost / totalCost) * 100);
+    const totalQuantity = Object.values(quantities).reduce((sum, quantity) => sum + quantity, 0);
 
-    return continents.reduce(
-      (result, continent) => {
-        result[continent] = calculatePercentage((budgetResults.regions as any)[continent]);
+    const calculatePercentage = (quantity: number) =>
+      totalQuantity > 0 ? Math.round((quantity / totalQuantity) * 100) : 0;
+
+    return Object.keys(quantities).reduce(
+      (result, region) => {
+        result[region] = calculatePercentage(quantities[region as keyof typeof quantities]);
         return result;
       },
       {} as Record<string, number>,
