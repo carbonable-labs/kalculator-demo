@@ -59,13 +59,13 @@
             {
               "region": "northAmerica",
               "quantity": 160,
-              "region_factor": 2.16,
+              "regionFactor": 2.16,
               "cost": 55555
             },
             {
               "region": "europe",
               "quantity": 80,
-              "region_factor": 2.43,
+              "regionFactor": 2.43,
               "cost": 5555
             }
           ]
@@ -77,13 +77,13 @@
             {
               "region": "europe",
               "quantity": 100,
-              "region_factor": 2,
+              "regionFactor": 2,
               "cost": 5555
             },
             {
               "region": "oceania",
               "quantity": 100,
-              "region_factor": 1.96,
+              "regionFactor": 1.96,
               "cost": 5555
             }
           ]
@@ -95,13 +95,13 @@
             {
               "region": "asia",
               "quantity": 100,
-              "region_factor": 0.67,
+              "regionFactor": 0.67,
               "cost": 5555
             },
             {
               "region": "africa",
               "quantity": 100,
-              "region_factor": 1.11,
+              "regionFactor": 1.11,
               "cost": 5555
             }
           ]
@@ -122,13 +122,13 @@
             {
               "region": "northAmerica",
               "quantity": 260,
-              "region_factor": 2.16,
+              "regionFactor": 2.16,
               "cost": 5555
             },
             {
               "region": "europe",
               "quantity": 130,
-              "region_factor": 2.43,
+              "regionFactor": 2.43,
               "cost": 5555
             }
           ]
@@ -140,13 +140,13 @@
             {
               "region": "southAmerica",
               "quantity": 100,
-              "region_factor": 0.29,
+              "regionFactor": 0.29,
               "cost": 5555
             },
             {
               "region": "asia",
               "quantity": 100,
-              "region_factor": 0.27,
+              "regionFactor": 0.27,
               "cost": 5555
             }
           ]
@@ -158,7 +158,7 @@
             {
               "region": "oceania",
               "quantity": 100,
-              "region_factor": 1.2,
+              "regionFactor": 1.2,
               "cost": 5555
             }
           ]
@@ -179,13 +179,13 @@
             {
               "region": "northAmerica",
               "quantity": 308,
-              "region_factor": 2.16,
+              "regionFactor": 2.16,
               "cost": 5555
             },
             {
               "region": "europe",
               "quantity": 154,
-              "region_factor": 2.43,
+              "regionFactor": 2.43,
               "cost": 5555
             }
           ]
@@ -197,13 +197,13 @@
             {
               "region": "southAmerica",
               "quantity": 100,
-              "region_factor": 0.29,
+              "regionFactor": 0.29,
               "cost": 5555
             },
             {
               "region": "asia",
               "quantity": 100,
-              "region_factor": 0.27,
+              "regionFactor": 0.27,
               "cost": 5555
             }
           ]
@@ -215,7 +215,7 @@
             {
               "region": "oceania",
               "quantity": 100,
-              "region_factor": 1.2,
+              "regionFactor": 1.2,
               "cost": 5555
             }
           ]
@@ -236,13 +236,13 @@
             {
               "region": "northAmerica",
               "quantity": 316,
-              "region_factor": 2.16,
+              "regionFactor": 2.16,
               "cost": 5555
             },
             {
               "region": "europe",
               "quantity": 158,
-              "region_factor": 2.43,
+              "regionFactor": 2.43,
               "cost": 5555
             }
           ]
@@ -254,13 +254,13 @@
             {
               "region": "southAmerica",
               "quantity": 100,
-              "region_factor": 0.29,
+              "regionFactor": 0.29,
               "cost": 5555
             },
             {
               "region": "asia",
               "quantity": 100,
-              "region_factor": 0.27,
+              "regionFactor": 0.27,
               "cost": 5555
             }
           ]
@@ -272,7 +272,7 @@
             {
               "region": "oceania",
               "quantity": 100,
-              "region_factor": 1.2,
+              "regionFactor": 1.2,
               "cost": 5555
             }
           ]
@@ -293,13 +293,13 @@
             {
               "region": "northAmerica",
               "quantity": 324,
-              "region_factor": 2.16,
+              "regionFactor": 2.16,
               "cost": 5555
             },
             {
               "region": "europe",
               "quantity": 162,
-              "region_factor": 2.43,
+              "regionFactor": 2.43,
               "cost": 5555
             }
           ]
@@ -311,13 +311,13 @@
             {
               "region": "southAmerica",
               "quantity": 100,
-              "region_factor": 0.29,
+              "regionFactor": 0.29,
               "cost": 5555
             },
             {
               "region": "asia",
               "quantity": 100,
-              "region_factor": 0.27,
+              "regionFactor": 0.27,
               "cost": 5555
             }
           ]
@@ -329,7 +329,7 @@
             {
               "region": "oceania",
               "quantity": 100,
-              "region_factor": 1.2,
+              "regionFactor": 1.2,
               "cost": 5555
             }
           ]
@@ -350,13 +350,13 @@
             {
               "region": "northAmerica",
               "quantity": 332,
-              "region_factor": 2.16,
+              "regionFactor": 2.16,
               "cost": 5555
             },
             {
               "region": "europe",
               "quantity": 166,
-              "region_factor": 2.43,
+              "regionFactor": 2.43,
               "cost": 5555
             }
           ]
@@ -368,13 +368,13 @@
             {
               "region": "southAmerica",
               "quantity": 100,
-              "region_factor": 0.29,
+              "regionFactor": 0.29,
               "cost": 5555
             },
             {
               "region": "asia",
               "quantity": 100,
-              "region_factor": 0.27,
+              "regionFactor": 0.27,
               "cost": 5555
             }
           ]
@@ -386,7 +386,7 @@
             {
               "region": "oceania",
               "quantity": 100,
-              "region_factor": 1.2,
+              "regionFactor": 1.2,
               "cost": 5555
             }
           ]
@@ -407,13 +407,13 @@
             {
               "region": "northAmerica",
               "quantity": 336,
-              "region_factor": 2.16,
+              "regionFactor": 2.16,
               "cost": 5555
             },
             {
               "region": "europe",
               "quantity": 168,
-              "region_factor": 2.43,
+              "regionFactor": 2.43,
               "cost": 5555
             }
           ]
@@ -425,13 +425,13 @@
             {
               "region": "southAmerica",
               "quantity": 100,
-              "region_factor": 0.29,
+              "regionFactor": 0.29,
               "cost": 5555
             },
             {
               "region": "asia",
               "quantity": 100,
-              "region_factor": 0.27,
+              "regionFactor": 0.27,
               "cost": 5555
             }
           ]
@@ -443,7 +443,7 @@
             {
               "region": "oceania",
               "quantity": 100,
-              "region_factor": 1.2,
+              "regionFactor": 1.2,
               "cost": 5555
             }
           ]
@@ -464,13 +464,13 @@
             {
               "region": "northAmerica",
               "quantity": 320,
-              "region_factor": 2.16,
+              "regionFactor": 2.16,
               "cost": 5555
             },
             {
               "region": "europe",
               "quantity": 160,
-              "region_factor": 2.43,
+              "regionFactor": 2.43,
               "cost": 5555
             }
           ]
@@ -482,13 +482,13 @@
             {
               "region": "europe",
               "quantity": 100,
-              "region_factor": 2,
+              "regionFactor": 2,
               "cost": 5555
             },
             {
               "region": "oceania",
               "quantity": 100,
-              "region_factor": 1.96,
+              "regionFactor": 1.96,
               "cost": 5555
             }
           ]
@@ -500,13 +500,13 @@
             {
               "region": "asia",
               "quantity": 100,
-              "region_factor": 0.67,
+              "regionFactor": 0.67,
               "cost": 5555
             },
             {
               "region": "africa",
               "quantity": 100,
-              "region_factor": 1.11,
+              "regionFactor": 1.11,
               "cost": 5555
             }
           ]

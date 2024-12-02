@@ -126,7 +126,7 @@ export const checkPriceExPost = (
         let regionPurchase: RegionPurchase = {
           region,
           quantity: regionalQuantity,
-          region_factor: coefficient,
+          regionFactor: coefficient,
           cost: costForTypologyMedium,
         };
 

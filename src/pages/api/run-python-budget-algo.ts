@@ -110,7 +110,7 @@ export default async function handler(req: any, res: any) {
         regionPurchase = {
           region,
           quantity: 0,
-          region_factor: 1, // Assuming region_factor is 1; adjust if needed
+          regionFactor: 1, // Assuming regionFactor is 1; adjust if needed
           cost: 0,
         };
         financingDetails.regions.push(regionPurchase);
