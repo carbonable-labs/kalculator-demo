@@ -4,40 +4,15 @@ import { computeBudgetAdvice } from '@/algorithms/advice/budgetEstimationAdvice'
 import { deltaExAnte } from '@/constants/forecasts';
 import { duration } from '@/constants/time';
 import { carbonToOffset } from '@/constants/user';
-import { BudgetAlgorithmInput, BudgetOutputData, BudgetPythonResponse, Financing, PurchaseEntry, RegionCosts, RegionAllocation, Typology, TypologyCosts } from '@/types/types';
+import { BudgetAlgorithmInput, BudgetOutputData, BudgetPythonResponse, Financing, PurchaseEntry, RegionCosts, RegionAllocation, Typology, TypologyCosts, TimeConstraint } from '@/types/types';
 import { getCostPerTypes, getCostPerRegions } from '@/utils/calculations';
 
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
-  const data = {
-    financing: {
-      exPost: 0.4,
-      exAnte: 0.6,
-    },
-    typology: {
-      nbsRemoval: 0.5,
-      nbsAvoidance: 0.3,
-      biochar: 0.1,
-      dac: 0.05,
-      renewableEnergy: 0.05,
-    },
-    regionAllocation: {
-      northAmerica: 0.1,
-      southAmerica: 0.2,
-      europe: 0.3,
-      africa: 0.2,
-      asia: 0.1,
-      oceania: 0.1,
-    },
-    carbonNeeds: {
-      2025: 5000000,
-      2040: 10000000,
-      2050: 40000000,
-    },
-  };
 
-  let typology = data.typology;
-  let regionAllocation = data.regionAllocation;
-  let financingData = data.financing;
+  let typology = input.typology;
+  let regionAllocation = input.regionAllocation;
+  let financingData = input.financing;
+
 
   const sendDataToBackend = async (): Promise<BudgetPythonResponse | null> => {
     try {
@@ -47,13 +22,13 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(input),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to send data');
       }
-  
+
       const result = await response.json(); // Parse JSON response
       return result; // Return the entire object
     } catch (error) {
@@ -65,18 +40,18 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   let { totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = await sendDataToBackend() || {};
 
   // Vérifiez si les données sont bien reçues
-  if (!totalBudgetMedium || !totalBudgetLow ||!totalBudgetHigh ||!strategies) {
+  if (!totalBudgetMedium || !totalBudgetLow || !totalBudgetHigh || !strategies) {
     throw new Error('Failed to fetch budget or strategies data from backend.');
   }
-    
+
   // console.log(computedAdvice);
-  
+
 
   const notAdjustedBudget = totalBudgetMedium; // todo: review naming
-  
+
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies); // Todo: naming
   const regionCosts: RegionCosts = getCostPerRegions(strategies); // Todo: naming
-  
+
   let regionsData: RegionAllocation = {
     // todo: refacto
     northAmerica: regionAllocation.northAmerica,
@@ -86,7 +61,7 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
     asia: regionAllocation.asia,
     oceania: regionAllocation.oceania,
   };
-  
+
   let algoRes: BudgetOutputData = {
     financing: financingData,
     typologies: typology,
@@ -120,7 +95,7 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
     advice_geography: { change: false },
     strategies: strategies,
   };
-  
+
   let computedAdvice = computeBudgetAdvice(input, algoRes);
   algoRes = {
     ...algoRes,

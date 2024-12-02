@@ -20,7 +20,7 @@ export default function PurchaseRecoTable() {
     'Date',
     'Carbon Units (t)',
     'Typology',
-    'Mecanism',
+    'Mechanism',
     'Region',
     'Total Purchased ($)',
     'Price/t ($)',
@@ -33,16 +33,25 @@ export default function PurchaseRecoTable() {
   useEffect(() => {
     if (budgetResults) {
       const recoData = budgetResults.strategies.flatMap((strategy) =>
-        strategy.types_purchased.flatMap((reco) =>
-          reco.regions.map((region) => ({
-            date: strategy.year.toString(),
-            carbonUnits: region.quantity,
-            typology: displayedNames[reco.typology] || reco.typology,
-            mecanism: displayedMethodology[reco.typology] || '',
-            region: displayedNames[region.region] || region.region,
-            totalPurchased: region.cost,
-            price: reco.price_per_ton,
-          })),
+        strategy.types_purchased.flatMap((typeBreakdown) =>
+          // Iterate over exAnte and exPost
+          ['exAnte', 'exPost'].flatMap((financingType) => {
+            const financingDetails = typeBreakdown[financingType];
+            if (!financingDetails) {
+              return []; // Skip if undefined
+            }
+            return financingDetails.regions.map((region) => ({
+              date: strategy.year.toString(),
+              carbonUnits: region.quantity,
+              typology:
+                displayedNames[typeBreakdown.typology] || typeBreakdown.typology,
+              mecanism:
+                displayedMethodology[typeBreakdown.typology] || '',
+              region: displayedNames[region.region] || region.region,
+              totalPurchased: region.cost,
+              price: financingDetails.price_per_ton,
+            }));
+          }),
         ),
       );
 

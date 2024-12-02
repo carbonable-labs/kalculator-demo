@@ -107,6 +107,7 @@ export interface BudgetAlgorithmInput {
   financing: Financing;
   typology: Typology;
   regionAllocation: RegionAllocation;
+  carbonUnitNeeds: { [year: string]: number };
 }
 
 export interface StratAlgorithmInput {

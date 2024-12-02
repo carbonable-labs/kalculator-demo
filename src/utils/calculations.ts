@@ -156,19 +156,30 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
   let costRenewableEnergy = 0;
 
   strategies.forEach((strategy) => {
-    strategy.types_purchased.forEach((type) => {
-      const totalCostForType = type.regions.reduce((total, region) => total + region.cost, 0);
+    strategy.types_purchased.forEach((typeBreakdown) => {
+      const { typology, exAnte, exPost } = typeBreakdown;
 
-      if (type.typology === 'nbsRemoval') {
-        costNbsRemoval += totalCostForType;
-      } else if (type.typology === 'nbsAvoidance') {
-        costNbsAvoidance += totalCostForType;
-      } else if (type.typology === 'biochar') {
-        costBiochar += totalCostForType;
-      } else if (type.typology === 'dac') {
-        costDac += totalCostForType;
-      } else if (type.typology === 'renewableEnergy') {
-        costRenewableEnergy += totalCostForType;
+      // Sum costs from both exAnte and exPost
+      const totalCostForType = (exAnte?.cost || 0) + (exPost?.cost || 0);
+
+      switch (typology) {
+        case 'nbsRemoval':
+          costNbsRemoval += totalCostForType;
+          break;
+        case 'nbsAvoidance':
+          costNbsAvoidance += totalCostForType;
+          break;
+        case 'biochar':
+          costBiochar += totalCostForType;
+          break;
+        case 'dac':
+          costDac += totalCostForType;
+          break;
+        case 'renewableEnergy':
+          costRenewableEnergy += totalCostForType;
+          break;
+        default:
+          break;
       }
     });
   });
@@ -182,7 +193,8 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
   };
 };
 
-export const getCostPerRegions = (strategies: YearlyStrategy[]): RegionCosts => {
+
+export const getCostPerRegions = (strategies: YearlyStrategy[]) => {
   let costNorthAmerica = 0;
   let costSouthAmerica = 0;
   let costEurope = 0;
@@ -191,29 +203,35 @@ export const getCostPerRegions = (strategies: YearlyStrategy[]): RegionCosts => 
   let costOceania = 0;
 
   strategies.forEach((strategy) => {
-    strategy.types_purchased.forEach((type) => {
-      type.regions.forEach((regionPurchase) => {
-        switch (regionPurchase.region) {
-          case 'northAmerica':
-            costNorthAmerica += regionPurchase.cost;
-            break;
-          case 'southAmerica':
-            costSouthAmerica += regionPurchase.cost;
-            break;
-          case 'europe':
-            costEurope += regionPurchase.cost;
-            break;
-          case 'africa':
-            costAfrica += regionPurchase.cost;
-            break;
-          case 'asia':
-            costAsia += regionPurchase.cost;
-            break;
-          case 'oceania':
-            costOceania += regionPurchase.cost;
-            break;
-          default:
-            break;
+    strategy.types_purchased.forEach((typeBreakdown) => {
+      const { exAnte, exPost } = typeBreakdown;
+
+      [exAnte, exPost].forEach((financingDetails) => {
+        if (financingDetails && financingDetails.regions) {
+          financingDetails.regions.forEach((regionPurchase) => {
+            switch (regionPurchase.region) {
+              case 'northAmerica':
+                costNorthAmerica += regionPurchase.cost;
+                break;
+              case 'southAmerica':
+                costSouthAmerica += regionPurchase.cost;
+                break;
+              case 'europe':
+                costEurope += regionPurchase.cost;
+                break;
+              case 'africa':
+                costAfrica += regionPurchase.cost;
+                break;
+              case 'asia':
+                costAsia += regionPurchase.cost;
+                break;
+              case 'oceania':
+                costOceania += regionPurchase.cost;
+                break;
+              default:
+                break;
+            }
+          });
         }
       });
     });
@@ -228,6 +246,7 @@ export const getCostPerRegions = (strategies: YearlyStrategy[]): RegionCosts => 
     oceania: costOceania,
   };
 };
+
 
 const getRegionFactor = (typology: string, region: keyof RegionAllocation): number => {
   switch (typology) {

@@ -9,7 +9,7 @@ import {
   RegionPurchase,
 } from '@/types/types';
 
-export default async function handler(req, res) {
+export default async function handler(req:any, res:any) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -18,6 +18,7 @@ export default async function handler(req, res) {
     const scriptPath = path.join(process.cwd(), 'src/python-scripts', 'algo_budget', 'main.py');
 
     const inputData = req.body as BudgetAlgorithmInput;
+    console.log("input data:", inputData)
 
     const options = {
       mode: 'text',
@@ -27,8 +28,11 @@ export default async function handler(req, res) {
 
     const data = await PythonShell.run(scriptPath, options);
     const parsedData = JSON.parse(data[0]);
-    console.log("parsedData:", parsedData);
     const parsedResults: PurchaseEntry[] = parsedData.results;
+    console.log("data:", data)
+
+    console.log("parsed Results:", parsedResults)
+    console.log("total price", parsedData.total_price);
 
     const yearlyStrategiesMap = new Map<number, YearlyStrategy>();
     let totalBudgetLow: number = 0;

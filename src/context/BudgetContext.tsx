@@ -21,6 +21,8 @@ interface BudgetContextType {
   setTimeConstraints: (value: number | null) => void;
   financing: Financing;
   setFinancing: (value: Financing) => void;
+  optimizeFinancing: boolean;
+  setOptimizeFinancing: (value: boolean) => void;
   typology: Typology;
   setTypology: (value: Typology) => void;
   regionAllocation: RegionAllocation;
@@ -41,6 +43,7 @@ const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
 export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [timeConstraints, setTimeConstraints] = useState<number | null>(null);
   const [financing, setFinancing] = useState<Financing>(DEFAULT_FINANCING);
+  const [optimizeFinancing, setOptimizeFinancing] = useState<boolean>(false);
   const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLOGY);
   const [regionAllocation, setRegionAllocation] =
     useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
@@ -57,17 +60,37 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsCalculating(true);
 
     try {
-      const results = await runBudgetAlgo({
-        financing,
-        regionAllocation,
-        timeConstraints,
-        typology,
-      });
+      let results;
+      if (optimizeFinancing){
+
+        let newFinancing:Financing = {
+          exAnte: 0,
+          exPost: 0,
+        }
+
+        results = await runBudgetAlgo({
+          financing: newFinancing,
+          regionAllocation,
+          timeConstraints,
+          typology,
+          carbonUnitNeeds
+        });
+      }
+      else{
+
+        results = await runBudgetAlgo({
+          financing,
+          regionAllocation,
+          timeConstraints,
+          typology,
+          carbonUnitNeeds
+        });
+      }
 
       setBudgetResults(results);
       setHistory([
         ...history,
-        [results.total_cost_medium, { financing, regionAllocation, timeConstraints, typology }],
+        [results.total_cost_medium, { financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds }],
       ]);
     } catch (error) {
       console.error('Error calculating budget:', error);
@@ -84,6 +107,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setTimeConstraints,
         financing,
         setFinancing,
+        optimizeFinancing,
+        setOptimizeFinancing,
         typology,
         setTypology,
         regionAllocation,

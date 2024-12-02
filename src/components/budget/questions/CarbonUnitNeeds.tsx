@@ -10,7 +10,7 @@ interface CarbonUnit {
 }
 
 export default function CarbonUnitNeeds() {
-  const [units, setUnits] = useState<CarbonUnit[]>([{ year: '', amount: '' }]);
+  const [units, setUnits] = useState<CarbonUnit[]>([{ year: '2050', amount: '960000' }]);
   const { setCarbonUnitNeeds } = useBudget();
 
   const handleInputChange = (index: number, field: keyof CarbonUnit, value: string) => {
