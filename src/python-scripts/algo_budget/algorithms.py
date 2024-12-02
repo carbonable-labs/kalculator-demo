@@ -7,8 +7,7 @@ from pulp import lpSum
 from typing import TypedDict, Dict
 
 from models import Financing, Typology, RegionAllocation, TimeConstraint, CarbonNeeds
-from constants import (nbsRemovalRegion, nbsAvoidanceRegion, dacRegion, biocharRegion,
-                       renewableEnergyRegion, x_coefficients, coefficients)
+from constants import (x_coefficients, coefficients, regional_factors)
 
 
 # TODO : Write asserts to verify that for each parameter, the sum of the entered fields equals 1
@@ -137,15 +136,14 @@ def yearlyAlgo(
     }
 
     for project, base_coefficients in x_coefficients.items():
-        # Convertir le nom du projet en clé correcte pour eval
-        project_region_variable = project.replace("_", "") + "Region"
+        # Obtenir les facteurs régionaux pour le projet
+        project_region_factors = regional_factors[project]
         regional_coefficients["x"][project] = {
             region: [c * factor for c in base_coefficients]
-            for region, factor in eval(project_region_variable).items()
+            for region, factor in project_region_factors.items()
         }
         regional_coefficients["y"][project] = {
-            region: [c * 0.87 for c in regional_coefficients["x"]
-                     [project][region]]
+            region: [c * 0.87 for c in regional_coefficients["x"][project][region]]
             for region in regional_coefficients["x"][project]
         }
 
@@ -1165,14 +1163,14 @@ def fiveYearAlgo(
     }
 
     for project, base_coefficients in x_coefficients.items():
-        project_region_variable = project.replace("_", "") + "Region"
+        # Obtenir les facteurs régionaux pour le projet
+        project_region_factors = regional_factors[project]
         regional_coefficients["x"][project] = {
             region: [c * factor for c in base_coefficients]
-            for region, factor in eval(project_region_variable).items()
+            for region, factor in project_region_factors.items()
         }
         regional_coefficients["y"][project] = {
-            region: [c * 0.87 for c in regional_coefficients["x"]
-                     [project][region]]
+            region: [c * 0.87 for c in regional_coefficients["x"][project][region]]
             for region in regional_coefficients["x"][project]
         }
 
@@ -2181,14 +2179,14 @@ def flexibleAlgo(
     }
 
     for project, base_coefficients in x_coefficients.items():
-        project_region_variable = project.replace("_", "") + "Region"
+        # Obtenir les facteurs régionaux pour le projet
+        project_region_factors = regional_factors[project]
         regional_coefficients["x"][project] = {
             region: [c * factor for c in base_coefficients]
-            for region, factor in eval(project_region_variable).items()
+            for region, factor in project_region_factors.items()
         }
         regional_coefficients["y"][project] = {
-            region: [c * 0.87 for c in regional_coefficients["x"]
-                     [project][region]]
+            region: [c * 0.87 for c in regional_coefficients["x"][project][region]]
             for region in regional_coefficients["x"][project]
         }
 

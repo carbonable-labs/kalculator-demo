@@ -99,62 +99,54 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setIsCalculating(false);
     }
-  }, [
-    financing,
-    regionAllocation,
-    timeConstraints,
-    typology,
-    optimizeFinancing,
-    carbonUnitNeeds,
-  ]);
+  }, [financing, regionAllocation, timeConstraints, typology, optimizeFinancing, carbonUnitNeeds]);
 
-  const value = useMemo(() => ({
-    timeConstraints,
-    setTimeConstraints,
-    financing,
-    setFinancing,
-    optimizeFinancing,
-    setOptimizeFinancing,
-    typology,
-    setTypology,
-    regionAllocation,
-    setRegionAllocation,
-    budgetResults,
-    setBudgetResults,
-    isCalculating,
-    setIsCalculating,
-    calculateBudget,
-    history,
-    setHistory,
-    carbonUnitNeeds,
-    setCarbonUnitNeeds,
-  }), [
-    timeConstraints,
-    setTimeConstraints,
-    financing,
-    setFinancing,
-    optimizeFinancing,
-    setOptimizeFinancing,
-    typology,
-    setTypology,
-    regionAllocation,
-    setRegionAllocation,
-    budgetResults,
-    setBudgetResults,
-    isCalculating,
-    setIsCalculating,
-    calculateBudget,
-    history,
-    setHistory,
-    carbonUnitNeeds,
-    setCarbonUnitNeeds,
-  ]);
-
-  return (
-    <BudgetContext.Provider value={value}>
-      {children}
-    </BudgetContext.Provider>
+  const value = useMemo(
+    () => ({
+      timeConstraints,
+      setTimeConstraints,
+      financing,
+      setFinancing,
+      optimizeFinancing,
+      setOptimizeFinancing,
+      typology,
+      setTypology,
+      regionAllocation,
+      setRegionAllocation,
+      budgetResults,
+      setBudgetResults,
+      isCalculating,
+      setIsCalculating,
+      calculateBudget,
+      history,
+      setHistory,
+      carbonUnitNeeds,
+      setCarbonUnitNeeds,
+    }),
+    [
+      timeConstraints,
+      setTimeConstraints,
+      financing,
+      setFinancing,
+      optimizeFinancing,
+      setOptimizeFinancing,
+      typology,
+      setTypology,
+      regionAllocation,
+      setRegionAllocation,
+      budgetResults,
+      setBudgetResults,
+      isCalculating,
+      setIsCalculating,
+      calculateBudget,
+      history,
+      setHistory,
+      carbonUnitNeeds,
+      setCarbonUnitNeeds,
+    ],
   );
+
+  return <BudgetContext.Provider value={value}>{children}</BudgetContext.Provider>;
 };
 
 export const useBudget = () => {

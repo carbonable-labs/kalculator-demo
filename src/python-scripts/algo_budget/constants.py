@@ -43,7 +43,15 @@ renewableEnergyRegion = {
     "oceania": 1.64,
 }
 
-# Coefficients per year (to be multiplied by regional factors)
+regional_factors = {
+    "nbsRemoval": nbsRemovalRegion,
+    "nbsAvoidance": nbsAvoidanceRegion,
+    "dac": dacRegion,
+    "biochar": biocharRegion,
+    "renewableEnergy": renewableEnergyRegion
+}
+
+# Coefficients per year (to be multiplied by regional factors), from 2025 to 2050
 x_coefficients = {
     "nbsRemoval": [35.158035, 36.0545649, 36.9739563, 37.91679219, 38.88367039, 39.87520398,
                 40.89202168, 41.93476824, 43.00410483, 44.1007095, 45.22527759, 46.08455787,
