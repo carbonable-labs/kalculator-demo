@@ -61,36 +61,36 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     try {
       let results;
-      if (optimizeFinancing){
-
-        let newFinancing:Financing = {
+      if (optimizeFinancing) {
+        let newFinancing: Financing = {
           exAnte: 0,
           exPost: 0,
-        }
+        };
 
         results = await runBudgetAlgo({
           financing: newFinancing,
           regionAllocation,
           timeConstraints,
           typology,
-          carbonUnitNeeds
+          carbonUnitNeeds,
         });
-      }
-      else{
-
+      } else {
         results = await runBudgetAlgo({
           financing,
           regionAllocation,
           timeConstraints,
           typology,
-          carbonUnitNeeds
+          carbonUnitNeeds,
         });
       }
 
       setBudgetResults(results);
       setHistory([
         ...history,
-        [results.total_cost_medium, { financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds }],
+        [
+          results.total_cost_medium,
+          { financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds },
+        ],
       ]);
     } catch (error) {
       console.error('Error calculating budget:', error);

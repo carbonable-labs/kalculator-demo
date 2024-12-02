@@ -43,10 +43,8 @@ export default function PurchaseRecoTable() {
             return financingDetails.regions.map((region) => ({
               date: strategy.year.toString(),
               carbonUnits: region.quantity,
-              typology:
-                displayedNames[typeBreakdown.typology] || typeBreakdown.typology,
-              mecanism:
-                displayedMethodology[typeBreakdown.typology] || '',
+              typology: displayedNames[typeBreakdown.typology] || typeBreakdown.typology,
+              mecanism: displayedMethodology[typeBreakdown.typology] || '',
               region: displayedNames[region.region] || region.region,
               totalPurchased: region.cost,
               price: financingDetails.price_per_ton,

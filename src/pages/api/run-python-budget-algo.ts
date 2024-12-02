@@ -9,7 +9,7 @@ import {
   RegionPurchase,
 } from '@/types/types';
 
-export default async function handler(req:any, res:any) {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -18,7 +18,7 @@ export default async function handler(req:any, res:any) {
     const scriptPath = path.join(process.cwd(), 'src/python-scripts', 'algo_budget', 'main.py');
 
     const inputData = req.body as BudgetAlgorithmInput;
-    console.log("input data:", inputData)
+    console.log('input data:', inputData);
 
     const options = {
       mode: 'text',
@@ -29,10 +29,10 @@ export default async function handler(req:any, res:any) {
     const data = await PythonShell.run(scriptPath, options);
     const parsedData = JSON.parse(data[0]);
     const parsedResults: PurchaseEntry[] = parsedData.results;
-    console.log("data:", data)
+    console.log('data:', data);
 
-    console.log("parsed Results:", parsedResults)
-    console.log("total price", parsedData.total_price);
+    console.log('parsed Results:', parsedResults);
+    console.log('total price', parsedData.total_price);
 
     const yearlyStrategiesMap = new Map<number, YearlyStrategy>();
     let totalBudgetLow: number = 0;
@@ -72,7 +72,7 @@ export default async function handler(req:any, res:any) {
       totalBudgetHigh += costHigh;
 
       // Find or create the TypologyFinancingBreakdown for the typology
-      let typologyBreakdown = yearlyStrategy.types_purchased.find(tp => tp.typology === typology);
+      let typologyBreakdown = yearlyStrategy.types_purchased.find((tp) => tp.typology === typology);
       if (!typologyBreakdown) {
         typologyBreakdown = {
           typology,
@@ -109,7 +109,7 @@ export default async function handler(req:any, res:any) {
       financingDetails.price_per_ton = financingDetails.cost / financingDetails.quantity;
 
       // Find or create the RegionPurchase
-      let regionPurchase = financingDetails.regions.find(rp => rp.region === region);
+      let regionPurchase = financingDetails.regions.find((rp) => rp.region === region);
       if (!regionPurchase) {
         regionPurchase = {
           region,
@@ -122,10 +122,11 @@ export default async function handler(req:any, res:any) {
 
       regionPurchase.quantity += quantity;
       regionPurchase.cost += cost;
-
     });
 
-    const sortedStrategies = Array.from(yearlyStrategiesMap.values()).sort((a, b) => a.year - b.year);
+    const sortedStrategies = Array.from(yearlyStrategiesMap.values()).sort(
+      (a, b) => a.year - b.year,
+    );
 
     res.status(200).json({
       totalBudgetLow,

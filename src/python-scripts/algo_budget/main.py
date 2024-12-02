@@ -29,7 +29,7 @@ def main():
         print("Error: missing time_constraint")
         sys.exit(1)        
     optimizeFinancing = False
-    if int(financing["exPost"]) == 0 & int(financing["exAnte"]) == 0:
+    if float(financing["exPost"]) == 0.0 and float(financing["exAnte"]) == 0.0:
         optimizeFinancing = True
         
 

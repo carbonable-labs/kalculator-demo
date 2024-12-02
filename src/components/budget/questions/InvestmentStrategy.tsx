@@ -19,13 +19,11 @@ export default function InvestmentStrategy() {
     if (isDontKnowSelected) {
       setFinancing(DEFAULT_FINANCING);
       setOptimizeFinancing(true);
-      console.log("setOptimize true");
     } else {
       setFinancing({
         exAnte: (investmentStrategy as number) / 100,
         exPost: (100 - (investmentStrategy as number)) / 100,
       });
-      console.log("setOptimize false");
       setOptimizeFinancing(false);
     }
   }, [isDontKnowSelected, investmentStrategy]);

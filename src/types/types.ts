@@ -131,7 +131,7 @@ export interface TypoAlgorithmInput {
 export interface RegionPurchase {
   region: string;
   quantity: number;
-  region_factor: number;  // todo camel case
+  region_factor: number; // todo camel case
   cost: number;
 }
 
@@ -175,7 +175,7 @@ export interface YearlyStrategy {
   cost_low: number; // todo: Average cost of all the assets ?
   cost_medium: number; // ""
   cost_high: number; // ""
-  types_purchased: TypologyFinancingBreakdown[];  // todo types_purchased -> rename typologyBreakdown
+  types_purchased: TypologyFinancingBreakdown[]; // todo types_purchased -> rename typologyBreakdown
 }
 
 export interface TypologyFinancingBreakdown {

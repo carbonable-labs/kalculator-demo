@@ -5,7 +5,7 @@ import { deltaExAnte } from '@/constants/forecasts';
 import { duration } from '@/constants/time';
 import { carbonToOffset } from '@/constants/user';
 import { BudgetAlgorithmInput, BudgetOutputData, BudgetPythonResponse, Financing, PurchaseEntry, RegionCosts, RegionAllocation, Typology, TypologyCosts, TimeConstraint } from '@/types/types';
-import { getCostPerTypes, getCostPerRegions } from '@/utils/calculations';
+import { getCostPerTypes, getCostPerRegions, calculateTotalQuantitiesFinancing, calculateTotalCostsFinancing } from '@/utils/calculations';
 
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
 
@@ -51,6 +51,13 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
 
   const typologyCosts: TypologyCosts = getCostPerTypes(strategies); // Todo: naming
   const regionCosts: RegionCosts = getCostPerRegions(strategies); // Todo: naming
+  if (input.financing.exAnte == 0 && input.financing.exPost == 0) {
+    let {totalExAnte, totalExPost} = calculateTotalQuantitiesFinancing(strategies);
+    financingData = {
+      exAnte: totalExAnte,
+      exPost: totalExPost
+    }
+  }
 
   let regionsData: RegionAllocation = {
     // todo: refacto
@@ -61,6 +68,8 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
     asia: regionAllocation.asia,
     oceania: regionAllocation.oceania,
   };
+
+  let { totalCostExAnte, totalCostExPost} = calculateTotalCostsFinancing(strategies);
 
   let algoRes: BudgetOutputData = {
     financing: financingData,
@@ -77,8 +86,8 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
     average_price_per_ton_medium: totalBudgetMedium / carbonToOffset,
     average_price_per_ton_high: totalBudgetHigh / carbonToOffset,
     total_cost_flexible: totalBudgetMedium,
-    cost_ex_post: totalBudgetMedium * financingData.exPost,
-    cost_ex_ante: totalBudgetMedium - notAdjustedBudget * financingData.exPost,
+    cost_ex_post: totalCostExAnte,
+    cost_ex_ante: totalCostExPost,
     cost_nbs_removal: typologyCosts.costNbsRemoval,
     cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
     cost_biochar: typologyCosts.costBiochar,

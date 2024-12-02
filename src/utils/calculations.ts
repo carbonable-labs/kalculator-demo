@@ -193,7 +193,6 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
   };
 };
 
-
 export const getCostPerRegions = (strategies: YearlyStrategy[]) => {
   let costNorthAmerica = 0;
   let costSouthAmerica = 0;
@@ -247,7 +246,6 @@ export const getCostPerRegions = (strategies: YearlyStrategy[]) => {
   };
 };
 
-
 const getRegionFactor = (typology: string, region: keyof RegionAllocation): number => {
   switch (typology) {
     case 'nbsRemoval':
@@ -262,3 +260,37 @@ const getRegionFactor = (typology: string, region: keyof RegionAllocation): numb
       return 1.0;
   }
 };
+
+export function calculateTotalQuantitiesFinancing(strategies: YearlyStrategy[]): {
+  totalExAnte: number;
+  totalExPost: number;
+} {
+  let totalExAnte = 0;
+  let totalExPost = 0;
+
+  strategies.forEach((strategy) => {
+    strategy.types_purchased.forEach((typeBreakdown) => {
+      totalExAnte += typeBreakdown.exAnte.quantity;
+      totalExPost += typeBreakdown.exPost.quantity;
+    });
+  });
+
+  return { totalExAnte, totalExPost };
+}
+
+export function calculateTotalCostsFinancing(strategies: YearlyStrategy[]): {
+  totalCostExAnte: number;
+  totalCostExPost: number;
+} {
+  let totalCostExAnte = 0;
+  let totalCostExPost = 0;
+
+  strategies.forEach((strategy) => {
+    strategy.types_purchased.forEach((typeBreakdown) => {
+      totalCostExAnte += typeBreakdown.exAnte.cost;
+      totalCostExPost += typeBreakdown.exPost.cost;
+    });
+  });
+
+  return { totalCostExAnte, totalCostExPost };
+}
