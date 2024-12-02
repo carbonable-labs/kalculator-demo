@@ -3,11 +3,11 @@ import {
   Typology,
   Financing,
   TimeConstraint,
-  TypologyCosts,
-  RegionCosts,
+  CostByTypology,
+  CostByRegion,
 } from '@/types/types';
 
-import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
+// import { runBudgetAlgo } from '@/algorithms/algoBudget';
 
 export interface Advice {
   change: boolean;
@@ -49,7 +49,7 @@ export const adviceTimeline = (timeConstraints: TimeConstraint): Advice => {
   return { change: false, advice: '' };
 };
 
-export const adviceTypo = (typology: Typology, typoCosts: TypologyCosts): Advice => {
+export const adviceTypo = (typology: Typology, typoCosts: CostByTypology): Advice => {
   // TODO: Update advice considering non used pct.
   let totalCost =
     typoCosts.costBiochar +
@@ -91,7 +91,7 @@ export const adviceTypo = (typology: Typology, typoCosts: TypologyCosts): Advice
   return { change: false, advice: '' };
 };
 
-export const adviceGeography = (region: RegionAllocation, regionsCosts: RegionCosts): Advice => {
+export const adviceGeography = (region: RegionAllocation, regionsCosts: CostByRegion): Advice => {
   let totalCost =
     regionsCosts.africa +
     regionsCosts.asia +

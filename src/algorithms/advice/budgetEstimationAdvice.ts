@@ -5,20 +5,23 @@ import {
   Advice,
   Financing,
 } from '@/types/types';
-import { runBudgetAlgorithm } from '@/algorithms/algoBudget';
+import { runBudgetAlgo } from '@/actions/budget';
 import { deltaExAnte } from '@/constants/forecasts';
 import RenewableEnergy from '@/components/budget/questions/typologies/RenewableEnergy';
 
-export const adviceBudgetTimeline = (
+export const adviceBudgetTimeline = async (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
-): Advice => {
+): Promise<Advice> => {
   let fiveYearInput = { ...input, timeConstraints: TimeConstraint.FiveYear };
-  let fiveYearOutput: BudgetOutputData = runBudgetAlgorithm(fiveYearInput);
+  let fiveYearOutput: BudgetOutputData = await runBudgetAlgo(fiveYearInput);
+
   let flexibleInput = { ...input, timeConstraints: TimeConstraint.NoConstraint };
-  let flexibleOutput: BudgetOutputData = runBudgetAlgorithm(flexibleInput);
+  let flexibleOutput: BudgetOutputData = await runBudgetAlgo(flexibleInput);
+
   let deltaFiveYear = output.total_cost_medium - fiveYearOutput.total_cost_medium;
   let deltaFlexible = output.total_cost_medium - flexibleOutput.total_cost_medium;
+
   const minProfit = output.total_cost_medium * 0.005; // 0.5% profit margin
   if (input.timeConstraints === TimeConstraint.Yearly) {
     if (Math.max(deltaFiveYear, deltaFlexible) < minProfit) {
@@ -58,13 +61,13 @@ export const adviceBudgetTimeline = (
   return { change: false };
 };
 
-export const adviceBudgetFinancing = (
+export const adviceBudgetFinancing = async (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
-): Advice => {
+): Promise<Advice> => {
   if (input.financing.exAnte <= 0.88) {
     let newFinancing: Financing = { exAnte: 0.88, exPost: 0.12 };
-    let newOutput: BudgetOutputData = runBudgetAlgorithm({ ...input, financing: newFinancing });
+    let newOutput: BudgetOutputData = await runBudgetAlgo({ ...input, financing: newFinancing });
     let delta = output.total_cost_medium - newOutput.total_cost_medium;
     const minProfit = output.total_cost_medium * 0.005; // 0.5% profit margin
     if (delta > minProfit) {
@@ -81,10 +84,10 @@ export const adviceBudgetFinancing = (
   return { change: false };
 };
 
-export const adviceBudgetTypology = (
+export const adviceBudgetTypology = async (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
-): Advice => {
+): Promise<Advice> => {
   let pctBiochar = input.typology.biochar;
   let pctDac = input.typology.dac;
   let pctNbsAvoidance = input.typology.nbsAvoidance;
@@ -141,7 +144,7 @@ export const adviceBudgetTypology = (
       .map((x, i) => (x == 0 || x == maxErrorIndex ? [0, i] : [1, i]))
       .filter((x) => x[0] == 1)
       .map((x) => x[1]);
-    allocationSupport.forEach((i) => {
+    allocationSupport.forEach(async (i) => {
       let tmpDistribution = [...newTypologyDistribution];
       tmpDistribution[i] = newTypologyDistribution[i] - sign * step;
       let tmpTypology = {
@@ -151,7 +154,7 @@ export const adviceBudgetTypology = (
         nbsRemoval: tmpDistribution[3] / 100,
         renewableEnergy: 0,
       };
-      let tmpOutput = runBudgetAlgorithm({ ...input, typology: tmpTypology });
+      let tmpOutput = await runBudgetAlgo({ ...input, typology: tmpTypology });
       let tmpCosts = [
         tmpOutput.cost_biochar,
         tmpOutput.cost_dac,
@@ -241,10 +244,10 @@ const computeSolutionError = (
   let normalizedErrors = errors.map((x) => x / Math.pow(100 - target, 2));
   return normalizedErrors;
 };
-export const adviceBudgetGeography = (
+export const adviceBudgetGeography = async (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
-): Advice => {
+): Promise<Advice> => {
   let pctEU = input.regionAllocation.europe;
   let pctAF = input.regionAllocation.africa;
   let pctAS = input.regionAllocation.asia;
@@ -304,7 +307,7 @@ export const adviceBudgetGeography = (
       .map((x, i) => (x == 0 || x == maxErrorIndex ? [0, i] : [1, i]))
       .filter((x) => x[0] == 1)
       .map((x) => x[1]);
-    allocationSupport.forEach((i) => {
+    allocationSupport.forEach(async (i) => {
       let tmpDistribution = [...newRegionDistribution];
       tmpDistribution[i] = newRegionDistribution[i] - sign * step;
       let tmpRegions = {
@@ -315,7 +318,7 @@ export const adviceBudgetGeography = (
         northAmerica: tmpDistribution[4] / 100,
         southAmerica: tmpDistribution[5] / 100,
       };
-      let tmpOutput = runBudgetAlgorithm({ ...input, regionAllocation: tmpRegions });
+      let tmpOutput = await runBudgetAlgo({ ...input, regionAllocation: tmpRegions });
       let tmpCosts = [
         tmpOutput.cost_europe,
         tmpOutput.cost_africa,
@@ -369,14 +372,14 @@ export const adviceBudgetGeography = (
   return { change: false };
 };
 
-export const computeBudgetAdvice = (
+export const computeBudgetAdvice = async (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
-): Array<Advice> => {
-  let computedTimelineTip = adviceBudgetTimeline(input, output);
-  let computedFinancingTip = adviceBudgetFinancing(input, output);
-  let computedTypologyTip = adviceBudgetTypology(input, output);
-  let computedGeographyTip = adviceBudgetGeography(input, output);
+): Promise<Array<Advice>> => {
+  const computedTimelineTip = await adviceBudgetTimeline(input, output);
+  const computedFinancingTip = await adviceBudgetFinancing(input, output);
+  const computedTypologyTip = await adviceBudgetTypology(input, output);
+  const computedGeographyTip = await adviceBudgetGeography(input, output);
 
   return [computedTimelineTip, computedFinancingTip, computedTypologyTip, computedGeographyTip];
 };

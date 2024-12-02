@@ -99,13 +99,13 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
     strategies,
   };
 
-  const computedAdvice = computeBudgetAdvice(input, algoRes);
+  // const computedAdvice = await computeBudgetAdvice(input, algoRes);
 
   return {
     ...algoRes,
-    advice_timeline: computedAdvice[0],
-    advice_financing: computedAdvice[1],
-    advice_typo: computedAdvice[2],
-    advice_geography: computedAdvice[3],
+    // advice_timeline: computedAdvice[0],
+    // advice_financing: computedAdvice[1],
+    // advice_typo: computedAdvice[2],
+    // advice_geography: computedAdvice[3],
   };
 }

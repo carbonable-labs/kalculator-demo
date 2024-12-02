@@ -135,7 +135,7 @@ export interface RegionPurchase {
   cost: number;
 }
 
-export interface RegionCosts {
+export interface CostByRegion {
   northAmerica: number;
   southAmerica: number;
   europe: number;
@@ -161,7 +161,7 @@ export interface PurchaseEntry {
   type: string; // 'ex-ante' or 'ex-post'
 }
 
-export interface TypologyCosts {
+export interface CostByTypology {
   costNbsRemoval: number;
   costNbsAvoidance: number;
   costBiochar: number;

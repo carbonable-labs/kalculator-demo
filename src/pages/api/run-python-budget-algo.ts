@@ -29,10 +29,6 @@ export default async function handler(req: any, res: any) {
     const data = await PythonShell.run(scriptPath, options);
     const parsedData = JSON.parse(data[0]);
     const parsedResults: PurchaseEntry[] = parsedData.results;
-    console.log('data:', data);
-
-    console.log('parsed Results:', parsedResults);
-    console.log('total price', parsedData.total_price);
 
     const yearlyStrategiesMap = new Map<number, YearlyStrategy>();
     let totalBudgetLow: number = 0;

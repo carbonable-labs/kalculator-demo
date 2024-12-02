@@ -12,7 +12,6 @@ import {
 } from '@/constants/regions';
 import {
   RegionAllocation,
-  RegionCosts,
   RegionPurchase,
   YearlyStrategy,
   TypologyPurchaseSummary,

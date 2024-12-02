@@ -2,8 +2,8 @@ import {
   StratAlgorithmInput,
   YearlyStrategy,
   StratOutputData,
-  RegionCosts,
-  TypologyCosts,
+  CostByRegion,
+  CostByTypology,
   Financing,
   RegionAllocation,
   Typology,
@@ -124,8 +124,8 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     prevRenewableEnergy,
   ];
 
-  const typologyCosts: TypologyCosts = getCostPerTypes(strategies);
-  const regionCosts: RegionCosts = getCostPerRegions(strategies);
+  const typologyCosts: CostByTypology = getCostPerTypes(strategies);
+  const CostByRegion: CostByRegion = getCostPerRegions(strategies);
 
   let financingData: Financing = {
     exAnte: financing.exAnte,
@@ -175,12 +175,12 @@ export const runStratAlgorithm = (input: StratAlgorithmInput) => {
     cost_nbs_avoidance: typologyCosts.costNbsAvoidance,
     cost_biochar: typologyCosts.costBiochar,
     cost_dac: typologyCosts.costDac,
-    cost_north_america: regionCosts.northAmerica,
-    cost_south_america: regionCosts.southAmerica,
-    cost_europe: regionCosts.europe,
-    cost_africa: regionCosts.africa,
-    cost_asia: regionCosts.asia,
-    cost_oceania: regionCosts.oceania,
+    cost_north_america: CostByRegion.northAmerica,
+    cost_south_america: CostByRegion.southAmerica,
+    cost_europe: CostByRegion.europe,
+    cost_africa: CostByRegion.africa,
+    cost_asia: CostByRegion.asia,
+    cost_oceania: CostByRegion.oceania,
     advice_timeline: { change: false },
     advice_financing: { change: false },
     advice_typo: { change: false },
