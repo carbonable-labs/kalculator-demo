@@ -14,7 +14,7 @@ import {
   DEFAULT_GEOGRAPHICAL_AREA,
   DEFAULT_TYPOLOGY,
 } from '@/utils/configuration';
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useState, useMemo } from 'react';
 
 interface BudgetContextType {
   timeConstraints: number | null;
@@ -60,7 +60,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsCalculating(true);
 
     try {
-      let results;
+      let results: BudgetOutputData | null = null;
       if (optimizeFinancing) {
         let newFinancing: Financing = {
           exAnte: 0,
@@ -84,46 +84,74 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
       }
 
-      setBudgetResults(results);
-      setHistory([
-        ...history,
-        [
-          results.total_cost_medium,
-          { financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds },
-        ],
-      ]);
+      if (results) {
+        setBudgetResults(results);
+        setHistory([
+          ...history,
+          [
+            results.total_cost_medium,
+            { financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds },
+          ],
+        ]);
+      }
     } catch (error) {
       console.error('Error calculating budget:', error);
-      // You might want to set an error state here
     } finally {
       setIsCalculating(false);
     }
-  }, [financing, regionAllocation, timeConstraints, typology]);
+  }, [
+    financing,
+    regionAllocation,
+    timeConstraints,
+    typology,
+    optimizeFinancing,
+    carbonUnitNeeds,
+  ]);
+
+  const value = useMemo(() => ({
+    timeConstraints,
+    setTimeConstraints,
+    financing,
+    setFinancing,
+    optimizeFinancing,
+    setOptimizeFinancing,
+    typology,
+    setTypology,
+    regionAllocation,
+    setRegionAllocation,
+    budgetResults,
+    setBudgetResults,
+    isCalculating,
+    setIsCalculating,
+    calculateBudget,
+    history,
+    setHistory,
+    carbonUnitNeeds,
+    setCarbonUnitNeeds,
+  }), [
+    timeConstraints,
+    setTimeConstraints,
+    financing,
+    setFinancing,
+    optimizeFinancing,
+    setOptimizeFinancing,
+    typology,
+    setTypology,
+    regionAllocation,
+    setRegionAllocation,
+    budgetResults,
+    setBudgetResults,
+    isCalculating,
+    setIsCalculating,
+    calculateBudget,
+    history,
+    setHistory,
+    carbonUnitNeeds,
+    setCarbonUnitNeeds,
+  ]);
 
   return (
-    <BudgetContext.Provider
-      value={{
-        timeConstraints,
-        setTimeConstraints,
-        financing,
-        setFinancing,
-        optimizeFinancing,
-        setOptimizeFinancing,
-        typology,
-        setTypology,
-        regionAllocation,
-        setRegionAllocation,
-        budgetResults,
-        setBudgetResults,
-        isCalculating,
-        setIsCalculating,
-        calculateBudget,
-        history,
-        setHistory,
-        carbonUnitNeeds,
-        setCarbonUnitNeeds,
-      }}
-    >
+    <BudgetContext.Provider value={value}>
       {children}
     </BudgetContext.Provider>
   );
@@ -132,7 +160,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 export const useBudget = () => {
   const context = useContext(BudgetContext);
   if (context === undefined) {
-    throw new Error('useBudget must be used within an BudgetProvider');
+    throw new Error('useBudget must be used within a BudgetProvider');
   }
   return context;
 };

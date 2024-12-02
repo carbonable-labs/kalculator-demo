@@ -33,7 +33,6 @@ export default function CarbonUnitNeeds() {
         },
         {} as { [year: string]: number },
       );
-
     setCarbonUnitNeeds(validUnits);
   }, [units, setCarbonUnitNeeds]);
 
