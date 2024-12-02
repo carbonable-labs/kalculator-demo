@@ -1,6 +1,6 @@
 // import {
 //   TimeConstraint,
-//   ProjectConfig,
+//   Typology,
 //   TypoAlgorithmInput,
 //   TypoOutputData,
 //   YearlyStrategy,
@@ -19,9 +19,9 @@
 
 // export const runTypoAlgorithm = (input: TypoAlgorithmInput): TypoOutputData => {
 //   const { configType, budget, regionAllocation, financing, timeConstraints } = input;
-//   const projectConfig: ProjectConfig[] = configMap[configType];
+//   const Typology: Typology[] = configMap[configType];
 
-//   for (const config of projectConfig) {
+//   for (const config of Typology) {
 //     // Loop through each type repartition, from the most aligned to the least
 //     // Access values from the config object
 //     const nbsRemoval = config.nbsRemoval * carbonToOffset;

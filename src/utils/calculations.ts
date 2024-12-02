@@ -46,7 +46,6 @@ export const normalizeScoresToPercentages = (scores: Typology): Typology => {
     biochar: (scores.biochar / total) * 100,
     dac: (scores.dac / total) * 100,
     renewableEnergy: (scores.renewableEnergy / total) * 100,
-    // blueCarbon: (scores.blue_carbon / total) * 100,
   };
 };
 

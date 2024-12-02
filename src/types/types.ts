@@ -54,13 +54,6 @@ export const typologyMapping = {
     pricing: 5,
     reputation: 3,
   },
-  // blue_carbon: {
-  //   biodiversity: 2,
-  //   durability: 3,
-  //   removal: 3,
-  //   pricing: 5,
-  //   reputation: 3,
-  // },
 };
 
 // Represents the typology repartition, expressed as percentages of total carbon credit invest
@@ -70,7 +63,6 @@ export interface Typology {
   biochar: number; // Biochar projects for carbon sequestration
   dac: number; // Direct Air Capture technology
   renewableEnergy: number; // Renewable energy projects (e.g., solar, wind)
-  // blueCarbon: number;       // Blue Carbon projects (e.g., coastal and marine ecosystems)
 }
 
 export interface Financing {
@@ -84,14 +76,6 @@ export enum TimeConstraint { // TODO: maybe change typing
   NoConstraint = -1,
 }
 
-export type ProjectConfig = {
-  nbsRemoval: number; // NbS ARR project weight
-  biochar: number; // Biochar project weight
-  dac: number; // DAC project weight
-  nbsAvoidance: number; // NbS REDD project weight
-  renewableEnergy: number; // Renewable Energy project weight
-};
-
 export enum ConfigType {
   CarbonImpact = 'CarbonImpact',
   Durability = 'Durability',
@@ -100,31 +84,28 @@ export enum ConfigType {
 }
 
 // Algos input
-export type AlgorithmInput = BudgetAlgorithmInput | TypoAlgorithmInput;
-
-export interface BudgetAlgorithmInput {
+export interface BaseAlgorithmInput {
   timeConstraints: TimeConstraint;
   financing: Financing;
-  typology: Typology;
   regionAllocation: RegionAllocation;
+}
+
+export interface BudgetAlgorithmInput extends BaseAlgorithmInput {
+  typology: Typology;
   carbonUnitNeeds: { [year: string]: number };
 }
 
-export interface StratAlgorithmInput {
-  timeConstraints: TimeConstraint;
-  financing: Financing;
+export interface StratAlgorithmInput extends BaseAlgorithmInput {
   typology: Typology;
-  regionAllocation: RegionAllocation;
   budget: number;
 }
 
-export interface TypoAlgorithmInput {
-  timeConstraints: TimeConstraint;
-  financing: Financing;
-  regionAllocation: RegionAllocation;
+export interface TypoAlgorithmInput extends BaseAlgorithmInput {
   budget: number;
   configType: ConfigType;
 }
+
+export type AlgorithmInput = BudgetAlgorithmInput | TypoAlgorithmInput | StratAlgorithmInput;
 
 // Algos output
 
@@ -197,8 +178,9 @@ export interface Advice {
   tipPhrase?: string;
   actionText?: string;
   budgetDelta?: number;
-  tip?: TimeConstraint | Financing | Array<Typology> | Array<RegionAllocation>;
+  tip?: TimeConstraint | Financing | Typology[] | RegionAllocation[];
 }
+
 export interface BudgetPythonResponse {
   totalBudgetLow: number;
   totalBudgetMedium: number;
@@ -239,79 +221,17 @@ export interface BudgetOutputData {
   strategies: YearlyStrategy[];
 }
 
-export interface StratOutputData {
-  financing: Financing;
-  typologies: Typology;
-  regions: RegionAllocation;
+export interface StratOutputData extends BudgetOutputData {
   otherTypologiesPossible: Typology[];
-  carbon_offset: number;
   user_budget: number;
   money_saving: number;
   money_to_add: number;
-  budget_not_compatible: string; //TODO ??
-  total_cost_low: number;
-  total_cost_medium: number;
-  total_cost_high: number;
-  average_yearly_cost_low: number;
-  average_yearly_cost_medium: number;
-  average_yearly_cost_high: number;
-  average_price_per_ton_low: number;
-  average_price_per_ton_medium: number;
-  average_price_per_ton_high: number;
-  total_cost_flexible: number;
-  cost_ex_post: number;
-  cost_ex_ante: number;
-  cost_nbs_removal: number;
-  cost_nbs_avoidance: number;
-  cost_biochar: number;
-  cost_dac: number;
-  cost_north_america: number;
-  cost_south_america: number;
-  cost_europe: number;
-  cost_africa: number;
-  cost_asia: number;
-  cost_oceania: number;
+  budget_not_compatible: string; // TODO
+}
+
+export interface TypoOutputData extends BudgetOutputData {
   advice_timeline: Advice;
   advice_financing: Advice;
   advice_typo: Advice;
   advice_geography: Advice;
-  strategies: YearlyStrategy[];
-}
-
-export interface TypoOutputData {
-  financing: Financing;
-  typologies: Typology;
-  regions: RegionAllocation;
-  carbon_offset: number;
-  user_budget: number;
-  money_saving: number;
-  money_to_add: number;
-  budget_not_compatible: string; //TODO ??
-  total_cost_low: number;
-  total_cost_medium: number;
-  total_cost_high: number;
-  average_yearly_cost_low: number;
-  average_yearly_cost_medium: number;
-  average_yearly_cost_high: number;
-  average_price_per_ton_low: number;
-  average_price_per_ton_medium: number;
-  average_price_per_ton_high: number;
-  total_cost_flexible: number;
-  cost_ex_post: number;
-  cost_ex_ante: number;
-  cost_nbs_removal: number;
-  cost_nbs_avoidance: number;
-  cost_biochar: number;
-  cost_dac: number;
-  cost_north_america: number;
-  cost_south_america: number;
-  cost_europe: number;
-  cost_africa: number;
-  cost_asia: number;
-  cost_oceania: number;
-  advice_timeline: string;
-  advice_financing: string;
-  advice_typo: string;
-  advice_geography: string;
-  strategies: YearlyStrategy[];
 }
