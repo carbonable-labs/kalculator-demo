@@ -18,7 +18,9 @@ import {
   calculateTotalCostsFinancing,
 } from '@/utils/calculations';
 
-async function requestBudgetComputation(input: BudgetAlgorithmInput): Promise<BudgetPythonResponse | null> {
+async function requestBudgetComputation(
+  input: BudgetAlgorithmInput,
+): Promise<BudgetPythonResponse | null> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/run-python-budget-algo`, {
@@ -40,7 +42,7 @@ async function requestBudgetComputation(input: BudgetAlgorithmInput): Promise<Bu
 
 function getUpdatedFinancing(
   financing: { exAnte: number; exPost: number },
-  strategies: any
+  strategies: any,
 ): { exAnte: number; exPost: number } {
   if (financing.exAnte === 0 && financing.exPost === 0) {
     const { totalExAnte, totalExPost } = calculateTotalQuantitiesFinancing(strategies);
