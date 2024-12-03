@@ -191,3 +191,58 @@ export function calculateTotalCostsFinancing(strategies: YearlyStrategy[]): {
 
   return { totalCostExAnte, totalCostExPost };
 }
+
+export function assertTypologySum(typology: Typology): void {
+  const total = Object.values(typology).reduce((sum, value) => sum + value, 0);
+  if (Math.abs(total - 1) > 1e-6) {
+    throw new Error(`Sum of typology repartition should be exactly 1, and not: ${total}`);
+  }
+}
+
+export const calculateTypologyScores = (preferences: UserPreferences): Typology => {
+  const scores: Partial<Typology> = {};
+  Object.entries(typologyMapping).forEach(([typology, attributes]) => {
+    const score =
+      preferences.biodiversity * attributes.biodiversity +
+      preferences.durability * attributes.durability +
+      preferences.removal * attributes.removal +
+      preferences.pricing * attributes.pricing +
+      preferences.reputation * attributes.reputation;
+    scores[typology as keyof Typology] = score;
+  });
+  return scores as Typology;
+};
+
+// Should be exactly 1
+export const normalizeScoresToPercentages = (scores: Typology): Typology => {
+  const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
+  if (total === 0) {
+    return {
+      nbsRemoval: 0,
+      nbsAvoidance: 0,
+      biochar: 0,
+      dac: 0,
+      renewableEnergy: 0,
+    };
+  }
+
+  let normalized: Typology = {
+    nbsRemoval: Math.round((scores.nbsRemoval / total) * 100) / 100,
+    nbsAvoidance: Math.round((scores.nbsAvoidance / total) * 100) / 100,
+    biochar: Math.round((scores.biochar / total) * 100) / 100,
+    dac: Math.round((scores.dac / total) * 100) / 100,
+    renewableEnergy: Math.round((scores.renewableEnergy / total) * 100) / 100,
+  };
+
+  const correctedTotal = Object.values(normalized).reduce((sum, value) => sum + value, 0);
+  const difference = 1 - correctedTotal;
+
+  const maxKey = Object.keys(normalized).reduce((maxKey, key) =>
+    normalized[key as keyof Typology] > normalized[maxKey as keyof Typology] ? key : maxKey
+  ) as keyof Typology;
+
+  normalized[maxKey] = Math.round((normalized[maxKey] + difference) * 100) / 100;
+
+  return normalized;
+};
+

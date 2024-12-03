@@ -16,6 +16,7 @@ import {
   getCostPerRegions,
   calculateTotalQuantitiesFinancing,
   calculateTotalCostsFinancing,
+  assertTypologySum,
 } from '@/utils/calculations';
 
 async function requestBudgetComputation(
@@ -53,7 +54,8 @@ function getUpdatedFinancing(
 
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
   const { typology, regionAllocation, financing } = input;
-
+  assertTypologySum(typology);
+  
   const response = await requestBudgetComputation(input);
   if (!response) throw new Error('Failed to fetch budget or strategies data from backend.');
 
