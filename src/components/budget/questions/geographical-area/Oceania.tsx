@@ -12,15 +12,20 @@ export default function Oceania() {
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
-    setRegionAllocation({
-      ...regionAllocation,
-      oceania: Math.round(oceania as number) / 100,
-    });
-  }, [oceania]);
+    if (regionAllocation?.oceania) {
+      setOceania(regionAllocation.oceania * 100);
+    }
+  }, []);
 
   useEffect(() => {
-    setOceania(regionAllocation.oceania * 100);
-  }, [regionAllocation.oceania]);
+    // Prevent unnecessary updates if the values are the same
+    if (Math.round(oceania as number) / 100 !== regionAllocation.oceania) {
+      setRegionAllocation({
+        ...regionAllocation,
+        oceania: Math.round(oceania as number) / 100,
+      });
+    }
+  }, [oceania, setRegionAllocation, regionAllocation]);
 
   return (
     <SliderWithInput

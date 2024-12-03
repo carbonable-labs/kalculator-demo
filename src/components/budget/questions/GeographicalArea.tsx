@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
 import Title from '@/components/form/Title';
 import Africa from './geographical-area/Africa';
 import Asia from './geographical-area/Asia';
@@ -13,11 +12,7 @@ import NorthAmerica from './geographical-area/NorthAmerica';
 
 export default function GeographicalArea() {
   const [isFullGeographicalArea, setIsFullGeographicalArea] = useState(true);
-  const { regionAllocation, setRegionAllocation } = useBudget();
-
-  const reset = () => {
-    setRegionAllocation(DEFAULT_GEOGRAPHICAL_AREA);
-  };
+  const { regionAllocation } = useBudget();
 
   useEffect(() => {
     const regionAllocationValues = Object.values(regionAllocation);
@@ -49,12 +44,6 @@ export default function GeographicalArea() {
       {!isFullGeographicalArea && (
         <div className="mt-6 rounded-lg bg-red-800 px-4 py-2 text-sm">
           The sum of the geographical areas values must be equal to 100%
-          <span
-            onClick={reset}
-            className="ml-4 cursor-pointer rounded-lg border border-opacityLight-30 px-2 py-1 uppercase hover:bg-opacityLight-10"
-          >
-            Reset
-          </span>
         </div>
       )}
     </>

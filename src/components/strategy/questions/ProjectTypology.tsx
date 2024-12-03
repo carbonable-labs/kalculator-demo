@@ -16,7 +16,6 @@ import {
   CLIMATE_AVOIDANCE_TYPOLOGY,
   CLIMATE_NO_IDEA_TYPOLOGY,
   CLIMATE_REMOVAL_TYPOLOGY,
-  DEFAULT_TYPOLOGY,
   TYPOLOGY_PREFERENCE,
 } from '@/utils/configuration';
 import { Typology } from '@/types/types';
@@ -28,10 +27,6 @@ export default function ProjectTypology() {
   const [impactPreference, setImpactPreference] = useState<string>('');
   const [nbSPreference, setNbSPreference] = useState<string>('');
   const { typology, setTypology } = useStrategy();
-
-  const reset = () => {
-    setTypology(DEFAULT_TYPOLOGY);
-  };
 
   useEffect(() => {
     const typologyValues = Object.values(typology);
@@ -82,12 +77,6 @@ export default function ProjectTypology() {
       {!isTypologyFull && (
         <div className="mt-6 rounded-lg bg-red-800 px-4 py-2 text-sm">
           The sum of the typology values must be equal to 100%
-          <span
-            onClick={reset}
-            className="ml-4 cursor-pointer rounded-lg border border-opacityLight-30 px-2 py-1 uppercase hover:bg-opacityLight-10"
-          >
-            Reset
-          </span>
         </div>
       )}
       <div className="ml-2 mt-12 flex items-center">

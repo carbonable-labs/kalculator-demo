@@ -10,16 +10,20 @@ export default function Europe() {
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
-    setRegionAllocation({
-      ...regionAllocation,
-      europe: Math.round(europe as number) / 100,
-    });
-  }, [europe]);
+    if (regionAllocation?.europe) {
+      setEurope(regionAllocation.europe * 100);
+    }
+  }, []);
 
   useEffect(() => {
-    setEurope(regionAllocation.europe * 100);
-  }, [regionAllocation.europe]);
-
+    // Prevent unnecessary updates if the values are the same
+    if (Math.round(europe as number) / 100 !== regionAllocation.europe) {
+      setRegionAllocation({
+        ...regionAllocation,
+        europe: Math.round(europe as number) / 100,
+      });
+    }
+  }, [europe, setRegionAllocation, regionAllocation]);
   return (
     <SliderWithInput
       inputLabel="Europe"
