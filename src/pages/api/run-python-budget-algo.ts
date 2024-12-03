@@ -1,13 +1,12 @@
-import { PythonShell } from 'python-shell';
+import { PythonShell, Options } from 'python-shell';
 import path from 'path';
 import {
   BudgetAlgorithmInput,
   PurchaseEntry,
   YearlyStrategy,
-  TypologyFinancingBreakdown,
   FinancingPurchaseDetails,
-  RegionPurchase,
 } from '@/types/types';
+import { typologyCostFactors } from '@/constants/forecasts';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -20,7 +19,7 @@ export default async function handler(req: any, res: any) {
     const inputData = req.body as BudgetAlgorithmInput;
     console.log('input data:', inputData);
 
-    const options = {
+    const options: Options = {
       mode: 'text',
       pythonPath: path.join(process.cwd(), 'venv/bin/python'),
       args: [JSON.stringify(inputData)],
@@ -38,7 +37,6 @@ export default async function handler(req: any, res: any) {
     parsedResults.forEach((entry) => {
       const { year, quantity, typology, region, price, type } = entry;
 
-      // Find or create the YearlyStrategy for the year
       let yearlyStrategy = yearlyStrategiesMap.get(year);
       if (!yearlyStrategy) {
         yearlyStrategy = {
@@ -54,10 +52,13 @@ export default async function handler(req: any, res: any) {
 
       yearlyStrategy.quantity_purchased += quantity;
 
-      // For simplicity, assuming cost_low = 0.9 * price, cost_high = 1.1 * price
       const cost = quantity * price;
-      const costLow = quantity * price * 0.9;
-      const costHigh = quantity * price * 1.1;
+      if (!(typology in typologyCostFactors)) {
+        throw new Error(`Unknown typology: ${typology}`);
+      }
+      const factors = typologyCostFactors[typology];
+      const costLow = cost * factors.low;
+      const costHigh = cost * factors.high;
 
       yearlyStrategy.cost_medium += cost;
       yearlyStrategy.cost_low += costLow;
@@ -67,7 +68,6 @@ export default async function handler(req: any, res: any) {
       totalBudgetLow += costLow;
       totalBudgetHigh += costHigh;
 
-      // Find or create the TypologyFinancingBreakdown for the typology
       let typologyBreakdown = yearlyStrategy.types_purchased.find((tp) => tp.typology === typology);
       if (!typologyBreakdown) {
         typologyBreakdown = {
@@ -88,7 +88,6 @@ export default async function handler(req: any, res: any) {
         yearlyStrategy.types_purchased.push(typologyBreakdown);
       }
 
-      // Select the correct FinancingPurchaseDetails based on the type
       let financingDetails: FinancingPurchaseDetails;
       if (type === 'ex-ante') {
         financingDetails = typologyBreakdown.exAnte;
@@ -101,16 +100,13 @@ export default async function handler(req: any, res: any) {
       financingDetails.quantity += quantity;
       financingDetails.cost += cost;
 
-      // Update average price per ton
       financingDetails.price_per_ton = financingDetails.cost / financingDetails.quantity;
 
-      // Find or create the RegionPurchase
       let regionPurchase = financingDetails.regions.find((rp) => rp.region === region);
       if (!regionPurchase) {
         regionPurchase = {
           region,
           quantity: 0,
-          regionFactor: 1, // Assuming regionFactor is 1; adjust if needed
           cost: 0,
         };
         financingDetails.regions.push(regionPurchase);

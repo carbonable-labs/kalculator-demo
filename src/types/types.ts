@@ -1,3 +1,5 @@
+import { typologyCostFactors } from '@/constants/forecasts';
+
 // Regional allocation of funds from user input
 export interface RegionAllocation {
   northAmerica: number;
@@ -112,7 +114,6 @@ export type AlgorithmInput = BudgetAlgorithmInput | TypoAlgorithmInput | StratAl
 export interface RegionPurchase {
   region: string;
   quantity: number;
-  regionFactor: number;
   cost: number;
 }
 
@@ -136,7 +137,7 @@ export interface TypologyPurchaseSummary {
 export interface PurchaseEntry {
   year: number;
   quantity: number;
-  typology: string;
+  typology: keyof typeof typologyCostFactors;
   region: string;
   price: number;
   type: string; // 'ex-ante' or 'ex-post'
