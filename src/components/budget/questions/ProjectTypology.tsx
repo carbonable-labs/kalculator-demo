@@ -72,7 +72,7 @@ export default function ProjectTypology() {
       setNbsRemoval(selectedTypology.nbsRemoval * 100);
       setRenewableEnergy(selectedTypology.renewableEnergy * 100);
     }
-  }, [isDontKnowSelected, impactPreference, nbSPreference, setTypology]);
+  }, [isDontKnowSelected, impactPreference, nbSPreference]);
 
   return (
     <>
