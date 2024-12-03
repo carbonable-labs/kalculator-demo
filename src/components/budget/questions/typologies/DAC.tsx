@@ -30,10 +30,6 @@ export default function DAC({ isDontKnowSelected, dac, setDac }: NbSProps) {
     }
   }, [dac, setTypology, typology]);
 
-  useEffect(() => {
-    setDac(typology.dac * 100);
-  }, [typology.dac]);
-
   return (
     <SliderWithInput
       inputLabel="Direct Air Capture (DAC)"
