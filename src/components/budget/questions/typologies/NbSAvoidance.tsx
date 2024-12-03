@@ -2,29 +2,32 @@
 
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_TYPOLOGY } from '@/utils/configuration';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
+  nbs: number | number[];
+  setNbs: (value: number | number[]) => void;
 }
 
-export default function NbSAvoidance({ isDontKnowSelected }: NbSProps) {
-  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(
-    DEFAULT_TYPOLOGY.nbsAvoidance * 100,
-  );
+export default function NbSAvoidance({ isDontKnowSelected, nbs, setNbs }: NbSProps) {
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {
-    setTypology({
-      ...typology,
-      nbsAvoidance: Math.round(renewableEnergy as number) / 100,
-    });
-  }, [renewableEnergy]);
+    if (typology?.nbsAvoidance) {
+      setNbs(typology.nbsAvoidance * 100);
+    }
+  }, []);
 
+  // Update typology when nbs changes
   useEffect(() => {
-    setRenewableEnergy(typology.nbsAvoidance * 100);
-  }, [typology.nbsAvoidance]);
+    if (Math.round(nbs as number) / 100 !== typology.nbsAvoidance) {
+      setTypology({
+        ...typology,
+        nbsAvoidance: Math.round(nbs as number) / 100,
+      });
+    }
+  }, [nbs, setTypology, typology]);
 
   return (
     <SliderWithInput
@@ -34,9 +37,9 @@ export default function NbSAvoidance({ isDontKnowSelected }: NbSProps) {
       minValue={0}
       maxValue={100}
       label="RE"
-      value={renewableEnergy as number}
-      onChange={setRenewableEnergy}
-      displayedValue={renewableEnergy as number}
+      value={nbs as number}
+      onChange={setNbs}
+      displayedValue={nbs as number}
       isDisabled={isDontKnowSelected}
     />
   );

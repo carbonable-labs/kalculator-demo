@@ -10,15 +10,20 @@ export default function Asia() {
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
-    setRegionAllocation({
-      ...regionAllocation,
-      asia: Math.round(asia as number) / 100,
-    });
-  }, [asia]);
+    if (regionAllocation?.asia) {
+      setAsia(regionAllocation.asia * 100);
+    }
+  }, []);
 
   useEffect(() => {
-    setAsia(regionAllocation.asia * 100);
-  }, [regionAllocation.asia]);
+    // Prevent unnecessary updates if the values are the same
+    if (Math.round(asia as number) / 100 !== regionAllocation.asia) {
+      setRegionAllocation({
+        ...regionAllocation,
+        asia: Math.round(asia as number) / 100,
+      });
+    }
+  }, [asia, setRegionAllocation, regionAllocation]);
 
   return (
     <SliderWithInput

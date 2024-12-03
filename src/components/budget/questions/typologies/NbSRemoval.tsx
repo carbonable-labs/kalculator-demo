@@ -2,27 +2,32 @@
 
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_TYPOLOGY } from '@/utils/configuration';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
+  nbs: number | number[];
+  setNbs: (value: number | number[]) => void;
 }
 
-export default function NbSRemoval({ isDontKnowSelected }: NbSProps) {
-  const [nbs, setNbs] = useState<number | number[]>(DEFAULT_TYPOLOGY.nbsRemoval * 100);
+export default function NbSRemoval({ isDontKnowSelected, nbs, setNbs }: NbSProps) {
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {
-    setTypology({
-      ...typology,
-      nbsRemoval: Math.round(nbs as number) / 100,
-    });
-  }, [nbs]);
+    if (typology?.nbsRemoval) {
+      setNbs(typology.nbsRemoval * 100);
+    }
+  }, []);
 
+  // Update typology when nbs changes
   useEffect(() => {
-    setNbs(typology.nbsRemoval * 100);
-  }, [typology.nbsRemoval]);
+    if (Math.round(nbs as number) / 100 !== typology.nbsRemoval) {
+      setTypology({
+        ...typology,
+        nbsRemoval: Math.round(nbs as number) / 100,
+      });
+    }
+  }, [nbs, setTypology, typology]);
 
   return (
     <SliderWithInput

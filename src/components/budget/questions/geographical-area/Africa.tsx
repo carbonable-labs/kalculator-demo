@@ -10,15 +10,20 @@ export default function Africa() {
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
-    setRegionAllocation({
-      ...regionAllocation,
-      africa: Math.round(africa as number) / 100,
-    });
-  }, [africa]);
+    if (regionAllocation?.africa) {
+      setAfrica(regionAllocation.africa * 100);
+    }
+  }, []);
 
   useEffect(() => {
-    setAfrica(regionAllocation.africa * 100);
-  }, [regionAllocation.africa]);
+    // Prevent unnecessary updates if the values are the same
+    if (Math.round(africa as number) / 100 !== regionAllocation.africa) {
+      setRegionAllocation({
+        ...regionAllocation,
+        africa: Math.round(africa as number) / 100,
+      });
+    }
+  }, [africa, setRegionAllocation, regionAllocation]);
 
   return (
     <SliderWithInput

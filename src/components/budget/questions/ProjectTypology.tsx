@@ -29,10 +29,17 @@ export default function ProjectTypology() {
   const [impactPreference, setImpactPreference] = useState<string>('');
   const [nbSPreference, setNbSPreference] = useState<string>('');
   const { typology, setTypology } = useBudget();
-
-  const reset = () => {
-    setTypology(DEFAULT_TYPOLOGY);
-  };
+  const [biochar, setBiochar] = useState<number | number[]>(DEFAULT_TYPOLOGY.biochar * 100);
+  const [dac, setDac] = useState<number | number[]>(DEFAULT_TYPOLOGY.dac * 100);
+  const [nbsAvoidance, setNbsAvoidance] = useState<number | number[]>(
+    DEFAULT_TYPOLOGY.nbsAvoidance * 100,
+  );
+  const [nbsRemoval, setNbsRemoval] = useState<number | number[]>(
+    DEFAULT_TYPOLOGY.nbsRemoval * 100,
+  );
+  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(
+    DEFAULT_TYPOLOGY.renewableEnergy * 100,
+  );
 
   useEffect(() => {
     const typologyValues = Object.values(typology);
@@ -59,6 +66,11 @@ export default function ProjectTypology() {
     const selectedTypology: Typology = typologyMap[impactPreference]?.[nbSPreference];
     if (selectedTypology) {
       setTypology(selectedTypology);
+      setBiochar(selectedTypology.biochar * 100);
+      setDac(selectedTypology.dac * 100);
+      setNbsAvoidance(selectedTypology.nbsAvoidance * 100);
+      setNbsRemoval(selectedTypology.nbsRemoval * 100);
+      setRenewableEnergy(selectedTypology.renewableEnergy * 100);
     }
   }, [isDontKnowSelected, impactPreference, nbSPreference, setTypology]);
 
@@ -69,29 +81,39 @@ export default function ProjectTypology() {
         subtitle="Which project typology mix are you aiming for?"
       />
       <div className="mt-8 w-full">
-        <NbSRemoval isDontKnowSelected={isDontKnowSelected} />
+        <NbSRemoval
+          isDontKnowSelected={isDontKnowSelected}
+          nbs={nbsRemoval}
+          setNbs={setNbsRemoval}
+        />
       </div>
       <div className="mt-8 w-full">
-        <NbSAvoidance isDontKnowSelected={isDontKnowSelected} />
+        <NbSAvoidance
+          isDontKnowSelected={isDontKnowSelected}
+          nbs={nbsAvoidance}
+          setNbs={setNbsAvoidance}
+        />
       </div>
       <div className="mt-8 w-full">
-        <DAC isDontKnowSelected={isDontKnowSelected} />
+        <DAC isDontKnowSelected={isDontKnowSelected} dac={dac} setDac={setDac} />
       </div>
       <div className="mt-8 w-full">
-        <Biochar isDontKnowSelected={isDontKnowSelected} />
+        <Biochar
+          isDontKnowSelected={isDontKnowSelected}
+          biochar={biochar}
+          setBiochar={setBiochar}
+        />
       </div>
       <div className="mt-8 w-full">
-        <RenewableEnergy isDontKnowSelected={isDontKnowSelected} />
+        <RenewableEnergy
+          isDontKnowSelected={isDontKnowSelected}
+          renewableEnergy={renewableEnergy}
+          setRenewableEnergy={setRenewableEnergy}
+        />
       </div>
       {!isTypologyFull && (
         <div className="mt-6 rounded-lg bg-red-800 px-4 py-2 text-sm">
           The sum of the typology values must be equal to 100%
-          <span
-            onClick={reset}
-            className="ml-4 cursor-pointer rounded-lg border border-opacityLight-30 px-2 py-1 uppercase hover:bg-opacityLight-10"
-          >
-            Reset
-          </span>
         </div>
       )}
       <div className="ml-2 mt-12 flex items-center">

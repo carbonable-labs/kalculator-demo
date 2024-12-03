@@ -2,23 +2,33 @@
 
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_TYPOLOGY } from '@/utils/configuration';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
+  dac: number | number[];
+  setDac: (value: number | number[]) => void;
 }
 
-export default function DAC({ isDontKnowSelected }: NbSProps) {
-  const [dac, setDac] = useState<number | number[]>(DEFAULT_TYPOLOGY.dac * 100);
+export default function DAC({ isDontKnowSelected, dac, setDac }: NbSProps) {
   const { typology, setTypology } = useBudget();
 
+  // Initialize dac value from typology once on mount
   useEffect(() => {
-    setTypology({
-      ...typology,
-      dac: Math.round(dac as number) / 100,
-    });
-  }, [dac]);
+    if (typology?.dac) {
+      setDac(typology.dac * 100);
+    }
+  }, []);
+
+  // Update typology when dac changes
+  useEffect(() => {
+    if (Math.round(dac as number) / 100 !== typology.dac) {
+      setTypology({
+        ...typology,
+        dac: Math.round(dac as number) / 100,
+      });
+    }
+  }, [dac, setTypology, typology]);
 
   useEffect(() => {
     setDac(typology.dac * 100);

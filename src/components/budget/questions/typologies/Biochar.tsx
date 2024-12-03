@@ -2,27 +2,33 @@
 
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_TYPOLOGY } from '@/utils/configuration';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
+  biochar: number | number[];
+  setBiochar: (value: number | number[]) => void;
 }
 
-export default function Biochar({ isDontKnowSelected }: NbSProps) {
-  const [biochar, setBiochar] = useState<number | number[]>(DEFAULT_TYPOLOGY.biochar * 100);
+export default function Biochar({ isDontKnowSelected, biochar, setBiochar }: NbSProps) {
   const { typology, setTypology } = useBudget();
 
+  // Initialize biochar value from typology once on mount
   useEffect(() => {
-    setTypology({
-      ...typology,
-      biochar: Math.round(biochar as number) / 100,
-    });
-  }, [biochar]);
+    if (typology?.biochar) {
+      setBiochar(typology.biochar * 100);
+    }
+  }, []);
 
+  // Update typology when biochar changes
   useEffect(() => {
-    setBiochar(typology.biochar * 100);
-  }, [typology.biochar]);
+    if (Math.round(biochar as number) / 100 !== typology.biochar) {
+      setTypology({
+        ...typology,
+        biochar: Math.round(biochar as number) / 100,
+      });
+    }
+  }, [biochar, setTypology, typology]);
 
   return (
     <SliderWithInput

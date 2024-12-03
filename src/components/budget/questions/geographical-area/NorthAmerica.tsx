@@ -12,15 +12,20 @@ export default function NorthAmerica() {
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
-    setRegionAllocation({
-      ...regionAllocation,
-      northAmerica: Math.round(northAmerica as number) / 100,
-    });
-  }, [northAmerica]);
+    if (regionAllocation?.northAmerica) {
+      setNorthAmerica(regionAllocation.northAmerica * 100);
+    }
+  }, []);
 
   useEffect(() => {
-    setNorthAmerica(regionAllocation.northAmerica * 100);
-  }, [regionAllocation.northAmerica]);
+    // Prevent unnecessary updates if the values are the same
+    if (Math.round(northAmerica as number) / 100 !== regionAllocation.northAmerica) {
+      setRegionAllocation({
+        ...regionAllocation,
+        northAmerica: Math.round(northAmerica as number) / 100,
+      });
+    }
+  }, [northAmerica, setRegionAllocation, regionAllocation]);
 
   return (
     <SliderWithInput

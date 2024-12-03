@@ -12,15 +12,20 @@ export default function LatinAmerica() {
   const { regionAllocation, setRegionAllocation } = useBudget();
 
   useEffect(() => {
-    setRegionAllocation({
-      ...regionAllocation,
-      southAmerica: Math.round(latinAmerica as number) / 100,
-    });
-  }, [latinAmerica]);
+    if (regionAllocation?.southAmerica) {
+      setLatinAmerica(regionAllocation.southAmerica * 100);
+    }
+  }, []);
 
   useEffect(() => {
-    setLatinAmerica(regionAllocation.southAmerica * 100);
-  }, [regionAllocation.southAmerica]);
+    // Prevent unnecessary updates if the values are the same
+    if (Math.round(latinAmerica as number) / 100 !== regionAllocation.southAmerica) {
+      setRegionAllocation({
+        ...regionAllocation,
+        southAmerica: Math.round(latinAmerica as number) / 100,
+      });
+    }
+  }, [latinAmerica, setRegionAllocation, regionAllocation]);
 
   return (
     <SliderWithInput

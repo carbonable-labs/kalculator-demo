@@ -7,24 +7,32 @@ import { useEffect, useState } from 'react';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
+  renewableEnergy: number | number[];
+  setRenewableEnergy: (value: number | number[]) => void;
 }
 
-export default function RenewableEnergy({ isDontKnowSelected }: NbSProps) {
-  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(
-    DEFAULT_TYPOLOGY.renewableEnergy * 100,
-  );
+export default function RenewableEnergy({
+  isDontKnowSelected,
+  renewableEnergy,
+  setRenewableEnergy,
+}: NbSProps) {
   const { typology, setTypology } = useBudget();
 
   useEffect(() => {
-    setTypology({
-      ...typology,
-      renewableEnergy: Math.round(renewableEnergy as number) / 100,
-    });
-  }, [renewableEnergy]);
+    if (typology?.renewableEnergy) {
+      setRenewableEnergy(typology.renewableEnergy * 100);
+    }
+  }, []);
 
+  // Update typology when renewableEnergy changes
   useEffect(() => {
-    setRenewableEnergy(typology.renewableEnergy * 100);
-  }, [typology.renewableEnergy]);
+    if (Math.round(renewableEnergy as number) / 100 !== typology.renewableEnergy) {
+      setTypology({
+        ...typology,
+        renewableEnergy: Math.round(renewableEnergy as number) / 100,
+      });
+    }
+  }, [renewableEnergy, setTypology, typology]);
 
   return (
     <SliderWithInput
