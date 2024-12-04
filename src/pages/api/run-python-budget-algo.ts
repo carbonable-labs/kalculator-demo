@@ -29,12 +29,15 @@ export default async function handler(req: any, res: any) {
     const parsedData = JSON.parse(data[0]);
     const parsedResults: PurchaseEntry[] = parsedData.results;
 
+    // Filter out purchases with quantities less than 10
+    const filteredResults = parsedResults.filter((entry) => entry.quantity >= 10);
+
     const yearlyStrategiesMap = new Map<number, YearlyStrategy>();
     let totalBudgetLow: number = 0;
     let totalBudgetMedium: number = 0;
     let totalBudgetHigh: number = 0;
 
-    parsedResults.forEach((entry) => {
+    filteredResults.forEach((entry) => {
       const { year, quantity, typology, region, price, type } = entry;
 
       let yearlyStrategy = yearlyStrategiesMap.get(year);
