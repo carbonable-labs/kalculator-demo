@@ -343,7 +343,7 @@ def yearlyAlgo(
 
     ## Contraint : balanced upper bound of purchases per year##
 
-    Lp_prob += z <= 0.15 * (
+    Lp_prob += z <= 0.08 * (
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] * \
@@ -1370,7 +1370,7 @@ def fiveYearAlgo(
 
     # Contraint : balanced upper bound of purchases per year
 
-    Lp_prob += z <= 0.40 * (
+    Lp_prob += z <= 0.25 * (
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] * \
@@ -2269,7 +2269,7 @@ def flexibleAlgo(
 
     ## Contraint : balanced upper bound of purchases per year##
 
-    Lp_prob += z <= 0.3 * (
+    Lp_prob += z <= 0.33 * (
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] * \

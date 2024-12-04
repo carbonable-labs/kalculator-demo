@@ -14,12 +14,12 @@ const PreferenceQuestion: React.FC<PreferenceQuestionProps> = ({
   onChange,
 }) => {
   return (
-    <div className="mb-4 flex items-center">
-      <label className="w-1/2">{question}</label>
+    <div className="mb-6 flex items-center">
+      <label className="w-1/2 text-sm text-neutral-200">{question}</label>
       <select
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-1/2 border px-2 py-1 rounded"
+        className="w-1/2 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
