@@ -382,7 +382,7 @@
 //   2050: 357.5972654,
 // };
 
-// export const deltaExAnte = 0.87; // todo: be more precise on forward impact
+export const deltaExAnte = 0.87; // todo: be more precise on forward impact
 
 export const typologyCostFactors = {
   biochar: {

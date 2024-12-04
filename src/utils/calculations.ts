@@ -238,11 +238,10 @@ export const normalizeScoresToPercentages = (scores: Typology): Typology => {
   const difference = 1 - correctedTotal;
 
   const maxKey = Object.keys(normalized).reduce((maxKey, key) =>
-    normalized[key as keyof Typology] > normalized[maxKey as keyof Typology] ? key : maxKey
+    normalized[key as keyof Typology] > normalized[maxKey as keyof Typology] ? key : maxKey,
   ) as keyof Typology;
 
   normalized[maxKey] = Math.round((normalized[maxKey] + difference) * 100) / 100;
 
   return normalized;
 };
-

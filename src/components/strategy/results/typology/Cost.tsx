@@ -18,7 +18,7 @@ export default function Cost() {
 
   const nbsPercentage = Math.round((strategyResults.cost_nbs_avoidance / total) * 100);
 
-  const renewablePercentage = Math.round((strategyResults.cost_nbs_removal / total) * 100);
+  const renewableEnergyPercentage = Math.round((strategyResults.cost_nbs_removal / total) * 100);
 
   const biocharPercentage = Math.round((strategyResults.cost_biochar / total) * 100);
 
@@ -32,7 +32,7 @@ export default function Cost() {
           data={[
             {
               nbs: nbsPercentage,
-              renewable: renewablePercentage,
+              renewableEnergy: renewableEnergyPercentage,
               biochar: biocharPercentage,
               dac: dacPercentage,
             },

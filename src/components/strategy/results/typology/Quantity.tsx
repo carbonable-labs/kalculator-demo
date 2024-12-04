@@ -18,7 +18,9 @@ export default function Quantity() {
 
   const nbsPercentage = Math.round((strategyResults.typologies.nbsRemoval / total) * 100);
 
-  const renewablePercentage = Math.round((strategyResults.typologies.nbsAvoidance / total) * 100);
+  const renewableEnergyPercentage = Math.round(
+    (strategyResults.typologies.nbsAvoidance / total) * 100,
+  );
 
   const biocharPercentage = Math.round((strategyResults.typologies.biochar / total) * 100);
 
@@ -32,7 +34,7 @@ export default function Quantity() {
           data={[
             {
               nbs: nbsPercentage,
-              renewable: renewablePercentage,
+              renewableEnergy: renewableEnergyPercentage,
               biochar: biocharPercentage,
               dac: dacPercentage,
             },

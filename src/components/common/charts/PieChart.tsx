@@ -10,8 +10,9 @@ interface PieChartProps<T extends DataPoint> {
 
 export default function PieChartComponent<T extends DataPoint>({ data, unit }: PieChartProps<T>) {
   const barColors: Record<string, string> = {
-    nbs: '#29A46F', // Green
-    renewable: '#FBBF24', // New color: Amber/Yellow
+    nbsAvoidance: '#6ee7b7', // Mint Green
+    nbsRemoval: '#29A46F', // Green
+    renewableEnergy: '#FBBF24', // New color: Amber/Yellow
     biochar: '#f97316', // Orange
     dac: '#3b82f6', // Blue
     africa: '#f59e0b', // Amber

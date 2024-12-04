@@ -112,6 +112,7 @@ export const adviceBudgetTypology = async (
     output.cost_dac,
     output.cost_nbs_avoidance,
     output.cost_nbs_removal,
+    output.cost_renewable_energy,
   ];
   let newCosts = [...prevCosts];
 
@@ -160,6 +161,7 @@ export const adviceBudgetTypology = async (
         tmpOutput.cost_dac,
         tmpOutput.cost_nbs_avoidance,
         tmpOutput.cost_nbs_removal,
+        tmpOutput.cost_renewable_energy,
       ];
 
       let tmpErrors = computeSolutionError(tmpDistribution, tmpCosts, targetCoeff);

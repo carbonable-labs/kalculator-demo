@@ -55,7 +55,7 @@ function getUpdatedFinancing(
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
   const { typology, regionAllocation, financing } = input;
   assertTypologySum(typology);
-  
+
   const response = await requestBudgetComputation(input);
   if (!response) throw new Error('Failed to fetch budget or strategies data from backend.');
 
@@ -88,6 +88,7 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
     cost_ex_ante: totalCostExAnte,
     cost_nbs_removal: costByTypology.costNbsRemoval,
     cost_nbs_avoidance: costByTypology.costNbsAvoidance,
+    cost_renewable_energy: costByTypology.costRenewableEnergy,
     cost_biochar: costByTypology.costBiochar,
     cost_dac: costByTypology.costDac,
     cost_north_america: costByRegion.northAmerica,

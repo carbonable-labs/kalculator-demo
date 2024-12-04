@@ -14,11 +14,16 @@ export default function Quantity() {
     budgetResults.typologies.nbsAvoidance +
     budgetResults.typologies.nbsRemoval +
     budgetResults.typologies.dac +
-    budgetResults.typologies.biochar;
+    budgetResults.typologies.biochar +
+    budgetResults.typologies.renewableEnergy;
 
-  const nbsPercentage = Math.round((budgetResults.typologies.nbsRemoval / total) * 100);
+  const nbsRemovalPercentage = Math.round((budgetResults.typologies.nbsRemoval / total) * 100);
 
-  const renewablePercentage = Math.round((budgetResults.typologies.nbsAvoidance / total) * 100);
+  const nbsAvoidancePercentage = Math.round((budgetResults.typologies.nbsAvoidance / total) * 100);
+
+  const renewableEnergyPercentage = Math.round(
+    (budgetResults.typologies.renewableEnergy / total) * 100,
+  );
 
   const biocharPercentage = Math.round((budgetResults.typologies.biochar / total) * 100);
 
@@ -31,8 +36,9 @@ export default function Quantity() {
         <PieChartComponent
           data={[
             {
-              nbs: nbsPercentage,
-              renewable: renewablePercentage,
+              nbsRemoval: nbsRemovalPercentage,
+              nbsAvoidance: nbsAvoidancePercentage,
+              renewableEnergy: renewableEnergyPercentage,
               biochar: biocharPercentage,
               dac: dacPercentage,
             },

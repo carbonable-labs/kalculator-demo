@@ -28,7 +28,9 @@ export default function ProjectTypology() {
   const [nbsAvoidance, setNbsAvoidance] = useState<number | number[]>(typology.nbsAvoidance * 100);
   const [dac, setDac] = useState<number | number[]>(typology.dac * 100);
   const [biochar, setBiochar] = useState<number | number[]>(typology.biochar * 100);
-  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(typology.renewableEnergy * 100);
+  const [renewableEnergy, setRenewableEnergy] = useState<number | number[]>(
+    typology.renewableEnergy * 100,
+  );
 
   // State for user preferences
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
@@ -49,7 +51,6 @@ export default function ProjectTypology() {
 
     // Update context
     setTypology(normalized);
-    console.log("normalized:", normalized);
 
     // Update local state variables
     setNbsRemoval(normalized.nbsRemoval * 100);
@@ -142,9 +143,7 @@ export default function ProjectTypology() {
       </div>
       {isDontKnowSelected && (
         <div className="mt-8 rounded-lg border-2 border-opacityLight-10 px-8 py-6">
-          <h3 className="text-lg font-semibold mb-4">
-            Please answer the following questions:
-          </h3>
+          <h3 className="mb-4 text-lg font-semibold">Please answer the following questions:</h3>
           <PreferenceQuestion
             question="How important is biodiversity improvement in shaping your portfolio?"
             value={userPreferences.biodiversity}
@@ -176,7 +175,10 @@ export default function ProjectTypology() {
             options={[
               { value: 1, label: 'Not Important – Little to no relevance in decision-making.' },
               { value: 2, label: 'Slightly Important – Considered, but rarely affects selection.' },
-              { value: 3, label: 'Moderately Important – One of several factors taken into account.' },
+              {
+                value: 3,
+                label: 'Moderately Important – One of several factors taken into account.',
+              },
               { value: 4, label: 'Very Important – Often influences decision-making.' },
               { value: 5, label: 'Extremely Important – Central to decision-making and strategy.' },
             ]}
@@ -187,10 +189,20 @@ export default function ProjectTypology() {
             onChange={(value) => handlePreferenceChange('pricing', value)}
             options={[
               { value: 1, label: 'Minimal Influence – Pricing is a minor consideration.' },
-              { value: 2, label: 'Secondary Influence – Pricing matters, but other factors usually take priority.' },
-              { value: 3, label: 'Balanced Influence – Pricing is considered equally with other factors.' },
+              {
+                value: 2,
+                label:
+                  'Secondary Influence – Pricing matters, but other factors usually take priority.',
+              },
+              {
+                value: 3,
+                label: 'Balanced Influence – Pricing is considered equally with other factors.',
+              },
               { value: 4, label: 'High Influence – Pricing is one of the main drivers.' },
-              { value: 5, label: 'Critical Influence – Pricing is the top priority in decision-making.' },
+              {
+                value: 5,
+                label: 'Critical Influence – Pricing is the top priority in decision-making.',
+              },
             ]}
           />
           <PreferenceQuestion
@@ -199,10 +211,20 @@ export default function ProjectTypology() {
             onChange={(value) => handlePreferenceChange('reputation', value)}
             options={[
               { value: 1, label: 'Minimal Influence – Reputation is a minor consideration.' },
-              { value: 2, label: 'Secondary Influence – Reputation matters, but other factors usually take priority.' },
-              { value: 3, label: 'Balanced Influence – Reputation is considered equally with other factors.' },
+              {
+                value: 2,
+                label:
+                  'Secondary Influence – Reputation matters, but other factors usually take priority.',
+              },
+              {
+                value: 3,
+                label: 'Balanced Influence – Reputation is considered equally with other factors.',
+              },
               { value: 4, label: 'Significant Influence – Reputation is one of the main drivers.' },
-              { value: 5, label: 'Primary Influence – Reputation is the top priority in decision-making.' },
+              {
+                value: 5,
+                label: 'Primary Influence – Reputation is the top priority in decision-making.',
+              },
             ]}
           />
         </div>
