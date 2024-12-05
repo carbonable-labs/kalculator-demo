@@ -64,30 +64,14 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     try {
       let results: BudgetOutputData | null = null;
-      let financingInput = financing;
-      let regionInput = regionAllocation;
-      if (optimizeFinancing) {
-        financingInput = {
-          exAnte: 0,
-          exPost: 0,
-        };
-      }
-      if (optimizeRegion) {
-        regionInput = {
-          northAmerica: 0,
-          southAmerica: 0,
-          europe: 0,
-          africa: 0,
-          asia: 0,
-          oceania: 0,
-        }
-      }
       results = await runBudgetAlgo({
-        financing: financingInput,
-        regionAllocation: regionInput,
+        financing: financing,
+        regionAllocation: regionAllocation,
         timeConstraints,
         typology,
         carbonUnitNeeds,
+        optimizeFinancing,
+        optimizeRegion
       });
 
       if (results) {
@@ -96,7 +80,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           ...history,
           [
             results.total_cost_medium,
-            { financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds },
+            { financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds, optimizeFinancing, optimizeRegion },
           ],
         ]);
       }

@@ -2,7 +2,7 @@
 import PieChartComponent from '@/components/common/charts/PieChart';
 import { ChartTitle } from '@/components/form/Title';
 import { useBudget } from '@/context/BudgetContext';
-import { getQuantityPerRegions } from '@/utils/calculations';
+import { RegionAllocation } from '@/types/types';
 import { useMemo } from 'react';
 
 export default function Quantity() {
@@ -10,8 +10,7 @@ export default function Quantity() {
 
   const percentages = useMemo(() => {
     if (!budgetResults || !budgetResults.strategies) return null;
-
-    const quantities = getQuantityPerRegions(budgetResults.strategies);
+    let quantities: RegionAllocation = budgetResults.regions;
 
     const totalQuantity = Object.values(quantities).reduce((sum, quantity) => sum + quantity, 0);
 

@@ -17,6 +17,7 @@ import {
   calculateTotalQuantitiesFinancing,
   calculateTotalCostsFinancing,
   assertTypologySum,
+  calculateTotalQuantitiesRegionAllocation,
 } from '@/utils/calculations';
 
 async function requestBudgetComputation(
@@ -44,16 +45,31 @@ async function requestBudgetComputation(
 function getUpdatedFinancing(
   financing: { exAnte: number; exPost: number },
   strategies: any,
+  optimizeFinancing: boolean
 ): { exAnte: number; exPost: number } {
-  if (financing.exAnte === 0 && financing.exPost === 0) {
+  if (optimizeFinancing) {
     const { totalExAnte, totalExPost } = calculateTotalQuantitiesFinancing(strategies);
-    return { exAnte: totalExAnte, exPost: totalExPost };
+    let exAntePercentage = totalExAnte / (totalExAnte + totalExPost);
+    let exPostPercentage = 1- exAntePercentage;
+    return { exAnte: exAntePercentage, exPost: exPostPercentage };
   }
   return financing;
 }
 
+function getUpdatedRegionAllocation(
+  regionAllocation: RegionAllocation,
+  strategies: any,
+  optimizeRegion: boolean
+): RegionAllocation {
+  if (optimizeRegion) {
+    const updatedRegionAllocation = calculateTotalQuantitiesRegionAllocation(strategies);
+    return updatedRegionAllocation;
+  }
+  return regionAllocation;
+}
+
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
-  const { typology, regionAllocation, financing } = input;
+  const { typology, regionAllocation, financing, optimizeFinancing, optimizeRegion } = input;
   assertTypologySum(typology);
 
   const response = await requestBudgetComputation(input);
@@ -64,7 +80,8 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
     throw new Error('Missing required data from backend response.');
   }
 
-  const updatedFinancing = getUpdatedFinancing(financing, strategies);
+  const updatedFinancing = getUpdatedFinancing(financing, strategies, optimizeFinancing);
+  const updatedRegionAllocation = getUpdatedRegionAllocation(regionAllocation, strategies, optimizeRegion);
   const costByTypology: CostByTypology = getCostPerTypes(strategies);
   const costByRegion: CostByRegion = getCostPerRegions(strategies);
   const { totalCostExAnte, totalCostExPost } = calculateTotalCostsFinancing(strategies);
@@ -72,7 +89,7 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   const algoRes: BudgetOutputData = {
     financing: updatedFinancing,
     typologies: typology,
-    regions: regionAllocation,
+    regions: updatedRegionAllocation,
     carbon_offset: carbonToOffset,
     total_cost_low: totalBudgetLow,
     total_cost_medium: totalBudgetMedium,

@@ -12,7 +12,9 @@ def main():
     region_allocation = input_json.get("regionAllocation", {})
     carbon_needs = input_json.get("carbonUnitNeeds", {})
     time_constraint = input_json.get("timeConstraints", {})
-
+    optimizeFinancing = input_json.get("optimizeFinancing", {})
+    optimizeRegion = input_json.get("optimizeRegion", {})
+    
     if not financing:
         print("Error: missing financing")
         sys.exit(1)
@@ -28,17 +30,13 @@ def main():
     if not time_constraint:
         print("Error: missing time_constraint")
         sys.exit(1)        
-    optimizeFinancing = False
-    if float(financing["exPost"]) == 0.0 and float(financing["exAnte"]) == 0.0:
-        optimizeFinancing = True
-        
 
     if time_constraint == 1:
-        result = yearlyAlgo(financing, typology, region_allocation, carbon_needs, optimizeFinancing)
+        result = yearlyAlgo(financing, typology, region_allocation, carbon_needs, optimizeFinancing, optimizeRegion)
     elif time_constraint == 5:
-        result = fiveYearAlgo(financing, typology, region_allocation, carbon_needs, optimizeFinancing)
+        result = fiveYearAlgo(financing, typology, region_allocation, carbon_needs, optimizeFinancing, optimizeRegion)
     else:
-        result = flexibleAlgo(financing, typology, region_allocation, carbon_needs, optimizeFinancing)
+        result = flexibleAlgo(financing, typology, region_allocation, carbon_needs, optimizeFinancing, optimizeRegion)
     
     print(json.dumps(result))
 

@@ -18,7 +18,8 @@ def yearlyAlgo(
     typology: Typology,
     region_allocation: RegionAllocation,
     carbon_needs: Dict[int, int],
-    optimizeFinancing: bool
+    optimizeFinancing: bool,
+    optimizeRegion: bool
 ):
     """
 
@@ -106,10 +107,6 @@ def yearlyAlgo(
     # total_purch_for_typo_distrib : total purchases variable used for the typologies distribution
     total_purch_for_typo_distrib = p.LpVariable(
         "total_purch_for_typo_distrib", lowBound=0)
-
-    # total_purch_for_geo_distrib : total purchases variable used for geographical areas distribution
-    total_purch_for_geo_distrib = p.LpVariable(
-        "total_purch_for_geo_distrib", lowBound=0)
 
     # Group all the variables into a single list
     variables = (
@@ -696,230 +693,236 @@ def yearlyAlgo(
         ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
-    ## Constraint : distribution of geographical areas##
+    if not optimizeRegion:
+        ## Constraint: Distribution of geographical areas ##
+        
+        # total_purch_for_geo_distrib : total purchases variable used for geographical areas distribution
+        total_purch_for_geo_distrib = p.LpVariable(
+            "total_purch_for_geo_distrib", lowBound=0)
 
-    Lp_prob += (
-        total_purch_for_geo_distrib ==
-        # NbS-ARR
-        lpSum(
-            x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+        # Total purchases for geographical distribution
+        Lp_prob += (
+            total_purch_for_geo_distrib ==
+            # NbS-ARR
+            lpSum(
+                x_vars["nbsRemoval"][region][year] +
+                y_vars["nbsRemoval"][region][year]
+                for region in regions
+                for year in range(26)
+            ) +
 
-        # nbsAvoidance
-        lpSum(
-            x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+            # nbsAvoidance
+            lpSum(
+                x_vars["nbsAvoidance"][region][year] +
+                y_vars["nbsAvoidance"][region][year]
+                for region in regions
+                for year in range(26)
+            ) +
 
-        # biochar
-        lpSum(
-            x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+            # biochar
+            lpSum(
+                x_vars["biochar"][region][year] +
+                y_vars["biochar"][region][year]
+                for region in regions
+                for year in range(26)
+            ) +
 
-        # dac
-        lpSum(
-            x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+            # dac
+            lpSum(
+                x_vars["dac"][region][year] +
+                y_vars["dac"][region][year]
+                for region in regions
+                for year in range(26)
+            ) +
 
-        # renewableEnergy
-        lpSum(
-            x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
-            for region in regions
-            for year in range(26)
+            # renewableEnergy
+            lpSum(
+                x_vars["renewableEnergy"][region][year] +
+                y_vars["renewableEnergy"][region][year]
+                for region in regions
+                for year in range(26)
+            )
         )
-    )
 
-    # northAmerica
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["northAmerica"][year] +
-            y_vars["nbsRemoval"]["northAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["northAmerica"][year] +
-            y_vars["nbsAvoidance"]["northAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["northAmerica"][year] +
-            y_vars["biochar"]["northAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["northAmerica"][year] +
-            y_vars["dac"]["northAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["northAmerica"][year] +
-            y_vars["renewableEnergy"]["northAmerica"][year]
-            for year in range(26)
+        # northAmerica
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["northAmerica"][year] +
+                y_vars["nbsRemoval"]["northAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["northAmerica"][year] +
+                y_vars["nbsAvoidance"]["northAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["northAmerica"][year] +
+                y_vars["biochar"]["northAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["northAmerica"][year] +
+                y_vars["dac"]["northAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["northAmerica"][year] +
+                y_vars["renewableEnergy"]["northAmerica"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
-    )
 
-    # southAmerica
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["southAmerica"][year] +
-            y_vars["nbsRemoval"]["southAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["southAmerica"][year] +
-            y_vars["nbsAvoidance"]["southAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["southAmerica"][year] +
-            y_vars["biochar"]["southAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["southAmerica"][year] +
-            y_vars["dac"]["southAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["southAmerica"][year] +
-            y_vars["renewableEnergy"]["southAmerica"][year]
-            for year in range(26)
+        # southAmerica
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["southAmerica"][year] +
+                y_vars["nbsRemoval"]["southAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["southAmerica"][year] +
+                y_vars["nbsAvoidance"]["southAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["southAmerica"][year] +
+                y_vars["biochar"]["southAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["southAmerica"][year] +
+                y_vars["dac"]["southAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["southAmerica"][year] +
+                y_vars["renewableEnergy"]["southAmerica"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
-    )
 
-    # europe
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["europe"][year] +
-            y_vars["nbsRemoval"]["europe"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["europe"][year] +
-            y_vars["nbsAvoidance"]["europe"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["europe"][year] +
-            y_vars["biochar"]["europe"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["europe"][year] +
-            y_vars["dac"]["europe"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["europe"][year] +
-            y_vars["renewableEnergy"]["europe"][year]
-            for year in range(26)
+        # europe
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["europe"][year] +
+                y_vars["nbsRemoval"]["europe"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["europe"][year] +
+                y_vars["nbsAvoidance"]["europe"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["europe"][year] +
+                y_vars["biochar"]["europe"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["europe"][year] +
+                y_vars["dac"]["europe"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["europe"][year] +
+                y_vars["renewableEnergy"]["europe"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["europe"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["europe"] * total_purch_for_typo_distrib
-    )
 
-    # africa
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["africa"][year] +
-            y_vars["nbsRemoval"]["africa"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["africa"][year] +
-            y_vars["nbsAvoidance"]["africa"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["africa"][year] +
-            y_vars["biochar"]["africa"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["africa"][year] +
-            y_vars["dac"]["africa"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["africa"][year] +
-            y_vars["renewableEnergy"]["africa"][year]
-            for year in range(26)
+        # africa
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["africa"][year] +
+                y_vars["nbsRemoval"]["africa"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["africa"][year] +
+                y_vars["nbsAvoidance"]["africa"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["africa"][year] +
+                y_vars["biochar"]["africa"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["africa"][year] +
+                y_vars["dac"]["africa"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["africa"][year] +
+                y_vars["renewableEnergy"]["africa"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["africa"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["africa"] * total_purch_for_typo_distrib
-    )
 
-    # asia
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["asia"][year] +
-            y_vars["nbsRemoval"]["asia"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["asia"][year] +
-            y_vars["nbsAvoidance"]["asia"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["asia"][year] +
-            y_vars["biochar"]["asia"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["asia"][year] +
-            y_vars["dac"]["asia"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["asia"][year] +
-            y_vars["renewableEnergy"]["asia"][year]
-            for year in range(26)
+        # asia
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["asia"][year] +
+                y_vars["nbsRemoval"]["asia"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["asia"][year] +
+                y_vars["nbsAvoidance"]["asia"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["asia"][year] +
+                y_vars["biochar"]["asia"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["asia"][year] +
+                y_vars["dac"]["asia"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["asia"][year] +
+                y_vars["renewableEnergy"]["asia"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["asia"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["asia"] * total_purch_for_typo_distrib
-    )
 
-    # oceania
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["oceania"][year] +
-            y_vars["nbsRemoval"]["oceania"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["oceania"][year] +
-            y_vars["nbsAvoidance"]["oceania"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["oceania"][year] +
-            y_vars["biochar"]["oceania"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["oceania"][year] +
-            y_vars["dac"]["oceania"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["oceania"][year] +
-            y_vars["renewableEnergy"]["oceania"][year]
-            for year in range(26)
+        # oceania
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["oceania"][year] +
+                y_vars["nbsRemoval"]["oceania"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["oceania"][year] +
+                y_vars["nbsAvoidance"]["oceania"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["oceania"][year] +
+                y_vars["biochar"]["oceania"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["oceania"][year] +
+                y_vars["dac"]["oceania"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["oceania"][year] +
+                y_vars["renewableEnergy"]["oceania"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["oceania"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["oceania"] * total_purch_for_typo_distrib
-    )
 
     ## Constraint : carbon units needs by years##
 
@@ -1034,7 +1037,8 @@ def fiveYearAlgo(
     typology: Typology,
     region_allocation: RegionAllocation,
     carbon_needs: Dict[int, int],
-    optimizeFinancing: bool
+    optimizeFinancing: bool,
+    optimizeRegion: bool
 ):
     """
 
@@ -1124,10 +1128,6 @@ def fiveYearAlgo(
     # total_purch_for_typo_distrib : total purchases variable used for the typologies distribution
     total_purch_for_typo_distrib = p.LpVariable(
         "total_purch_for_typo_distrib", lowBound=0)
-
-    # total_purch_for_geo_distrib : total purchases variable used for geographical areas distribution
-    total_purch_for_geo_distrib = p.LpVariable(
-        "total_purch_for_geo_distrib", lowBound=0)
 
     # Group all the variables into a single list
     variables = (
@@ -1370,7 +1370,7 @@ def fiveYearAlgo(
 
     # Contraint : balanced upper bound of purchases per year
 
-    Lp_prob += z <= 0.25 * (
+    Lp_prob += z <= 0.40 * (
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] * \
@@ -1723,230 +1723,236 @@ def fiveYearAlgo(
         ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
-    # Constraint : distribution of geographical areas
+    if not optimizeRegion:
+        ## Constraint: Distribution of geographical areas ##
+        
+        # Define the total purchases variable used for geographical areas distribution
+        total_purch_for_geo_distrib = p.LpVariable(
+            "total_purch_for_geo_distrib", lowBound=0)
+        
+        # Total purchases for geographical distribution
+        Lp_prob += (
+            total_purch_for_geo_distrib ==
+            # NbS-ARR
+            lpSum(
+                x_vars["nbsRemoval"][region][year] +
+                y_vars["nbsRemoval"][region][year]
+                for region in regions
+                for year in range(6)
+            ) +
 
-    Lp_prob += (
-        total_purch_for_geo_distrib ==
-        # NbS-ARR
-        lpSum(
-            x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
-            for region in regions
-            for year in range(6)
-        ) +
+            # nbsAvoidance
+            lpSum(
+                x_vars["nbsAvoidance"][region][year] +
+                y_vars["nbsAvoidance"][region][year]
+                for region in regions
+                for year in range(6)
+            ) +
 
-        # nbsAvoidance
-        lpSum(
-            x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
-            for region in regions
-            for year in range(6)
-        ) +
+            # biochar
+            lpSum(
+                x_vars["biochar"][region][year] +
+                y_vars["biochar"][region][year]
+                for region in regions
+                for year in range(6)
+            ) +
 
-        # biochar
-        lpSum(
-            x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
-            for region in regions
-            for year in range(6)
-        ) +
+            # dac
+            lpSum(
+                x_vars["dac"][region][year] +
+                y_vars["dac"][region][year]
+                for region in regions
+                for year in range(6)
+            ) +
 
-        # dac
-        lpSum(
-            x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
-            for region in regions
-            for year in range(6)
-        ) +
-
-        # renewableEnergy
-        lpSum(
-            x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
-            for region in regions
-            for year in range(6)
+            # renewableEnergy
+            lpSum(
+                x_vars["renewableEnergy"][region][year] +
+                y_vars["renewableEnergy"][region][year]
+                for region in regions
+                for year in range(6)
+            )
         )
-    )
 
-    # northAmerica
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["northAmerica"][year] +
-            y_vars["nbsRemoval"]["northAmerica"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["northAmerica"][year] +
-            y_vars["nbsAvoidance"]["northAmerica"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["biochar"]["northAmerica"][year] +
-            y_vars["biochar"]["northAmerica"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["dac"]["northAmerica"][year] +
-            y_vars["dac"]["northAmerica"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["northAmerica"][year] +
-            y_vars["renewableEnergy"]["northAmerica"][year]
-            for year in range(6)
+        # northAmerica
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["northAmerica"][year] +
+                y_vars["nbsRemoval"]["northAmerica"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["northAmerica"][year] +
+                y_vars["nbsAvoidance"]["northAmerica"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["biochar"]["northAmerica"][year] +
+                y_vars["biochar"]["northAmerica"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["dac"]["northAmerica"][year] +
+                y_vars["dac"]["northAmerica"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["northAmerica"][year] +
+                y_vars["renewableEnergy"]["northAmerica"][year]
+                for year in range(6)
+            )
+        ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
-    )
 
-    # southAmerica
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["southAmerica"][year] +
-            y_vars["nbsRemoval"]["southAmerica"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["southAmerica"][year] +
-            y_vars["nbsAvoidance"]["southAmerica"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["biochar"]["southAmerica"][year] +
-            y_vars["biochar"]["southAmerica"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["dac"]["southAmerica"][year] +
-            y_vars["dac"]["southAmerica"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["southAmerica"][year] +
-            y_vars["renewableEnergy"]["southAmerica"][year]
-            for year in range(6)
+        # southAmerica
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["southAmerica"][year] +
+                y_vars["nbsRemoval"]["southAmerica"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["southAmerica"][year] +
+                y_vars["nbsAvoidance"]["southAmerica"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["biochar"]["southAmerica"][year] +
+                y_vars["biochar"]["southAmerica"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["dac"]["southAmerica"][year] +
+                y_vars["dac"]["southAmerica"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["southAmerica"][year] +
+                y_vars["renewableEnergy"]["southAmerica"][year]
+                for year in range(6)
+            )
+        ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
-    )
 
-    # europe
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["europe"][year] +
-            y_vars["nbsRemoval"]["europe"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["europe"][year] +
-            y_vars["nbsAvoidance"]["europe"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["biochar"]["europe"][year] +
-            y_vars["biochar"]["europe"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["dac"]["europe"][year] +
-            y_vars["dac"]["europe"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["europe"][year] +
-            y_vars["renewableEnergy"]["europe"][year]
-            for year in range(6)
+        # europe
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["europe"][year] +
+                y_vars["nbsRemoval"]["europe"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["europe"][year] +
+                y_vars["nbsAvoidance"]["europe"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["biochar"]["europe"][year] +
+                y_vars["biochar"]["europe"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["dac"]["europe"][year] +
+                y_vars["dac"]["europe"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["europe"][year] +
+                y_vars["renewableEnergy"]["europe"][year]
+                for year in range(6)
+            )
+        ) == region_allocation["europe"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["europe"] * total_purch_for_typo_distrib
-    )
 
-    # africa
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["africa"][year] +
-            y_vars["nbsRemoval"]["africa"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["africa"][year] +
-            y_vars["nbsAvoidance"]["africa"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["biochar"]["africa"][year] +
-            y_vars["biochar"]["africa"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["dac"]["africa"][year] +
-            y_vars["dac"]["africa"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["africa"][year] +
-            y_vars["renewableEnergy"]["africa"][year]
-            for year in range(6)
+        # africa
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["africa"][year] +
+                y_vars["nbsRemoval"]["africa"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["africa"][year] +
+                y_vars["nbsAvoidance"]["africa"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["biochar"]["africa"][year] +
+                y_vars["biochar"]["africa"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["dac"]["africa"][year] +
+                y_vars["dac"]["africa"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["africa"][year] +
+                y_vars["renewableEnergy"]["africa"][year]
+                for year in range(6)
+            )
+        ) == region_allocation["africa"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["africa"] * total_purch_for_typo_distrib
-    )
 
-    # asia
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["asia"][year] +
-            y_vars["nbsRemoval"]["asia"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["asia"][year] +
-            y_vars["nbsAvoidance"]["asia"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["biochar"]["asia"][year] +
-            y_vars["biochar"]["asia"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["dac"]["asia"][year] +
-            y_vars["dac"]["asia"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["asia"][year] +
-            y_vars["renewableEnergy"]["asia"][year]
-            for year in range(6)
+        # asia
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["asia"][year] +
+                y_vars["nbsRemoval"]["asia"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["asia"][year] +
+                y_vars["nbsAvoidance"]["asia"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["biochar"]["asia"][year] +
+                y_vars["biochar"]["asia"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["dac"]["asia"][year] +
+                y_vars["dac"]["asia"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["asia"][year] +
+                y_vars["renewableEnergy"]["asia"][year]
+                for year in range(6)
+            )
+        ) == region_allocation["asia"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["asia"] * total_purch_for_typo_distrib
-    )
 
-    # oceania
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["oceania"][year] +
-            y_vars["nbsRemoval"]["oceania"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["oceania"][year] +
-            y_vars["nbsAvoidance"]["oceania"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["biochar"]["oceania"][year] +
-            y_vars["biochar"]["oceania"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["dac"]["oceania"][year] +
-            y_vars["dac"]["oceania"][year]
-            for year in range(6)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["oceania"][year] +
-            y_vars["renewableEnergy"]["oceania"][year]
-            for year in range(6)
+        # oceania
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["oceania"][year] +
+                y_vars["nbsRemoval"]["oceania"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["oceania"][year] +
+                y_vars["nbsAvoidance"]["oceania"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["biochar"]["oceania"][year] +
+                y_vars["biochar"]["oceania"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["dac"]["oceania"][year] +
+                y_vars["dac"]["oceania"][year]
+                for year in range(6)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["oceania"][year] +
+                y_vars["renewableEnergy"]["oceania"][year]
+                for year in range(6)
+            )
+        ) == region_allocation["oceania"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["oceania"] * total_purch_for_typo_distrib
-    )
 
     # Definition of exAnte coefficients for each category
     coefficients = {
@@ -2064,7 +2070,8 @@ def flexibleAlgo(
     typology: Typology,
     region_allocation: RegionAllocation,
     carbon_needs: Dict[int, int],
-    optimizeFinancing: bool
+    optimizeFinancing: bool,
+    optimizeRegion: bool
 ):
     """
 
@@ -2149,10 +2156,6 @@ def flexibleAlgo(
     # total_purch_for_typo_distrib : total purchases variable used for the typologies distribution
     total_purch_for_typo_distrib = p.LpVariable(
         "total_purch_for_typo_distrib", lowBound=0)
-
-    # total_purch_for_geo_distrib : total purchases variable used for geographical areas distribution
-    total_purch_for_geo_distrib = p.LpVariable(
-        "total_purch_for_geo_distrib", lowBound=0)
 
     # Group all the variables into a single list
     variables = (
@@ -2269,7 +2272,7 @@ def flexibleAlgo(
 
     ## Contraint : balanced upper bound of purchases per year##
 
-    Lp_prob += z <= 0.33 * (
+    Lp_prob += z <= 0.3 * (
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] * \
@@ -2621,230 +2624,236 @@ def flexibleAlgo(
         ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
-    ## Constraint : distribution of geographical areas##
+    if not optimizeRegion:
+    ## Constraint: Distribution of geographical areas ##
+    
+        # Define the total purchases variable used for geographical areas distribution
+        total_purch_for_geo_distrib = p.LpVariable(
+            "total_purch_for_geo_distrib", lowBound=0)
+            
+        # Total purchases for geographical distribution
+        Lp_prob += (
+            total_purch_for_geo_distrib ==
+            # NbS-ARR
+            lpSum(
+                x_vars["nbsRemoval"][region][year] +
+                y_vars["nbsRemoval"][region][year]
+                for region in regions
+                for year in range(26)
+            ) +
 
-    Lp_prob += (
-        total_purch_for_geo_distrib ==
-        # NbS-ARR
-        lpSum(
-            x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+            # nbsAvoidance
+            lpSum(
+                x_vars["nbsAvoidance"][region][year] +
+                y_vars["nbsAvoidance"][region][year]
+                for region in regions
+                for year in range(26)
+            ) +
 
-        # nbsAvoidance
-        lpSum(
-            x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+            # biochar
+            lpSum(
+                x_vars["biochar"][region][year] +
+                y_vars["biochar"][region][year]
+                for region in regions
+                for year in range(26)
+            ) +
 
-        # biochar
-        lpSum(
-            x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+            # dac
+            lpSum(
+                x_vars["dac"][region][year] +
+                y_vars["dac"][region][year]
+                for region in regions
+                for year in range(26)
+            ) +
 
-        # dac
-        lpSum(
-            x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
-
-        # renewableEnergy
-        lpSum(
-            x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
-            for region in regions
-            for year in range(26)
+            # renewableEnergy
+            lpSum(
+                x_vars["renewableEnergy"][region][year] +
+                y_vars["renewableEnergy"][region][year]
+                for region in regions
+                for year in range(26)
+            )
         )
-    )
 
-    # northAmerica
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["northAmerica"][year] +
-            y_vars["nbsRemoval"]["northAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["northAmerica"][year] +
-            y_vars["nbsAvoidance"]["northAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["northAmerica"][year] +
-            y_vars["biochar"]["northAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["northAmerica"][year] +
-            y_vars["dac"]["northAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["northAmerica"][year] +
-            y_vars["renewableEnergy"]["northAmerica"][year]
-            for year in range(26)
+        # northAmerica
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["northAmerica"][year] +
+                y_vars["nbsRemoval"]["northAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["northAmerica"][year] +
+                y_vars["nbsAvoidance"]["northAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["northAmerica"][year] +
+                y_vars["biochar"]["northAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["northAmerica"][year] +
+                y_vars["dac"]["northAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["northAmerica"][year] +
+                y_vars["renewableEnergy"]["northAmerica"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
-    )
 
-    # southAmerica
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["southAmerica"][year] +
-            y_vars["nbsRemoval"]["southAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["southAmerica"][year] +
-            y_vars["nbsAvoidance"]["southAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["southAmerica"][year] +
-            y_vars["biochar"]["southAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["southAmerica"][year] +
-            y_vars["dac"]["southAmerica"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["southAmerica"][year] +
-            y_vars["renewableEnergy"]["southAmerica"][year]
-            for year in range(26)
+        # southAmerica
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["southAmerica"][year] +
+                y_vars["nbsRemoval"]["southAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["southAmerica"][year] +
+                y_vars["nbsAvoidance"]["southAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["southAmerica"][year] +
+                y_vars["biochar"]["southAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["southAmerica"][year] +
+                y_vars["dac"]["southAmerica"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["southAmerica"][year] +
+                y_vars["renewableEnergy"]["southAmerica"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
-    )
 
-    # europe
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["europe"][year] +
-            y_vars["nbsRemoval"]["europe"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["europe"][year] +
-            y_vars["nbsAvoidance"]["europe"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["europe"][year] +
-            y_vars["biochar"]["europe"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["europe"][year] +
-            y_vars["dac"]["europe"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["europe"][year] +
-            y_vars["renewableEnergy"]["europe"][year]
-            for year in range(26)
+        # europe
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["europe"][year] +
+                y_vars["nbsRemoval"]["europe"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["europe"][year] +
+                y_vars["nbsAvoidance"]["europe"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["europe"][year] +
+                y_vars["biochar"]["europe"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["europe"][year] +
+                y_vars["dac"]["europe"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["europe"][year] +
+                y_vars["renewableEnergy"]["europe"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["europe"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["europe"] * total_purch_for_typo_distrib
-    )
 
-    # africa
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["africa"][year] +
-            y_vars["nbsRemoval"]["africa"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["africa"][year] +
-            y_vars["nbsAvoidance"]["africa"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["africa"][year] +
-            y_vars["biochar"]["africa"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["africa"][year] +
-            y_vars["dac"]["africa"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["africa"][year] +
-            y_vars["renewableEnergy"]["africa"][year]
-            for year in range(26)
+        # africa
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["africa"][year] +
+                y_vars["nbsRemoval"]["africa"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["africa"][year] +
+                y_vars["nbsAvoidance"]["africa"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["africa"][year] +
+                y_vars["biochar"]["africa"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["africa"][year] +
+                y_vars["dac"]["africa"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["africa"][year] +
+                y_vars["renewableEnergy"]["africa"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["africa"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["africa"] * total_purch_for_typo_distrib
-    )
 
-    # asia
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["asia"][year] +
-            y_vars["nbsRemoval"]["asia"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["asia"][year] +
-            y_vars["nbsAvoidance"]["asia"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["asia"][year] +
-            y_vars["biochar"]["asia"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["asia"][year] +
-            y_vars["dac"]["asia"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["asia"][year] +
-            y_vars["renewableEnergy"]["asia"][year]
-            for year in range(26)
+        # asia
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["asia"][year] +
+                y_vars["nbsRemoval"]["asia"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["asia"][year] +
+                y_vars["nbsAvoidance"]["asia"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["asia"][year] +
+                y_vars["biochar"]["asia"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["asia"][year] +
+                y_vars["dac"]["asia"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["asia"][year] +
+                y_vars["renewableEnergy"]["asia"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["asia"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["asia"] * total_purch_for_typo_distrib
-    )
 
-    # oceania
-    Lp_prob += ((
-        lpSum(
-            x_vars["nbsRemoval"]["oceania"][year] +
-            y_vars["nbsRemoval"]["oceania"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["nbsAvoidance"]["oceania"][year] +
-            y_vars["nbsAvoidance"]["oceania"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["biochar"]["oceania"][year] +
-            y_vars["biochar"]["oceania"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["dac"]["oceania"][year] +
-            y_vars["dac"]["oceania"][year]
-            for year in range(26)
-        ) +
-        lpSum(
-            x_vars["renewableEnergy"]["oceania"][year] +
-            y_vars["renewableEnergy"]["oceania"][year]
-            for year in range(26)
+        # oceania
+        Lp_prob += ((
+            lpSum(
+                x_vars["nbsRemoval"]["oceania"][year] +
+                y_vars["nbsRemoval"]["oceania"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["nbsAvoidance"]["oceania"][year] +
+                y_vars["nbsAvoidance"]["oceania"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["biochar"]["oceania"][year] +
+                y_vars["biochar"]["oceania"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["dac"]["oceania"][year] +
+                y_vars["dac"]["oceania"][year]
+                for year in range(26)
+            ) +
+            lpSum(
+                x_vars["renewableEnergy"]["oceania"][year] +
+                y_vars["renewableEnergy"]["oceania"][year]
+                for year in range(26)
+            )
+        ) == region_allocation["oceania"] * total_purch_for_typo_distrib
         )
-    ) == region_allocation["oceania"] * total_purch_for_typo_distrib
-    )
 
     ## Constraint : carbon units needs by years##
 
