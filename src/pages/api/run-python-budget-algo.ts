@@ -8,23 +8,17 @@ import {
 } from '@/types/types';
 import { typologyCostFactors } from '@/constants/forecasts';
 
-export default async function handler(req: any, res: any) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+export async function executeBudgetAlgorithm(inputData: BudgetAlgorithmInput) {
+  const scriptPath = path.join(process.cwd(), 'src/python-scripts', 'algo_budget', 'main.py');
+  console.log('input data:', inputData);
+
+  const options: Options = {
+    mode: 'text',
+    pythonPath: '/venv/bin/python3',
+    args: [JSON.stringify(inputData)],
+  };
 
   try {
-    const scriptPath = path.join(process.cwd(), 'src/python-scripts', 'algo_budget', 'main.py');
-
-    const inputData = req.body as BudgetAlgorithmInput;
-    console.log('input data:', inputData);
-
-    const options: Options = {
-      mode: 'text',
-      pythonPath: path.join(process.cwd(), 'venv/bin/python'),
-      args: [JSON.stringify(inputData)],
-    };
-
     const data = await PythonShell.run(scriptPath, options);
     const parsedData = JSON.parse(data[0]);
     console.log('parsedData:', parsedData);
@@ -124,14 +118,14 @@ export default async function handler(req: any, res: any) {
       (a, b) => a.year - b.year,
     );
 
-    res.status(200).json({
+    return {
       totalBudgetLow,
       totalBudgetMedium,
       totalBudgetHigh,
       strategies: sortedStrategies,
-    });
+    };
   } catch (err) {
     console.error('Error executing Python script:', err);
-    res.status(500).json({ error: 'Failed to execute Python script' });
+    throw new Error('Failed to execute Python script');
   }
 }
