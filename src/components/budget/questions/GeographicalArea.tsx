@@ -91,7 +91,7 @@ export default function GeographicalArea() {
 
   return (
     <>
-      <Title title="5. Preferred Geographical Area" />
+      <Title title="4. Preferred Geographical Area" />
       <div className="mt-8 w-full">
         <Africa
           isDisabled={isDontKnowSelected}

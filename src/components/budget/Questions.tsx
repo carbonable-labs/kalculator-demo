@@ -15,13 +15,13 @@ export default function BudgetQuestions() {
         <PlanningCycle />
       </div>
       <div className="mt-16">
-        <InvestmentStrategy />
-      </div>
-      <div className="mt-16">
         <ProjectTypology />
       </div>
       <div className="mt-16">
         <GeographicalArea />
+      </div>
+      <div className="mt-16">
+        <InvestmentStrategy />
       </div>
       <div className="mt-24 text-center">
         <CalculateBudget />

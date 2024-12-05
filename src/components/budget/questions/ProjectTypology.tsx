@@ -96,7 +96,7 @@ export default function ProjectTypology() {
   return (
     <>
       <Title
-        title="4. Project Typologies Deep Dive"
+        title="3. Project Typologies Deep Dive"
         subtitle="Which project typology mix are you aiming for?"
       />
       <div className="mt-8 w-full">

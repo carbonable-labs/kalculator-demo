@@ -40,7 +40,7 @@ export default function InvestmentStrategy() {
   return (
     <>
       <Title
-        title="3. On Spot vs Forward Finance"
+        title="5. On Spot vs Forward Finance"
         subtitle="Please select your investment strategy split"
         tooltip={tooltip}
       />
