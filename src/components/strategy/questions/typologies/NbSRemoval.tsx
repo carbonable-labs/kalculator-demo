@@ -1,7 +1,7 @@
 'use client';
 
 import SliderWithInput from '@/components/form/SliderWithInput';
-import { useBudget } from '@/context/BudgetContext';
+import { useStrategy } from '@/context/StrategyContext';
 import { DEFAULT_TYPOLOGY } from '@/utils/configuration';
 import { useEffect, useState } from 'react';
 
@@ -11,7 +11,7 @@ interface NbSProps {
 
 export default function NbSRemoval({ isDontKnowSelected }: NbSProps) {
   const [nbs, setNbs] = useState<number | number[]>(DEFAULT_TYPOLOGY.nbsRemoval * 100);
-  const { typology, setTypology } = useBudget();
+  const { typology, setTypology } = useStrategy();
 
   useEffect(() => {
     setTypology({

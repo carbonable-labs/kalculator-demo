@@ -1,8 +1,8 @@
 'use server';
 
-import { computeBudgetAdvice } from '@/algorithms/advice/budgetEstimationAdvice';
 import { duration } from '@/constants/time';
 import { carbonToOffset } from '@/constants/user';
+import { executeBudgetAlgorithm } from '@/pages/api/run-python-budget-algo';
 import {
   BudgetAlgorithmInput,
   BudgetOutputData,
@@ -24,18 +24,8 @@ async function requestBudgetComputation(
   input: BudgetAlgorithmInput,
 ): Promise<BudgetPythonResponse | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/run-python-budget-algo`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to send data');
-    }
-
-    return await response.json();
+    const result = await executeBudgetAlgorithm(input);
+    return result;
   } catch (error) {
     console.error('Error:', error);
     return null;
