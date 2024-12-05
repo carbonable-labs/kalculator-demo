@@ -4,7 +4,7 @@ import { useBudget } from '@/context/BudgetContext';
 import { YearlyStrategy } from '@/types/types';
 import { formatLargeNumber } from '@/utils/output';
 import { useEffect, useState } from 'react';
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
 export default function CostChart() {
   const [graphData, setGraphData] = useState([{}]);
@@ -16,13 +16,13 @@ export default function CostChart() {
         <div className="font-inter rounded-xl border border-neutral-500 bg-neutral-700/90 px-8 pb-4 pt-4">
           <p className="bold text-center uppercase text-neutral-100">{label}</p>
           <p className="mt-2 text-left text-greenish-500">
-            Low: {formatLargeNumber(payload[0].value)}
+            Low: {payload[0].value ? formatLargeNumber(payload[0].value) : '-'}
           </p>
           <p className="mt-2 text-left text-blue-500">
-            Medium: {formatLargeNumber(payload[1].value)}
+            Medium: {payload[1].value ? formatLargeNumber(payload[1].value) : '-'}
           </p>
           <p className="mt-2 text-left text-orange-500">
-            High: {formatLargeNumber(payload[2].value)}
+            High: {payload[2].value ? formatLargeNumber(payload[2].value) : '-'}
           </p>
         </div>
       );
@@ -32,16 +32,14 @@ export default function CostChart() {
   };
 
   useEffect(() => {
-    if (!budgetResults) {
-      return;
-    }
-
-    const data = budgetResults?.strategies.map((strategy: YearlyStrategy) => {
+    const years = Array.from({ length: 2050 - 2025 + 1 }, (_, i) => 2025 + i);
+    const data = years.map((year) => {
+      const strategy = budgetResults?.strategies.find((s: YearlyStrategy) => s.year === year);
       return {
-        year: strategy.year,
-        low: strategy.cost_low,
-        medium: strategy.cost_medium,
-        high: strategy.cost_high,
+        year,
+        low: strategy?.cost_low || null,
+        medium: strategy?.cost_medium || null,
+        high: strategy?.cost_high || null,
       };
     });
     setGraphData(data);
@@ -50,7 +48,7 @@ export default function CostChart() {
   return (
     <div className="min-h-[400px] w-full">
       <ResponsiveContainer width="100%" height="100%" minHeight="400px">
-        <LineChart
+        <BarChart
           width={500}
           height={300}
           data={graphData}
@@ -60,35 +58,16 @@ export default function CostChart() {
             left: 20,
             bottom: 5,
           }}
+          barCategoryGap="15%"
+          barGap={2}
         >
           <XAxis dataKey="year" />
           <YAxis />
-          <Line
-            type="monotone"
-            dataKey="low"
-            stroke="#22c55e"
-            strokeWidth={3}
-            dot={false}
-            activeDot={true}
-          />
-          <Line
-            type="monotone"
-            dataKey="medium"
-            stroke="#3b82f6"
-            strokeWidth={3}
-            dot={false}
-            activeDot={true}
-          />
-          <Line
-            type="monotone"
-            dataKey="high"
-            stroke="#f97316"
-            strokeWidth={3}
-            dot={false}
-            activeDot={true}
-          />
-          <Tooltip content={<CustomTooltip />} />
-        </LineChart>
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }} />
+          <Bar dataKey="low" fill="#22c55e" />
+          <Bar dataKey="medium" fill="#3b82f6" />
+          <Bar dataKey="high" fill="#f97316" />
+        </BarChart>
       </ResponsiveContainer>
       <div className="mt-4">
         <Title title="Investment timeline" />
