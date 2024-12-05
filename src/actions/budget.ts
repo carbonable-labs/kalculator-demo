@@ -45,12 +45,12 @@ async function requestBudgetComputation(
 function getUpdatedFinancing(
   financing: { exAnte: number; exPost: number },
   strategies: any,
-  optimizeFinancing: boolean
+  optimizeFinancing: boolean,
 ): { exAnte: number; exPost: number } {
   if (optimizeFinancing) {
     const { totalExAnte, totalExPost } = calculateTotalQuantitiesFinancing(strategies);
     let exAntePercentage = totalExAnte / (totalExAnte + totalExPost);
-    let exPostPercentage = 1- exAntePercentage;
+    let exPostPercentage = 1 - exAntePercentage;
     return { exAnte: exAntePercentage, exPost: exPostPercentage };
   }
   return financing;
@@ -59,7 +59,7 @@ function getUpdatedFinancing(
 function getUpdatedRegionAllocation(
   regionAllocation: RegionAllocation,
   strategies: any,
-  optimizeRegion: boolean
+  optimizeRegion: boolean,
 ): RegionAllocation {
   if (optimizeRegion) {
     const updatedRegionAllocation = calculateTotalQuantitiesRegionAllocation(strategies);
@@ -81,7 +81,11 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   }
 
   const updatedFinancing = getUpdatedFinancing(financing, strategies, optimizeFinancing);
-  const updatedRegionAllocation = getUpdatedRegionAllocation(regionAllocation, strategies, optimizeRegion);
+  const updatedRegionAllocation = getUpdatedRegionAllocation(
+    regionAllocation,
+    strategies,
+    optimizeRegion,
+  );
   const costByTypology: CostByTypology = getCostPerTypes(strategies);
   const costByRegion: CostByRegion = getCostPerRegions(strategies);
   const { totalCostExAnte, totalCostExPost } = calculateTotalCostsFinancing(strategies);

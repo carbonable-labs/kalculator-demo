@@ -71,7 +71,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         typology,
         carbonUnitNeeds,
         optimizeFinancing,
-        optimizeRegion
+        optimizeRegion,
       });
 
       if (results) {
@@ -80,7 +80,15 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           ...history,
           [
             results.total_cost_medium,
-            { financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds, optimizeFinancing, optimizeRegion },
+            {
+              financing,
+              regionAllocation,
+              timeConstraints,
+              typology,
+              carbonUnitNeeds,
+              optimizeFinancing,
+              optimizeRegion,
+            },
           ],
         ]);
       }
@@ -89,7 +97,15 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setIsCalculating(false);
     }
-  }, [financing, regionAllocation, timeConstraints, typology, optimizeFinancing, optimizeRegion, carbonUnitNeeds]);
+  }, [
+    financing,
+    regionAllocation,
+    timeConstraints,
+    typology,
+    optimizeFinancing,
+    optimizeRegion,
+    carbonUnitNeeds,
+  ]);
 
   const value = useMemo(
     () => ({

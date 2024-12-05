@@ -15,28 +15,16 @@ import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
 export default function GeographicalArea() {
   const [isFullGeographicalArea, setIsFullGeographicalArea] = useState(true);
   const [isDontKnowSelected, setIsDontKnowSelected] = useState<boolean>(false);
-  const {
-    regionAllocation,
-    setRegionAllocation,
-    setOptimizeRegion,
-  } = useBudget();
+  const { regionAllocation, setRegionAllocation, setOptimizeRegion } = useBudget();
 
   // State variables for each geographical area percentage
-  const [africa, setAfrica] = useState<number | number[]>(
-    regionAllocation.africa * 100,
-  );
-  const [asia, setAsia] = useState<number | number[]>(
-    regionAllocation.asia * 100,
-  );
-  const [europe, setEurope] = useState<number | number[]>(
-    regionAllocation.europe * 100,
-  );
+  const [africa, setAfrica] = useState<number | number[]>(regionAllocation.africa * 100);
+  const [asia, setAsia] = useState<number | number[]>(regionAllocation.asia * 100);
+  const [europe, setEurope] = useState<number | number[]>(regionAllocation.europe * 100);
   const [latinAmerica, setLatinAmerica] = useState<number | number[]>(
     regionAllocation.southAmerica * 100,
   );
-  const [oceania, setOceania] = useState<number | number[]>(
-    regionAllocation.oceania * 100,
-  );
+  const [oceania, setOceania] = useState<number | number[]>(regionAllocation.oceania * 100);
   const [northAmerica, setNorthAmerica] = useState<number | number[]>(
     regionAllocation.northAmerica * 100,
   );
@@ -93,25 +81,13 @@ export default function GeographicalArea() {
     <>
       <Title title="4. Preferred Geographical Area" />
       <div className="mt-8 w-full">
-        <Africa
-          isDisabled={isDontKnowSelected}
-          value={africa}
-          setValue={setAfrica}
-        />
+        <Africa isDisabled={isDontKnowSelected} value={africa} setValue={setAfrica} />
       </div>
       <div className="mt-8 w-full">
-        <Asia
-          isDisabled={isDontKnowSelected}
-          value={asia}
-          setValue={setAsia}
-        />
+        <Asia isDisabled={isDontKnowSelected} value={asia} setValue={setAsia} />
       </div>
       <div className="mt-8 w-full">
-        <Europe
-          isDisabled={isDontKnowSelected}
-          value={europe}
-          setValue={setEurope}
-        />
+        <Europe isDisabled={isDontKnowSelected} value={europe} setValue={setEurope} />
       </div>
       <div className="mt-8 w-full">
         <LatinAmerica
@@ -121,11 +97,7 @@ export default function GeographicalArea() {
         />
       </div>
       <div className="mt-8 w-full">
-        <Oceania
-          isDisabled={isDontKnowSelected}
-          value={oceania}
-          setValue={setOceania}
-        />
+        <Oceania isDisabled={isDontKnowSelected} value={oceania} setValue={setOceania} />
       </div>
       <div className="mt-8 w-full">
         <NorthAmerica
@@ -140,10 +112,7 @@ export default function GeographicalArea() {
         </div>
       )}
       <div className="mt-8 flex items-center">
-        <DontKnowCheckbox
-          isSelected={isDontKnowSelected}
-          setIsSelected={setIsDontKnowSelected}
-        />
+        <DontKnowCheckbox isSelected={isDontKnowSelected} setIsSelected={setIsDontKnowSelected} />
         {isDontKnowSelected && (
           <div className="ml-8 text-sm font-light italic">
             Let Carbonable offer smart recommendations

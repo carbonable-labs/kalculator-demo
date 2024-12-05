@@ -27,7 +27,7 @@ export default async function handler(req: any, res: any) {
 
     const data = await PythonShell.run(scriptPath, options);
     const parsedData = JSON.parse(data[0]);
-    console.log("parsedData:", parsedData);
+    console.log('parsedData:', parsedData);
     const parsedResults: PurchaseEntry[] = parsedData.results;
 
     // Filter out purchases with quantities less than 10

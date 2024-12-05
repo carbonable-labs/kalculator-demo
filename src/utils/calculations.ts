@@ -105,7 +105,9 @@ export const getCostPerRegions = (strategies: YearlyStrategy[]) => {
   };
 };
 
-export const calculateTotalQuantitiesRegionAllocation = (strategies: YearlyStrategy[]): RegionAllocation => {
+export const calculateTotalQuantitiesRegionAllocation = (
+  strategies: YearlyStrategy[],
+): RegionAllocation => {
   let quantityNorthAmerica = 0;
   let quantitySouthAmerica = 0;
   let quantityEurope = 0;

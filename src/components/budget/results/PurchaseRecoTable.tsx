@@ -1,9 +1,10 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import CustomTable from '@/components/form/CustomTable';
 import { useBudget } from '@/context/BudgetContext';
 import { displayedMethodology, displayedNames } from '@/utils/charts';
-import { useEffect, useState } from 'react';
+import { TypologyFinancingBreakdown } from '@/types/types';
 
 interface RecoData {
   date: string;
@@ -34,22 +35,23 @@ export default function PurchaseRecoTable() {
     if (budgetResults) {
       const recoData = budgetResults.strategies.flatMap((strategy) =>
         strategy.types_purchased.flatMap((typeBreakdown) =>
-          // Iterate over exAnte and exPost
-          ['exAnte', 'exPost'].flatMap((financingType) => {
-            const financingDetails = typeBreakdown[financingType];
-            if (!financingDetails) {
-              return []; // Skip if undefined
-            }
-            return financingDetails.regions.map((region) => ({
-              date: strategy.year.toString(),
-              carbonUnits: region.quantity,
-              typology: displayedNames[typeBreakdown.typology] || typeBreakdown.typology,
-              mecanism: displayedMethodology[typeBreakdown.typology] || '',
-              region: displayedNames[region.region] || region.region,
-              totalPurchased: region.cost,
-              price: financingDetails.price_per_ton,
-            }));
-          }),
+          (['exAnte', 'exPost'] as Array<keyof TypologyFinancingBreakdown>).flatMap(
+            (financingType) => {
+              const financingDetails = typeBreakdown[financingType];
+              if (typeof financingDetails !== 'object' || !financingDetails?.regions) {
+                return []; // Skip if undefined or not the correct type
+              }
+              return financingDetails.regions.map((region) => ({
+                date: strategy.year.toString(),
+                carbonUnits: region.quantity,
+                typology: displayedNames[typeBreakdown.typology] || typeBreakdown.typology,
+                mecanism: displayedMethodology[typeBreakdown.typology] || '',
+                region: displayedNames[region.region] || region.region,
+                totalPurchased: region.cost,
+                price: financingDetails.price_per_ton,
+              }));
+            },
+          ),
         ),
       );
 
