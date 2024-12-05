@@ -1,30 +1,14 @@
 'use client';
 
 import SliderWithInput from '@/components/form/SliderWithInput';
-import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
-import { useEffect, useState } from 'react';
 
-export default function Asia() {
-  const [asia, setAsia] = useState<number | number[]>(DEFAULT_GEOGRAPHICAL_AREA.asia * 100);
-  const { regionAllocation, setRegionAllocation } = useBudget();
+interface AsiaProps {
+  isDisabled: boolean;
+  value: number | number[];
+  setValue: (value: number | number[]) => void;
+}
 
-  useEffect(() => {
-    if (regionAllocation?.asia) {
-      setAsia(regionAllocation.asia * 100);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Prevent unnecessary updates if the values are the same
-    if (Math.round(asia as number) / 100 !== regionAllocation.asia) {
-      setRegionAllocation({
-        ...regionAllocation,
-        asia: Math.round(asia as number) / 100,
-      });
-    }
-  }, [asia, setRegionAllocation, regionAllocation]);
-
+export default function Asia({ isDisabled, value, setValue }: AsiaProps) {
   return (
     <SliderWithInput
       inputLabel="Asia"
@@ -33,9 +17,10 @@ export default function Asia() {
       minValue={0}
       maxValue={100}
       label="Asia"
-      value={asia as number}
-      onChange={setAsia}
-      displayedValue={asia as number}
+      value={value as number}
+      onChange={setValue}
+      displayedValue={value as number}
+      isDisabled={isDisabled}
     />
   );
 }

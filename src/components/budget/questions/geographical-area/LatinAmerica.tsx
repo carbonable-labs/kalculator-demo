@@ -1,32 +1,14 @@
 'use client';
 
 import SliderWithInput from '@/components/form/SliderWithInput';
-import { useBudget } from '@/context/BudgetContext';
-import { DEFAULT_GEOGRAPHICAL_AREA } from '@/utils/configuration';
-import { useEffect, useState } from 'react';
 
-export default function LatinAmerica() {
-  const [latinAmerica, setLatinAmerica] = useState<number | number[]>(
-    DEFAULT_GEOGRAPHICAL_AREA.southAmerica * 100,
-  );
-  const { regionAllocation, setRegionAllocation } = useBudget();
+interface LatinAmericaProps {
+  isDisabled: boolean;
+  value: number | number[];
+  setValue: (value: number | number[]) => void;
+}
 
-  useEffect(() => {
-    if (regionAllocation?.southAmerica) {
-      setLatinAmerica(regionAllocation.southAmerica * 100);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Prevent unnecessary updates if the values are the same
-    if (Math.round(latinAmerica as number) / 100 !== regionAllocation.southAmerica) {
-      setRegionAllocation({
-        ...regionAllocation,
-        southAmerica: Math.round(latinAmerica as number) / 100,
-      });
-    }
-  }, [latinAmerica, setRegionAllocation, regionAllocation]);
-
+export default function LatinAmerica({ isDisabled, value, setValue }: LatinAmericaProps) {
   return (
     <SliderWithInput
       inputLabel="Latin America"
@@ -35,9 +17,10 @@ export default function LatinAmerica() {
       minValue={0}
       maxValue={100}
       label="Latin America"
-      value={latinAmerica as number}
-      onChange={setLatinAmerica}
-      displayedValue={latinAmerica as number}
+      value={value as number}
+      onChange={setValue}
+      displayedValue={value as number}
+      isDisabled={isDisabled}
     />
   );
 }

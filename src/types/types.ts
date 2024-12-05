@@ -23,23 +23,23 @@ export interface UserPreferences {
 export const typologyMapping = {
   nbsRemoval: {
     biodiversity: 5,
-    durability: 4,
-    removal: 5,
-    pricing: 4,
-    reputation: 5,
+    durability: 3,
+    removal: 5, // todo on off
+    pricing: 3,
+    reputation: 4,
   },
   nbsAvoidance: {
     biodiversity: 4,
-    durability: 2,
-    removal: 3,
+    durability: 1,
+    removal: 1,
     pricing: 4,
-    reputation: 3,
+    reputation: 2,
   },
   biochar: {
-    biodiversity: 3,
-    durability: 5,
+    biodiversity: 2,
+    durability: 4,
     removal: 5,
-    pricing: 3,
+    pricing: 2,
     reputation: 4,
   },
   dac: {
@@ -47,14 +47,14 @@ export const typologyMapping = {
     durability: 5,
     removal: 5,
     pricing: 1,
-    reputation: 4,
+    reputation: 5,
   },
   renewableEnergy: {
-    biodiversity: 2,
-    durability: 3,
-    removal: 3,
+    biodiversity: 1,
+    durability: 2,
+    removal: 1,
     pricing: 5,
-    reputation: 3,
+    reputation: 1,
   },
 };
 
@@ -208,6 +208,7 @@ export interface BudgetOutputData {
   cost_nbs_removal: number;
   cost_nbs_avoidance: number;
   cost_biochar: number;
+  cost_renewable_energy: number;
   cost_dac: number;
   cost_north_america: number;
   cost_south_america: number;

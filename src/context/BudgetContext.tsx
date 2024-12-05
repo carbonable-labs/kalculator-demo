@@ -23,6 +23,8 @@ interface BudgetContextType {
   setFinancing: (value: Financing) => void;
   optimizeFinancing: boolean;
   setOptimizeFinancing: (value: boolean) => void;
+  optimizeRegion: boolean;
+  setOptimizeRegion: (value: boolean) => void;
   typology: Typology;
   setTypology: (value: Typology) => void;
   regionAllocation: RegionAllocation;
@@ -44,6 +46,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [timeConstraints, setTimeConstraints] = useState<number | null>(null);
   const [financing, setFinancing] = useState<Financing>(DEFAULT_FINANCING);
   const [optimizeFinancing, setOptimizeFinancing] = useState<boolean>(false);
+  const [optimizeRegion, setOptimizeRegion] = useState<boolean>(false);
   const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLOGY);
   const [regionAllocation, setRegionAllocation] =
     useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
@@ -61,28 +64,31 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     try {
       let results: BudgetOutputData | null = null;
+      let financingInput = financing;
+      let regionInput = regionAllocation;
       if (optimizeFinancing) {
-        let newFinancing: Financing = {
+        financingInput = {
           exAnte: 0,
           exPost: 0,
         };
-
-        results = await runBudgetAlgo({
-          financing: newFinancing,
-          regionAllocation,
-          timeConstraints,
-          typology,
-          carbonUnitNeeds,
-        });
-      } else {
-        results = await runBudgetAlgo({
-          financing,
-          regionAllocation,
-          timeConstraints,
-          typology,
-          carbonUnitNeeds,
-        });
       }
+      if (optimizeRegion) {
+        regionInput = {
+          northAmerica: 0,
+          southAmerica: 0,
+          europe: 0,
+          africa: 0,
+          asia: 0,
+          oceania: 0,
+        }
+      }
+      results = await runBudgetAlgo({
+        financing: financingInput,
+        regionAllocation: regionInput,
+        timeConstraints,
+        typology,
+        carbonUnitNeeds,
+      });
 
       if (results) {
         setBudgetResults(results);
@@ -99,7 +105,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setIsCalculating(false);
     }
-  }, [financing, regionAllocation, timeConstraints, typology, optimizeFinancing, carbonUnitNeeds]);
+  }, [financing, regionAllocation, timeConstraints, typology, optimizeFinancing, optimizeRegion, carbonUnitNeeds]);
 
   const value = useMemo(
     () => ({
@@ -109,6 +115,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setFinancing,
       optimizeFinancing,
       setOptimizeFinancing,
+      optimizeRegion,
+      setOptimizeRegion,
       typology,
       setTypology,
       regionAllocation,
@@ -130,6 +138,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setFinancing,
       optimizeFinancing,
       setOptimizeFinancing,
+      optimizeRegion,
+      setOptimizeRegion,
       typology,
       setTypology,
       regionAllocation,
