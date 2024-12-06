@@ -201,49 +201,149 @@ export function assertTypologySum(typology: Typology): void {
   }
 }
 
-export const calculateTypologyScores = (preferences: UserPreferences): Typology => {
-  const scores: Partial<Typology> = {};
-  Object.entries(typologyMapping).forEach(([typology, attributes]) => {
-    const score =
-      preferences.biodiversity * attributes.biodiversity +
-      preferences.durability * attributes.durability +
-      preferences.removal * attributes.removal +
-      preferences.pricing * attributes.pricing +
-      preferences.reputation * attributes.reputation;
-    scores[typology as keyof Typology] = score;
-  });
-  return scores as Typology;
-};
+function filterByMaxRequirements(
+  typologies: Record<string, UserPreferences>,
+  prefs: UserPreferences
+): Record<string, UserPreferences> {
+  let filtered = { ...typologies };
 
-// Should be exactly 1
-export const normalizeScoresToPercentages = (scores: Typology): Typology => {
-  const total = Object.values(scores).reduce((sum, value) => sum + value, 0);
-  if (total === 0) {
+  const criteria: (keyof UserPreferences)[] = [
+    'biodiversity',
+    'durability',
+    'removal',
+    'pricing',
+    'reputation',
+  ];
+
+  for (const c of criteria) {
+    const userVal = prefs[c];
+    if (c === 'removal') {
+      if (userVal === 5) {
+        filtered = Object.fromEntries(
+          Object.entries(filtered).filter(([_, val]) => val[c] === 5)
+        );
+      } else if (userVal === 1) {
+        filtered = Object.fromEntries(
+          Object.entries(filtered).filter(([_, val]) => val[c] === 1)
+        );
+      }
+    } else if (userVal === 4) {
+      // Exclure les typologies avec un score de 1
+      filtered = Object.fromEntries(
+        Object.entries(filtered).filter(([_, val]) => val[c] > 1)
+      );
+    } else if (userVal === 5) {
+      // Exclure les typologies avec un score de 1 et 2
+      filtered = Object.fromEntries(
+        Object.entries(filtered).filter(([_, val]) => val[c] > 2)
+      );
+    }
+  }
+
+  return filtered;
+}
+
+function computeScore(
+  attributes: UserPreferences,
+  prefs: UserPreferences
+): number {
+  const factors: (keyof UserPreferences)[] = [
+    'biodiversity',
+    'durability',
+    'removal',
+    'pricing',
+    'reputation',
+  ];
+
+  let score = 0;
+
+  for (const f of factors) {
+    const pref = prefs[f];
+    if (f === 'removal') {
+      if (pref === 5 && attributes[f] === 5) {
+        score += 10;
+      } else if (pref === 1 && attributes[f] === 1) {
+        score += 10;
+      } else {
+        const distance = Math.abs(pref - attributes[f]);
+        score += 5 - distance; // todo, atm plus proche = meilleur
+      }
+    } else {
+      score += attributes[f] * pref; // todo sinon gestion classique
+    }
+  }
+
+  return score;
+}
+
+function getWeightedDistribution(
+  scores: [string, number][]
+): Record<string, number> {
+  scores.sort((a, b) => b[1] - a[1]);
+
+  // Sélectionner les 3 meilleures (ou 4 si nécessaire)
+  const nbToSelect = Math.min(scores.length, 4);
+  let selected = scores.slice(0, nbToSelect);
+
+  if (selected.length > 3) {
+    selected = selected.slice(0, 3);
+  }
+
+  if (selected.length === 0 && scores.length > 0) {
+    selected = [scores[0]];
+  }
+
+  const squaredScores = selected.map(([k, v]) => [k, Math.pow(v, 2)]) as [
+    string,
+    number
+  ][];
+
+  const sum = squaredScores.reduce((acc, [_, v]) => acc + v, 0);
+  const distribution: Record<string, number> = {};
+  for (const [key, val] of squaredScores) {
+    distribution[key] = sum > 0 ? val / sum : 0;
+  }
+
+  if (
+    Object.keys(distribution).length < 4 &&
+    scores.length > Object.keys(distribution).length
+  ) {
+    for (const [k] of scores) {
+      if (!(k in distribution)) {
+        distribution[k] = 0;
+        break;
+      }
+    }
+  }
+
+  return distribution;
+}
+
+export function computeFinalDistribution(
+  prefs: UserPreferences
+): Typology {
+  const filteredTypologies = filterByMaxRequirements(typologyMapping, prefs);
+
+  const scored = Object.entries(filteredTypologies).map(([name, attrs]) => {
+    return [name, computeScore(attrs, prefs)] as [string, number];
+  });
+
+  if (scored.length === 0) {
     return {
-      nbsRemoval: 0,
+      nbsRemoval: 1,
       nbsAvoidance: 0,
       biochar: 0,
       dac: 0,
       renewableEnergy: 0,
-    };
+    };  // todo
   }
 
-  let normalized: Typology = {
-    nbsRemoval: Math.round((scores.nbsRemoval / total) * 100) / 100,
-    nbsAvoidance: Math.round((scores.nbsAvoidance / total) * 100) / 100,
-    biochar: Math.round((scores.biochar / total) * 100) / 100,
-    dac: Math.round((scores.dac / total) * 100) / 100,
-    renewableEnergy: Math.round((scores.renewableEnergy / total) * 100) / 100,
+  const distribution = getWeightedDistribution(scored);
+  return {
+    nbsRemoval: distribution.nbsRemoval || 0,
+    nbsAvoidance: distribution.nbsAvoidance || 0,
+    biochar: distribution.biochar || 0,
+    dac: distribution.dac || 0,
+    renewableEnergy: distribution.renewableEnergy || 0,
   };
-
-  const correctedTotal = Object.values(normalized).reduce((sum, value) => sum + value, 0);
-  const difference = 1 - correctedTotal;
-
-  const maxKey = Object.keys(normalized).reduce((maxKey, key) =>
-    normalized[key as keyof Typology] > normalized[maxKey as keyof Typology] ? key : maxKey,
-  ) as keyof Typology;
-
-  normalized[maxKey] = Math.round((normalized[maxKey] + difference) * 100) / 100;
-
-  return normalized;
-};
+}

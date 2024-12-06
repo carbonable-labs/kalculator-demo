@@ -21,7 +21,6 @@ export async function executeBudgetAlgorithm(inputData: BudgetAlgorithmInput) {
   try {
     const data = await PythonShell.run(scriptPath, options);
     const parsedData = JSON.parse(data[0]);
-    console.log('parsedData:', parsedData);
     const parsedResults: PurchaseEntry[] = parsedData.results;
 
     // Filter out purchases with quantities less than 10

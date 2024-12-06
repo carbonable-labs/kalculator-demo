@@ -10,13 +10,8 @@ import DAC from './typologies/DAC';
 import Biochar from './typologies/Biochar';
 import RenewableEnergy from './typologies/RenewableEnergy';
 import PreferenceQuestion from './typologies/PreferenceQuestion';
-import { UserPreferences } from '@/types/types';
-import {
-  calculateTypologyScores,
-  // calculateTypologyScoresNonLinear,
-  normalizeScoresToPercentages,
-  // normalizeScoresToPercentagesNonLinear,
-} from '@/utils/calculations';
+import { UserPreferences, Typology } from '@/types/types';
+import { computeFinalDistribution } from '@/utils/calculations';
 
 export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);
@@ -36,62 +31,62 @@ export default function ProjectTypology() {
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     biodiversity: 3,
     durability: 3,
-    removal: 3,
     pricing: 3,
     reputation: 3,
+    removal: 0, // TODO Valeur par défaut pour "I don't care"
   });
+
+
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handlePreferenceChange = (key: keyof UserPreferences, value: number) => {
     setUserPreferences((prev) => ({ ...prev, [key]: value }));
   };
 
   const calculateTypologyFromPreferences = () => {
-    const scores = calculateTypologyScores(userPreferences);
-    const normalized = normalizeScoresToPercentages(scores);
-
-    // Update context
+    const normalized: Typology = computeFinalDistribution(userPreferences);
+    if (!normalized || Object.values(normalized).some((val) => isNaN(val))) {
+      setErrorMessage('No suitable distribution or invalid values in calculation.');
+      return;
+    }
+    console.log("normalized:", normalized)
+    setErrorMessage('');
     setTypology(normalized);
-
-    // Update local state variables
-    setNbsRemoval(normalized.nbsRemoval * 100);
-    setNbsAvoidance(normalized.nbsAvoidance * 100);
-    setDac(normalized.dac * 100);
-    setBiochar(normalized.biochar * 100);
-    setRenewableEnergy(normalized.renewableEnergy * 100);
+    setNbsRemoval(normalized.nbsRemoval * 100 || 0); // todo
+    setNbsAvoidance(normalized.nbsAvoidance * 100 || 0);
+    setDac(normalized.dac * 100 || 0);
+    setBiochar(normalized.biochar * 100 || 0);
+    setRenewableEnergy(normalized.renewableEnergy * 100 || 0);
   };
+
 
   // Sync local state with context when "I don't know" is selected
   useEffect(() => {
     if (isDontKnowSelected) {
       calculateTypologyFromPreferences();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDontKnowSelected, userPreferences]);
 
   // Update typology in context when sliders change and "I don't know" is not selected
   useEffect(() => {
     if (!isDontKnowSelected) {
       setTypology({
-        nbsRemoval: (nbsRemoval as number) / 100,
-        nbsAvoidance: (nbsAvoidance as number) / 100,
-        dac: (dac as number) / 100,
-        biochar: (biochar as number) / 100,
-        renewableEnergy: (renewableEnergy as number) / 100,
+        nbsRemoval: nbsRemoval as number / 100,
+        nbsAvoidance: nbsAvoidance as number / 100,
+        dac: dac as number / 100,
+        biochar: biochar as number / 100,
+        renewableEnergy: renewableEnergy as number / 100,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nbsRemoval, nbsAvoidance, dac, biochar, renewableEnergy]);
 
   // Ensure the sum of typology percentages is 100%
   useEffect(() => {
-    const total =
-      (nbsRemoval as number) +
-      (nbsAvoidance as number) +
-      (dac as number) +
-      (biochar as number) +
-      (renewableEnergy as number);
-    setIsTypologyFull(Math.round(total) === 100);
-  }, [nbsRemoval, nbsAvoidance, dac, biochar, renewableEnergy]);
+    if (!isDontKnowSelected) {
+      const total = (nbsRemoval as number) + (nbsAvoidance as number) + (dac as number) + (biochar as number) + (renewableEnergy as number);
+      setIsTypologyFull(Math.round(total) === 100);
+    }
+  }, [nbsRemoval, nbsAvoidance, dac, biochar, renewableEnergy, isDontKnowSelected]);
 
   return (
     <>
@@ -99,6 +94,11 @@ export default function ProjectTypology() {
         title="3. Project Typologies Deep Dive"
         subtitle="Which project typology mix are you aiming for?"
       />
+      {errorMessage && (
+        <div className="mt-4 rounded-lg bg-red-800 px-4 py-2 text-sm">
+          {errorMessage}
+        </div>
+      )}
       <div className="mt-8 w-full">
         <NbSRemoval
           isDontKnowSelected={isDontKnowSelected}
@@ -117,11 +117,7 @@ export default function ProjectTypology() {
         <DAC isDontKnowSelected={isDontKnowSelected} dac={dac} setDac={setDac} />
       </div>
       <div className="mt-8 w-full">
-        <Biochar
-          isDontKnowSelected={isDontKnowSelected}
-          biochar={biochar}
-          setBiochar={setBiochar}
-        />
+        <Biochar isDontKnowSelected={isDontKnowSelected} biochar={biochar} setBiochar={setBiochar} />
       </div>
       <div className="mt-8 w-full">
         <RenewableEnergy
@@ -130,7 +126,7 @@ export default function ProjectTypology() {
           setRenewableEnergy={setRenewableEnergy}
         />
       </div>
-      {!isTypologyFull && (
+      {!isTypologyFull && !isDontKnowSelected && (
         <div className="mt-6 rounded-lg bg-red-800 px-4 py-2 text-sm">
           The sum of the typology values must be equal to 100%
         </div>
@@ -143,32 +139,68 @@ export default function ProjectTypology() {
       </div>
       {isDontKnowSelected && (
         <div className="mt-8 rounded-lg border-2 border-opacityLight-10 px-8 py-6">
-          <h3 className="mb-4 text-lg font-semibold">Please answer the following questions:</h3>
+          <h3 className="mb-4 text-lg font-semibold">Please allocate exactly 12 points across these criteria:</h3>
           <PreferenceQuestion
             question="How important is biodiversity improvement in shaping your portfolio?"
             value={userPreferences.biodiversity}
             onChange={(value) => handlePreferenceChange('biodiversity', value)}
+            hint={
+              userPreferences.biodiversity === 5
+                ? 'Projects with low biodiversity scores will be excluded.'
+                : userPreferences.biodiversity === 4
+                  ? 'Projects with very low biodiversity scores will have less weight.'
+                  : undefined
+            }
           />
           <PreferenceQuestion
             question="How important is the durability of climate impact in your project selection?"
             value={userPreferences.durability}
             onChange={(value) => handlePreferenceChange('durability', value)}
-          />
-          <PreferenceQuestion
-            question="How important is a focus on carbon removal compared to avoidance?"
-            value={userPreferences.removal}
-            onChange={(value) => handlePreferenceChange('removal', value)}
+            hint={
+              userPreferences.durability === 5
+                ? 'Projects with low durability scores will be excluded.'
+                : userPreferences.durability === 4
+                  ? 'Projects with very low durability scores will have less weight.'
+                  : undefined
+            }
           />
           <PreferenceQuestion
             question="How important is pricing in driving your choices?"
             value={userPreferences.pricing}
             onChange={(value) => handlePreferenceChange('pricing', value)}
+            hint={
+              userPreferences.pricing === 5
+                ? 'Projects with high costs will be excluded.'
+                : userPreferences.pricing === 4
+                  ? 'Projects with very high costs will have less weight.'
+                  : undefined
+            }
           />
           <PreferenceQuestion
             question="How important is reputation in influencing your choices?"
             value={userPreferences.reputation}
             onChange={(value) => handlePreferenceChange('reputation', value)}
+            hint={
+              userPreferences.reputation === 5
+                ? 'Projects with low reputation will be excluded.'
+                : userPreferences.reputation === 4
+                  ? 'Projects with very low reputation scores will have less weight.'
+                  : undefined
+            }
           />
+          <PreferenceQuestion
+            question="How do you prioritize removal vs. avoidance?"
+            value={userPreferences.removal}
+            onChange={(value) => handlePreferenceChange('removal', value)}
+            hint={
+              userPreferences.removal === 5
+                ? 'Projects focused on removal will be prioritized.'
+                : userPreferences.removal === 1
+                  ? 'Projects focused on avoidance will be prioritized.'
+                  : 'No specific preference for removal vs. avoidance.'
+            }
+          />
+
         </div>
       )}
     </>

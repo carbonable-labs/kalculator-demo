@@ -12,7 +12,7 @@ export interface RegionAllocation {
 
 // Typology Form Answers of smart recommandation
 export interface UserPreferences {
-  biodiversity: number;
+  biodiversity: number; // 1-5 or undefined
   durability: number;
   removal: number;
   pricing: number;
@@ -20,11 +20,11 @@ export interface UserPreferences {
 }
 
 // Maps each typology (e.g., NbS Removal, Biochar, DAC) to its scoring attributes.
-export const typologyMapping = {
+export const typologyMapping: Record<string, UserPreferences> = {
   nbsRemoval: {
     biodiversity: 5,
     durability: 3,
-    removal: 5, // todo on off
+    removal: 5,
     pricing: 3,
     reputation: 4,
   },
