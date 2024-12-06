@@ -148,84 +148,26 @@ export default function ProjectTypology() {
             question="How important is biodiversity improvement in shaping your portfolio?"
             value={userPreferences.biodiversity}
             onChange={(value) => handlePreferenceChange('biodiversity', value)}
-            options={[
-              { value: 1, label: 'Minimal Influence – Little to no impact on portfolio.' },
-              { value: 2, label: 'Low Priority – Considered, but rarely influences portfolio.' },
-              { value: 3, label: 'Moderate Priority – One of many factors considered.' },
-              { value: 4, label: 'High Priority – Often shapes portfolio.' },
-              { value: 5, label: 'Core Priority – Central to portfolio strategy.' },
-            ]}
           />
           <PreferenceQuestion
             question="How important is the durability of climate impact in your project selection?"
             value={userPreferences.durability}
             onChange={(value) => handlePreferenceChange('durability', value)}
-            options={[
-              { value: 1, label: 'Uninfluential – Has little to no effect on project choices.' },
-              { value: 2, label: 'Minor Influence – Considered, but seldom guides selection.' },
-              { value: 3, label: 'Moderate Influence – One of several factors considered.' },
-              { value: 4, label: 'Significant Influence – Frequently influences project choices.' },
-              { value: 5, label: 'Primary Influence – Fundamental to project selection strategy.' },
-            ]}
           />
           <PreferenceQuestion
             question="How important is a focus on carbon removal compared to avoidance?"
             value={userPreferences.removal}
             onChange={(value) => handlePreferenceChange('removal', value)}
-            options={[
-              { value: 1, label: 'Not Important – Little to no relevance in decision-making.' },
-              { value: 2, label: 'Slightly Important – Considered, but rarely affects selection.' },
-              {
-                value: 3,
-                label: 'Moderately Important – One of several factors taken into account.',
-              },
-              { value: 4, label: 'Very Important – Often influences decision-making.' },
-              { value: 5, label: 'Extremely Important – Central to decision-making and strategy.' },
-            ]}
           />
           <PreferenceQuestion
             question="How important is pricing in driving your choices?"
             value={userPreferences.pricing}
             onChange={(value) => handlePreferenceChange('pricing', value)}
-            options={[
-              { value: 1, label: 'Minimal Influence – Pricing is a minor consideration.' },
-              {
-                value: 2,
-                label:
-                  'Secondary Influence – Pricing matters, but other factors usually take priority.',
-              },
-              {
-                value: 3,
-                label: 'Balanced Influence – Pricing is considered equally with other factors.',
-              },
-              { value: 4, label: 'High Influence – Pricing is one of the main drivers.' },
-              {
-                value: 5,
-                label: 'Critical Influence – Pricing is the top priority in decision-making.',
-              },
-            ]}
           />
           <PreferenceQuestion
             question="How important is reputation in influencing your choices?"
             value={userPreferences.reputation}
             onChange={(value) => handlePreferenceChange('reputation', value)}
-            options={[
-              { value: 1, label: 'Minimal Influence – Reputation is a minor consideration.' },
-              {
-                value: 2,
-                label:
-                  'Secondary Influence – Reputation matters, but other factors usually take priority.',
-              },
-              {
-                value: 3,
-                label: 'Balanced Influence – Reputation is considered equally with other factors.',
-              },
-              { value: 4, label: 'Significant Influence – Reputation is one of the main drivers.' },
-              {
-                value: 5,
-                label: 'Primary Influence – Reputation is the top priority in decision-making.',
-              },
-            ]}
           />
         </div>
       )}
