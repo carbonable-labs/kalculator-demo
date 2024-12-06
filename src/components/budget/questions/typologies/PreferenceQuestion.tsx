@@ -4,8 +4,8 @@ interface PreferenceQuestionProps {
   question: string;
   value: number;
   onChange: (value: number) => void;
-  dontCare: boolean;
-  onDontCareChange: (value: boolean) => void;
+  dontMind: boolean;
+  onDontMindChange: (value: boolean) => void;
   hint?: string;
 }
 
@@ -13,8 +13,8 @@ const PreferenceQuestion: React.FC<PreferenceQuestionProps> = ({
   question,
   value,
   onChange,
-  dontCare,
-  onDontCareChange,
+  dontMind,
+  onDontMindChange,
   hint,
 }) => {
   return (
@@ -28,11 +28,11 @@ const PreferenceQuestion: React.FC<PreferenceQuestionProps> = ({
         <div className="mr-4 flex items-center">
           <input
             type="checkbox"
-            checked={dontCare}
-            onChange={(e) => onDontCareChange(e.target.checked)}
+            checked={dontMind}
+            onChange={(e) => onDontMindChange(e.target.checked)}
             className="form-checkbox h-4 w-4 border-neutral-500 bg-neutral-800 text-neutral-500"
           />
-          <span className="ml-2 text-sm text-neutral-200">I don't care</span>
+          <span className="ml-2 text-sm text-neutral-200">I don't mind</span>
         </div>
 
         <div className="flex w-1/2 items-center">
@@ -41,12 +41,12 @@ const PreferenceQuestion: React.FC<PreferenceQuestionProps> = ({
             min={1}
             max={5}
             step={1}
-            value={dontCare ? 0 : value}
+            value={dontMind ? 0 : value}
             onChange={(e) => onChange(Number(e.target.value))}
             className="slider-range w-full"
-            disabled={dontCare}
+            disabled={dontMind}
           />
-          <div className="ml-4 text-sm text-neutral-200">{dontCare ? '-' : value}</div>
+          <div className="ml-4 text-sm text-neutral-200">{dontMind ? '-' : value}</div>
         </div>
       </div>
     </div>

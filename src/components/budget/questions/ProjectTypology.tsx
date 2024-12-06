@@ -13,6 +13,7 @@ import PreferenceQuestion from './typologies/PreferenceQuestion';
 import { UserPreferences, Typology } from '@/types/types';
 import { computeFinalDistribution } from '@/utils/calculations';
 import { getHint, HINTS } from '@/constants/hint';
+import RemovalAvoidanceQuestion from './typologies/RemovalAvoidanceQuestion';
 
 export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);
@@ -28,8 +29,8 @@ export default function ProjectTypology() {
     typology.renewableEnergy * 100,
   );
 
-  // State for "I don't care" checkboxes
-  const [dontCareStates, setDontCareStates] = useState({
+  // State for "I don't mind" checkboxes
+  const [dontMindStates, setDontMindStates] = useState({
     biodiversity: false,
     durability: false,
     pricing: false,
@@ -43,8 +44,9 @@ export default function ProjectTypology() {
     durability: 3,
     pricing: 3,
     reputation: 3,
-    removal: 0, // TODO Valeur par défaut pour "I don't care"
+    removal: 0,
   });
+  // Todo after untick I don't mind hint doesn't reappear automatically
 
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -52,8 +54,8 @@ export default function ProjectTypology() {
     setUserPreferences((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleDontCareChange = (key: keyof UserPreferences, value: boolean) => {
-    setDontCareStates((prev) => ({ ...prev, [key]: value }));
+  const handleDontMindChange = (key: keyof UserPreferences, value: boolean) => {
+    setDontMindStates((prev) => ({ ...prev, [key]: value }));
     if (value) {
       setUserPreferences((prev) => ({ ...prev, [key]: 0 }));
     }
@@ -65,10 +67,9 @@ export default function ProjectTypology() {
       setErrorMessage('No suitable distribution or invalid values in calculation.');
       return;
     }
-    console.log('normalized:', normalized);
     setErrorMessage('');
     setTypology(normalized);
-    setNbsRemoval(normalized.nbsRemoval * 100 || 0); // todo
+    setNbsRemoval(normalized.nbsRemoval * 100 || 0);
     setNbsAvoidance(normalized.nbsAvoidance * 100 || 0);
     setDac(normalized.dac * 100 || 0);
     setBiochar(normalized.biochar * 100 || 0);
@@ -164,23 +165,48 @@ export default function ProjectTypology() {
           <h3 className="mb-4 text-lg font-semibold">
             Please allocate exactly 12 points across these criteria:
           </h3>
-          {Object.keys(userPreferences).map((key) => (
-            <PreferenceQuestion
-              key={key}
-              question={`How important is ${key} in shaping your portfolio?`}
-              value={userPreferences[key as keyof UserPreferences]}
-              onChange={(value) => handlePreferenceChange(key as keyof UserPreferences, value)}
-              dontCare={dontCareStates[key as keyof UserPreferences]}
-              onDontCareChange={(value) =>
-                handleDontCareChange(key as keyof UserPreferences, value)
-              }
-              hint={getHint(
-                key as keyof typeof HINTS,
-                userPreferences[key as keyof UserPreferences],
-                dontCareStates[key as keyof UserPreferences],
-              )}
-            />
-          ))}
+
+          {Object.keys(userPreferences).map((key) =>
+            key === 'removal' ? (
+              <RemovalAvoidanceQuestion
+                key={key}
+                question="How do you prioritize removal vs. avoidance?"
+                value={
+                  dontMindStates.removal
+                    ? 'dontMind'
+                    : userPreferences.removal === 5
+                      ? 'removal'
+                      : userPreferences.removal === 1
+                        ? 'avoidance'
+                        : 'dontMind'
+                }
+                onChange={(value) => {
+                  setDontMindStates((prev) => ({ ...prev, removal: value === 'dontMind' }));
+                  setUserPreferences((prev) => ({
+                    ...prev,
+                    removal: value === 'removal' ? 5 : value === 'avoidance' ? 1 : 0,
+                  }));
+                }}
+                hint={getHint('removal', userPreferences.removal, dontMindStates.removal)}
+              />
+            ) : (
+              <PreferenceQuestion
+                key={key}
+                question={`How important is ${key} in shaping your portfolio?`}
+                value={userPreferences[key as keyof UserPreferences]}
+                onChange={(value) => handlePreferenceChange(key as keyof UserPreferences, value)}
+                dontMind={dontMindStates[key as keyof UserPreferences]}
+                onDontMindChange={(value) =>
+                  handleDontMindChange(key as keyof UserPreferences, value)
+                }
+                hint={getHint(
+                  key as keyof typeof HINTS,
+                  userPreferences[key as keyof UserPreferences],
+                  dontMindStates[key as keyof UserPreferences],
+                )}
+              />
+            ),
+          )}
         </div>
       )}
     </>

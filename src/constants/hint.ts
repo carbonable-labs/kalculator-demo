@@ -1,6 +1,6 @@
 export const HINTS = {
   biodiversity: {
-    dontCare: 'This criterion is ignored.',
+    dontMind: 'This criterion is ignored.',
     1: 'Biodiversity is not a priority in your portfolio.',
     2: 'You are slightly concerned about biodiversity in your projects.',
     3: 'Biodiversity is somewhat important, but not a key factor.',
@@ -8,7 +8,7 @@ export const HINTS = {
     5: 'Biodiversity is critical; projects with low scores will be excluded.',
   },
   durability: {
-    dontCare: 'This criterion is ignored.',
+    dontMind: 'This criterion is ignored.',
     1: 'Durability is not a priority for your project selection.',
     2: 'You prefer projects with some durability but are flexible.',
     3: 'Durability is moderately important for you.',
@@ -16,7 +16,7 @@ export const HINTS = {
     5: 'Durability is essential; projects with low durability scores will be excluded.',
   },
   pricing: {
-    dontCare: 'This criterion is ignored.',
+    dontMind: 'This criterion is ignored.',
     1: 'Pricing is not a priority; you are willing to pay a premium.',
     2: 'You have some preference for cost-effective projects.',
     3: 'Pricing is moderately important; you balance cost with other factors.',
@@ -24,7 +24,7 @@ export const HINTS = {
     5: 'Pricing is critical; expensive projects will be excluded.',
   },
   reputation: {
-    dontCare: 'This criterion is ignored.',
+    dontMind: 'This criterion is ignored.',
     1: 'Reputation is not a priority in your project selection.',
     2: 'You consider reputation somewhat, but it’s not a key factor.',
     3: 'Reputation is moderately important to your portfolio.',
@@ -32,7 +32,7 @@ export const HINTS = {
     5: 'Reputation is critical; projects with poor reputation will be excluded.',
   },
   removal: {
-    dontCare: 'This criterion is ignored.',
+    dontMind: 'This criterion is ignored.',
     1: 'Avoidance is critical; projects focused on removal will be excluded.',
     2: 'You strongly favor avoidance, but might consider some removal projects.',
     3: 'You balance removal and avoidance in your portfolio.',
@@ -41,7 +41,7 @@ export const HINTS = {
   },
 };
 
-export const getHint = (key: keyof typeof HINTS, value: number, dontCare: boolean) => {
-  if (dontCare) return HINTS[key].dontCare;
+export const getHint = (key: keyof typeof HINTS, value: number, dontMind: boolean) => {
+  if (dontMind) return HINTS[key].dontMind;
   return HINTS[key][value as 1 | 2 | 3 | 4 | 5];
 };

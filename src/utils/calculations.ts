@@ -200,7 +200,6 @@ export function assertTypologySum(typology: Typology): void {
     throw new Error(`Sum of typology repartition should be exactly 1, and not: ${total}`);
   }
 }
-
 function filterByMaxRequirements(
   typologies: Record<string, UserPreferences>,
   prefs: UserPreferences,
@@ -217,15 +216,15 @@ function filterByMaxRequirements(
 
   for (const c of criteria) {
     const userVal = prefs[c];
+    if (c === 'removal' && userVal === 0) {
+      continue;
+    }
+
     if (c === 'removal') {
       if (userVal === 5) {
-        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] >= 4));
+        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] === 5));
       } else if (userVal === 1) {
-        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] <= 2));
-      } else if (userVal === 4) {
-        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] >= 3));
-      } else if (userVal === 2) {
-        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] <= 3));
+        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] === 1));
       }
     } else if (userVal === 4) {
       filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] > 1));
