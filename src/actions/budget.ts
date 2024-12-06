@@ -60,7 +60,6 @@ function getUpdatedRegionAllocation(
 
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
   const { typology, regionAllocation, financing, optimizeFinancing, optimizeRegion } = input;
-  console.log("typology:", typology)
   assertTypologySum(typology);
 
   const response = await requestBudgetComputation(input);

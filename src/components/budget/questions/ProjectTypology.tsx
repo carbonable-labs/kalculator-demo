@@ -12,6 +12,7 @@ import RenewableEnergy from './typologies/RenewableEnergy';
 import PreferenceQuestion from './typologies/PreferenceQuestion';
 import { UserPreferences, Typology } from '@/types/types';
 import { computeFinalDistribution } from '@/utils/calculations';
+import { getHint, HINTS } from '@/constants/hint';
 
 export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);
@@ -27,6 +28,15 @@ export default function ProjectTypology() {
     typology.renewableEnergy * 100,
   );
 
+  // State for "I don't care" checkboxes
+  const [dontCareStates, setDontCareStates] = useState({
+    biodiversity: false,
+    durability: false,
+    pricing: false,
+    reputation: false,
+    removal: false,
+  });
+
   // State for user preferences
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     biodiversity: 3,
@@ -36,11 +46,17 @@ export default function ProjectTypology() {
     removal: 0, // TODO Valeur par défaut pour "I don't care"
   });
 
-
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handlePreferenceChange = (key: keyof UserPreferences, value: number) => {
     setUserPreferences((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleDontCareChange = (key: keyof UserPreferences, value: boolean) => {
+    setDontCareStates((prev) => ({ ...prev, [key]: value }));
+    if (value) {
+      setUserPreferences((prev) => ({ ...prev, [key]: 0 }));
+    }
   };
 
   const calculateTypologyFromPreferences = () => {
@@ -49,7 +65,7 @@ export default function ProjectTypology() {
       setErrorMessage('No suitable distribution or invalid values in calculation.');
       return;
     }
-    console.log("normalized:", normalized)
+    console.log('normalized:', normalized);
     setErrorMessage('');
     setTypology(normalized);
     setNbsRemoval(normalized.nbsRemoval * 100 || 0); // todo
@@ -58,7 +74,6 @@ export default function ProjectTypology() {
     setBiochar(normalized.biochar * 100 || 0);
     setRenewableEnergy(normalized.renewableEnergy * 100 || 0);
   };
-
 
   // Sync local state with context when "I don't know" is selected
   useEffect(() => {
@@ -71,11 +86,11 @@ export default function ProjectTypology() {
   useEffect(() => {
     if (!isDontKnowSelected) {
       setTypology({
-        nbsRemoval: nbsRemoval as number / 100,
-        nbsAvoidance: nbsAvoidance as number / 100,
-        dac: dac as number / 100,
-        biochar: biochar as number / 100,
-        renewableEnergy: renewableEnergy as number / 100,
+        nbsRemoval: (nbsRemoval as number) / 100,
+        nbsAvoidance: (nbsAvoidance as number) / 100,
+        dac: (dac as number) / 100,
+        biochar: (biochar as number) / 100,
+        renewableEnergy: (renewableEnergy as number) / 100,
       });
     }
   }, [nbsRemoval, nbsAvoidance, dac, biochar, renewableEnergy]);
@@ -83,7 +98,12 @@ export default function ProjectTypology() {
   // Ensure the sum of typology percentages is 100%
   useEffect(() => {
     if (!isDontKnowSelected) {
-      const total = (nbsRemoval as number) + (nbsAvoidance as number) + (dac as number) + (biochar as number) + (renewableEnergy as number);
+      const total =
+        (nbsRemoval as number) +
+        (nbsAvoidance as number) +
+        (dac as number) +
+        (biochar as number) +
+        (renewableEnergy as number);
       setIsTypologyFull(Math.round(total) === 100);
     }
   }, [nbsRemoval, nbsAvoidance, dac, biochar, renewableEnergy, isDontKnowSelected]);
@@ -95,9 +115,7 @@ export default function ProjectTypology() {
         subtitle="Which project typology mix are you aiming for?"
       />
       {errorMessage && (
-        <div className="mt-4 rounded-lg bg-red-800 px-4 py-2 text-sm">
-          {errorMessage}
-        </div>
+        <div className="mt-4 rounded-lg bg-red-800 px-4 py-2 text-sm">{errorMessage}</div>
       )}
       <div className="mt-8 w-full">
         <NbSRemoval
@@ -117,7 +135,11 @@ export default function ProjectTypology() {
         <DAC isDontKnowSelected={isDontKnowSelected} dac={dac} setDac={setDac} />
       </div>
       <div className="mt-8 w-full">
-        <Biochar isDontKnowSelected={isDontKnowSelected} biochar={biochar} setBiochar={setBiochar} />
+        <Biochar
+          isDontKnowSelected={isDontKnowSelected}
+          biochar={biochar}
+          setBiochar={setBiochar}
+        />
       </div>
       <div className="mt-8 w-full">
         <RenewableEnergy
@@ -139,68 +161,26 @@ export default function ProjectTypology() {
       </div>
       {isDontKnowSelected && (
         <div className="mt-8 rounded-lg border-2 border-opacityLight-10 px-8 py-6">
-          <h3 className="mb-4 text-lg font-semibold">Please allocate exactly 12 points across these criteria:</h3>
-          <PreferenceQuestion
-            question="How important is biodiversity improvement in shaping your portfolio?"
-            value={userPreferences.biodiversity}
-            onChange={(value) => handlePreferenceChange('biodiversity', value)}
-            hint={
-              userPreferences.biodiversity === 5
-                ? 'Projects with low biodiversity scores will be excluded.'
-                : userPreferences.biodiversity === 4
-                  ? 'Projects with very low biodiversity scores will have less weight.'
-                  : undefined
-            }
-          />
-          <PreferenceQuestion
-            question="How important is the durability of climate impact in your project selection?"
-            value={userPreferences.durability}
-            onChange={(value) => handlePreferenceChange('durability', value)}
-            hint={
-              userPreferences.durability === 5
-                ? 'Projects with low durability scores will be excluded.'
-                : userPreferences.durability === 4
-                  ? 'Projects with very low durability scores will have less weight.'
-                  : undefined
-            }
-          />
-          <PreferenceQuestion
-            question="How important is pricing in driving your choices?"
-            value={userPreferences.pricing}
-            onChange={(value) => handlePreferenceChange('pricing', value)}
-            hint={
-              userPreferences.pricing === 5
-                ? 'Projects with high costs will be excluded.'
-                : userPreferences.pricing === 4
-                  ? 'Projects with very high costs will have less weight.'
-                  : undefined
-            }
-          />
-          <PreferenceQuestion
-            question="How important is reputation in influencing your choices?"
-            value={userPreferences.reputation}
-            onChange={(value) => handlePreferenceChange('reputation', value)}
-            hint={
-              userPreferences.reputation === 5
-                ? 'Projects with low reputation will be excluded.'
-                : userPreferences.reputation === 4
-                  ? 'Projects with very low reputation scores will have less weight.'
-                  : undefined
-            }
-          />
-          <PreferenceQuestion
-            question="How do you prioritize removal vs. avoidance?"
-            value={userPreferences.removal}
-            onChange={(value) => handlePreferenceChange('removal', value)}
-            hint={
-              userPreferences.removal === 5
-                ? 'Projects focused on removal will be prioritized.'
-                : userPreferences.removal === 1
-                  ? 'Projects focused on avoidance will be prioritized.'
-                  : 'No specific preference for removal vs. avoidance.'
-            }
-          />
-
+          <h3 className="mb-4 text-lg font-semibold">
+            Please allocate exactly 12 points across these criteria:
+          </h3>
+          {Object.keys(userPreferences).map((key) => (
+            <PreferenceQuestion
+              key={key}
+              question={`How important is ${key} in shaping your portfolio?`}
+              value={userPreferences[key as keyof UserPreferences]}
+              onChange={(value) => handlePreferenceChange(key as keyof UserPreferences, value)}
+              dontCare={dontCareStates[key as keyof UserPreferences]}
+              onDontCareChange={(value) =>
+                handleDontCareChange(key as keyof UserPreferences, value)
+              }
+              hint={getHint(
+                key as keyof typeof HINTS,
+                userPreferences[key as keyof UserPreferences],
+                dontCareStates[key as keyof UserPreferences],
+              )}
+            />
+          ))}
         </div>
       )}
     </>

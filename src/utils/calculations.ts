@@ -203,7 +203,7 @@ export function assertTypologySum(typology: Typology): void {
 
 function filterByMaxRequirements(
   typologies: Record<string, UserPreferences>,
-  prefs: UserPreferences
+  prefs: UserPreferences,
 ): Record<string, UserPreferences> {
   let filtered = { ...typologies };
 
@@ -219,34 +219,25 @@ function filterByMaxRequirements(
     const userVal = prefs[c];
     if (c === 'removal') {
       if (userVal === 5) {
-        filtered = Object.fromEntries(
-          Object.entries(filtered).filter(([_, val]) => val[c] === 5)
-        );
+        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] >= 4));
       } else if (userVal === 1) {
-        filtered = Object.fromEntries(
-          Object.entries(filtered).filter(([_, val]) => val[c] === 1)
-        );
+        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] <= 2));
+      } else if (userVal === 4) {
+        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] >= 3));
+      } else if (userVal === 2) {
+        filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] <= 3));
       }
     } else if (userVal === 4) {
-      // Exclure les typologies avec un score de 1
-      filtered = Object.fromEntries(
-        Object.entries(filtered).filter(([_, val]) => val[c] > 1)
-      );
+      filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] > 1));
     } else if (userVal === 5) {
-      // Exclure les typologies avec un score de 1 et 2
-      filtered = Object.fromEntries(
-        Object.entries(filtered).filter(([_, val]) => val[c] > 2)
-      );
+      filtered = Object.fromEntries(Object.entries(filtered).filter(([_, val]) => val[c] > 2));
     }
   }
 
   return filtered;
 }
 
-function computeScore(
-  attributes: UserPreferences,
-  prefs: UserPreferences
-): number {
+function computeScore(attributes: UserPreferences, prefs: UserPreferences): number {
   const factors: (keyof UserPreferences)[] = [
     'biodiversity',
     'durability',
@@ -261,27 +252,28 @@ function computeScore(
     const pref = prefs[f];
     if (f === 'removal') {
       if (pref === 5 && attributes[f] === 5) {
-        score += 10;
+        score += 15;
       } else if (pref === 1 && attributes[f] === 1) {
+        score += 15;
+      } else if (pref === 4 && attributes[f] >= 3) {
+        score += 10;
+      } else if (pref === 2 && attributes[f] <= 3) {
         score += 10;
       } else {
         const distance = Math.abs(pref - attributes[f]);
-        score += 5 - distance; // todo, atm plus proche = meilleur
+        score += 5 - distance;
       }
     } else {
-      score += attributes[f] * pref; // todo sinon gestion classique
+      score += attributes[f] * pref;
     }
   }
 
   return score;
 }
 
-function getWeightedDistribution(
-  scores: [string, number][]
-): Record<string, number> {
+function getWeightedDistribution(scores: [string, number][]): Record<string, number> {
   scores.sort((a, b) => b[1] - a[1]);
 
-  // Sélectionner les 3 meilleures (ou 4 si nécessaire)
   const nbToSelect = Math.min(scores.length, 4);
   let selected = scores.slice(0, nbToSelect);
 
@@ -293,10 +285,7 @@ function getWeightedDistribution(
     selected = [scores[0]];
   }
 
-  const squaredScores = selected.map(([k, v]) => [k, Math.pow(v, 2)]) as [
-    string,
-    number
-  ][];
+  const squaredScores = selected.map(([k, v]) => [k, Math.pow(v, 2)]) as [string, number][];
 
   const sum = squaredScores.reduce((acc, [_, v]) => acc + v, 0);
   const distribution: Record<string, number> = {};
@@ -304,10 +293,7 @@ function getWeightedDistribution(
     distribution[key] = sum > 0 ? val / sum : 0;
   }
 
-  if (
-    Object.keys(distribution).length < 4 &&
-    scores.length > Object.keys(distribution).length
-  ) {
+  if (Object.keys(distribution).length < 4 && scores.length > Object.keys(distribution).length) {
     for (const [k] of scores) {
       if (!(k in distribution)) {
         distribution[k] = 0;
@@ -319,9 +305,7 @@ function getWeightedDistribution(
   return distribution;
 }
 
-export function computeFinalDistribution(
-  prefs: UserPreferences
-): Typology {
+export function computeFinalDistribution(prefs: UserPreferences): Typology {
   const filteredTypologies = filterByMaxRequirements(typologyMapping, prefs);
 
   const scored = Object.entries(filteredTypologies).map(([name, attrs]) => {
@@ -335,7 +319,7 @@ export function computeFinalDistribution(
       biochar: 0,
       dac: 0,
       renewableEnergy: 0,
-    };  // todo
+    }; // todo
   }
 
   const distribution = getWeightedDistribution(scored);
