@@ -2272,120 +2272,120 @@ def flexibleAlgo(
 
     ## Contraint : balanced upper bound of purchases per year##
 
-    Lp_prob += z <= 0.3 * (
-        # NbS-ARR
-        lpSum(
-            x_vars["nbsRemoval"][region][year] * \
-            regional_coefficients["x"]["nbsRemoval"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
-        lpSum(
-            y_vars["nbsRemoval"][region][year] * \
-            regional_coefficients["y"]["nbsRemoval"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+    # Lp_prob += z <= 0.3 * (
+    #     # NbS-ARR
+    #     lpSum(
+    #         x_vars["nbsRemoval"][region][year] * \
+    #         regional_coefficients["x"]["nbsRemoval"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
+    #     lpSum(
+    #         y_vars["nbsRemoval"][region][year] * \
+    #         regional_coefficients["y"]["nbsRemoval"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
 
-        # nbsAvoidance
-        lpSum(
-            x_vars["nbsAvoidance"][region][year] * \
-            regional_coefficients["x"]["nbsAvoidance"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
-        lpSum(
-            y_vars["nbsAvoidance"][region][year] * \
-            regional_coefficients["y"]["nbsAvoidance"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+    #     # nbsAvoidance
+    #     lpSum(
+    #         x_vars["nbsAvoidance"][region][year] * \
+    #         regional_coefficients["x"]["nbsAvoidance"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
+    #     lpSum(
+    #         y_vars["nbsAvoidance"][region][year] * \
+    #         regional_coefficients["y"]["nbsAvoidance"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
 
-        # biochar
-        lpSum(
-            x_vars["biochar"][region][year] * \
-            regional_coefficients["x"]["biochar"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
-        lpSum(
-            y_vars["biochar"][region][year] * \
-            regional_coefficients["y"]["biochar"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+    #     # biochar
+    #     lpSum(
+    #         x_vars["biochar"][region][year] * \
+    #         regional_coefficients["x"]["biochar"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
+    #     lpSum(
+    #         y_vars["biochar"][region][year] * \
+    #         regional_coefficients["y"]["biochar"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
 
-        # dac
-        lpSum(
-            x_vars["dac"][region][year] * \
-            regional_coefficients["x"]["dac"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
-        lpSum(
-            y_vars["dac"][region][year] * \
-            regional_coefficients["y"]["dac"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
+    #     # dac
+    #     lpSum(
+    #         x_vars["dac"][region][year] * \
+    #         regional_coefficients["x"]["dac"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
+    #     lpSum(
+    #         y_vars["dac"][region][year] * \
+    #         regional_coefficients["y"]["dac"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
 
-        # renewableEnergy
-        lpSum(
-            x_vars["renewableEnergy"][region][year] * \
-            regional_coefficients["x"]["renewableEnergy"][region][year]
-            for region in regions
-            for year in range(26)
-        ) +
-        lpSum(
-            y_vars["renewableEnergy"][region][year] * \
-            regional_coefficients["y"]["renewableEnergy"][region][year]
-            for region in regions
-            for year in range(26)
-        )
-    )
+    #     # renewableEnergy
+    #     lpSum(
+    #         x_vars["renewableEnergy"][region][year] * \
+    #         regional_coefficients["x"]["renewableEnergy"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     ) +
+    #     lpSum(
+    #         y_vars["renewableEnergy"][region][year] * \
+    #         regional_coefficients["y"]["renewableEnergy"][region][year]
+    #         for region in regions
+    #         for year in range(26)
+    #     )
+    # )
 
-    for year in range(26):
-        Lp_prob += (
-            # NbS-ARR
-            lpSum(
-                x_vars["nbsRemoval"][region][year] * regional_coefficients["x"]["nbsRemoval"][region][year] +
-                y_vars["nbsRemoval"][region][year] * \
-                regional_coefficients["y"]["nbsRemoval"][region][year]
-                for region in regions
-            ) +
+    # for year in range(26):
+    #     Lp_prob += (
+    #         # NbS-ARR
+    #         lpSum(
+    #             x_vars["nbsRemoval"][region][year] * regional_coefficients["x"]["nbsRemoval"][region][year] +
+    #             y_vars["nbsRemoval"][region][year] * \
+    #             regional_coefficients["y"]["nbsRemoval"][region][year]
+    #             for region in regions
+    #         ) +
 
-            # nbsAvoidance
-            lpSum(
-                x_vars["nbsAvoidance"][region][year] * regional_coefficients["x"]["nbsAvoidance"][region][year] +
-                y_vars["nbsAvoidance"][region][year] * \
-                regional_coefficients["y"]["nbsAvoidance"][region][year]
-                for region in regions
-            ) +
+    #         # nbsAvoidance
+    #         lpSum(
+    #             x_vars["nbsAvoidance"][region][year] * regional_coefficients["x"]["nbsAvoidance"][region][year] +
+    #             y_vars["nbsAvoidance"][region][year] * \
+    #             regional_coefficients["y"]["nbsAvoidance"][region][year]
+    #             for region in regions
+    #         ) +
 
-            # biochar
-            lpSum(
-                x_vars["biochar"][region][year] * regional_coefficients["x"]["biochar"][region][year] +
-                y_vars["biochar"][region][year] * \
-                regional_coefficients["y"]["biochar"][region][year]
-                for region in regions
-            ) +
+    #         # biochar
+    #         lpSum(
+    #             x_vars["biochar"][region][year] * regional_coefficients["x"]["biochar"][region][year] +
+    #             y_vars["biochar"][region][year] * \
+    #             regional_coefficients["y"]["biochar"][region][year]
+    #             for region in regions
+    #         ) +
 
-            # dac
-            lpSum(
-                x_vars["dac"][region][year] * regional_coefficients["x"]["dac"][region][year] +
-                y_vars["dac"][region][year] * \
-                regional_coefficients["y"]["dac"][region][year]
-                for region in regions
-            ) +
+    #         # dac
+    #         lpSum(
+    #             x_vars["dac"][region][year] * regional_coefficients["x"]["dac"][region][year] +
+    #             y_vars["dac"][region][year] * \
+    #             regional_coefficients["y"]["dac"][region][year]
+    #             for region in regions
+    #         ) +
 
-            # renewableEnergy
-            lpSum(
-                x_vars["renewableEnergy"][region][year] * regional_coefficients["x"]["renewableEnergy"][region][year] +
-                y_vars["renewableEnergy"][region][year] * \
-                regional_coefficients["y"]["renewableEnergy"][region][year]
-                for region in regions
-            ) <= z
-        )
+    #         # renewableEnergy
+    #         lpSum(
+    #             x_vars["renewableEnergy"][region][year] * regional_coefficients["x"]["renewableEnergy"][region][year] +
+    #             y_vars["renewableEnergy"][region][year] * \
+    #             regional_coefficients["y"]["renewableEnergy"][region][year]
+    #             for region in regions
+    #         ) <= z
+    #     )
 
     ## Constraint : On spot vs Forward##
 

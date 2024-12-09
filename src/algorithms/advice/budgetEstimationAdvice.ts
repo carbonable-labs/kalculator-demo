@@ -7,7 +7,6 @@ import {
 } from '@/types/types';
 import { runBudgetAlgo } from '@/actions/budget';
 import { deltaExAnte } from '@/constants/forecasts';
-import RenewableEnergy from '@/components/budget/questions/typologies/RenewableEnergy';
 
 export const adviceBudgetTimeline = async (
   input: BudgetAlgorithmInput,
@@ -26,23 +25,14 @@ export const adviceBudgetTimeline = async (
   if (input.timeConstraints === TimeConstraint.Yearly) {
     if (Math.max(deltaFiveYear, deltaFlexible) < minProfit) {
       return { change: false };
-    } else if (deltaFiveYear > deltaFlexible) {
-      return {
-        change: true,
-        adviceType: 'timeline',
-        tipPhrase: 'You should consider a more flexible timeframe.',
-        actionText: 'Go Five Year',
-        budgetDelta: deltaFiveYear,
-        tip: TimeConstraint.FiveYear,
-      };
     } else {
       return {
         change: true,
         adviceType: 'timeline',
-        tipPhrase: 'You should consider a more flexible timeframe.',
-        actionText: 'Go Flexible',
-        budgetDelta: deltaFlexible,
-        tip: TimeConstraint.NoConstraint,
+        tipPhrase: 'Consider a more flexible timeline by making fewer but larger investments.',
+        actionText: 'Switch to Five-Year Plan',
+        budgetDelta: deltaFiveYear,
+        tip: TimeConstraint.FiveYear,
       };
     }
   } else if (input.timeConstraints === TimeConstraint.FiveYear) {
@@ -50,8 +40,8 @@ export const adviceBudgetTimeline = async (
       return {
         change: true,
         adviceType: 'timeline',
-        tipPhrase: 'You should consider a more flexible timeframe.',
-        actionText: 'Go Flexible',
+        tipPhrase: 'A fully flexible timeline can help identify the ideal investment strategy without yearly constraints. While less realistic, it highlights the optimal scenario for comparison.',
+        actionText: 'Try Flexible',
         budgetDelta: deltaFlexible,
         tip: TimeConstraint.NoConstraint,
       };
@@ -379,14 +369,14 @@ export const computeBudgetAdvice = async (
   output: BudgetOutputData,
 ): Promise<Array<Advice>> => {
   const computedTimelineTip = await adviceBudgetTimeline(input, output);
-  const computedFinancingTip = await adviceBudgetFinancing(input, output);
-  const computedTypologyTip = await adviceBudgetTypology(input, output);
-  const computedGeographyTip = await adviceBudgetGeography(input, output);
+  // const computedFinancingTip = await adviceBudgetFinancing(input, output);
+  // const computedTypologyTip = await adviceBudgetTypology(input, output);
+  // const computedGeographyTip = await adviceBudgetGeography(input, output);
 
-  return [computedTimelineTip, computedFinancingTip, computedTypologyTip, computedGeographyTip];
+  return [computedTimelineTip];
 };
 
 // TODO: implement general optimization algorithm
 type Algo = (input: BudgetAlgorithmInput) => BudgetOutputData;
 type ScoreFunction = (output: BudgetOutputData) => number;
-const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => {};
+const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => { };

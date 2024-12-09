@@ -10,7 +10,6 @@ import { typologyCostFactors } from '@/constants/forecasts';
 
 export async function executeBudgetAlgorithm(inputData: BudgetAlgorithmInput) {
   const scriptPath = path.join(process.cwd(), 'src/python-scripts', 'algo_budget', 'main.py');
-  console.log('input data:', inputData);
 
   const options: Options = {
     mode: 'text',

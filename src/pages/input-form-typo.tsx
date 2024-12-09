@@ -56,7 +56,6 @@ const InputForm = () => {
     });
 
     const result = await response.json();
-    console.log(result);
 
     // Redirect to a results page or display the result directly
     // router.push('/results');

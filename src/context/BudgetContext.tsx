@@ -1,6 +1,7 @@
 'use client';
 
 import { runBudgetAlgo } from '@/actions/budget';
+import { computeBudgetAdvice } from '@/algorithms/advice/budgetEstimationAdvice';
 import { useBudgetHistory } from '@/hooks/useBudgetHistory';
 import {
   BudgetAlgorithmInput,
@@ -63,8 +64,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsCalculating(true);
 
     try {
-      let results: BudgetOutputData | null = null;
-      results = await runBudgetAlgo({
+      let input: BudgetAlgorithmInput = {
         financing: financing,
         regionAllocation: regionAllocation,
         timeConstraints,
@@ -72,10 +72,23 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         carbonUnitNeeds,
         optimizeFinancing,
         optimizeRegion,
-      });
+      };
+      let results: BudgetOutputData | null =  await runBudgetAlgo(input);
+      if (results){
+        
+      }
+      const computedAdvice = await computeBudgetAdvice(input, results);
 
-      if (results) {
-        setBudgetResults(results);
+      const resultsWithAdvice: BudgetOutputData = {
+        ...results,
+        advice_timeline: computedAdvice[0],
+        // advice_financing: computedAdvice[1],
+        // advice_typo: computedAdvice[2],
+        // advice_geography: computedAdvice[3],
+      };
+
+      if (resultsWithAdvice) {
+        setBudgetResults(resultsWithAdvice);
         setHistory([
           ...history,
           [
