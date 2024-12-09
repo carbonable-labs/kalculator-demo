@@ -5,6 +5,7 @@ import CustomTable from '@/components/form/CustomTable';
 import { useBudget } from '@/context/BudgetContext';
 import { displayedMethodology, displayedNames } from '@/utils/charts';
 import { TypologyFinancingBreakdown } from '@/types/types';
+import { calculateTotalAndCumulativeStock } from '@/utils/stockCalculator';
 
 interface RecoData {
   date: string;
@@ -35,6 +36,8 @@ export default function PurchaseRecoTable() {
 
   useEffect(() => {
     if (budgetResults) {
+      let stock = calculateTotalAndCumulativeStock(budgetResults.strategies);
+      console.log("stock", stock);
       const recoData = budgetResults.strategies.flatMap((strategy) =>
         strategy.types_purchased.flatMap((typeBreakdown) =>
           (['exAnte', 'exPost'] as Array<keyof TypologyFinancingBreakdown>).flatMap(

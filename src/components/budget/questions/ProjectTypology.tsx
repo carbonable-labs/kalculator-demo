@@ -17,6 +17,7 @@ import RemovalAvoidanceQuestion from './typologies/RemovalAvoidanceQuestion';
 
 export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);
+  const [currentSum, setCurrentSum] = useState(100);
   const [isDontKnowSelected, setIsDontKnowSelected] = useState<boolean>(false);
   const { typology, setTypology } = useBudget();
 
@@ -106,6 +107,7 @@ export default function ProjectTypology() {
         (biochar as number) +
         (renewableEnergy as number);
       setIsTypologyFull(Math.round(total) === 100);
+      setCurrentSum(Math.round(total));
     }
   }, [nbsRemoval, nbsAvoidance, dac, biochar, renewableEnergy, isDontKnowSelected]);
 
@@ -151,7 +153,7 @@ export default function ProjectTypology() {
       </div>
       {!isTypologyFull && !isDontKnowSelected && (
         <div className="mt-6 rounded-lg bg-red-800 px-4 py-2 text-sm">
-          The sum of the typology values must be equal to 100%
+          The sum of the typology values must be equal to 100%, not {currentSum}%
         </div>
       )}
       <div className="ml-2 mt-12 flex items-center">
