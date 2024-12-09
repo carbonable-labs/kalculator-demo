@@ -13,16 +13,18 @@ export default function InvestmentStrategy() {
     DEFAULT_FINANCING.exAnte * 100,
   );
   const [isDontKnowSelected, setIsDontKnowSelected] = useState<boolean>(false);
-  const { financing, setFinancing, setOptimizeFinancing } = useBudget();
+  const { financing, setFinancing, setOptimizeFinancing, optimizeFinancing } = useBudget();
 
-  // Handle initial financing value
   useEffect(() => {
-    if (financing && !isDontKnowSelected) {
+    if (optimizeFinancing) {
       setInvestmentStrategy(financing.exAnte * 100);
+      setIsDontKnowSelected(true);
+    } else {
+      setInvestmentStrategy(financing.exAnte * 100);
+      setIsDontKnowSelected(false);
     }
-  }, []);
+  }, [optimizeFinancing]);
 
-  // Handle changes to investment strategy and "don't know" selection
   useEffect(() => {
     if (isDontKnowSelected) {
       setFinancing(DEFAULT_FINANCING);

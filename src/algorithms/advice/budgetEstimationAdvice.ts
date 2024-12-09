@@ -91,7 +91,6 @@ export const adviceBudgetFinancing = async (
       tip: newOutput.financing,
     };
   }
-  console.log("delta, minprofit, delta-minProfit", delta, minProfit, delta - minProfit)
   return {
     change: false,
     adviceType: 'financing',
