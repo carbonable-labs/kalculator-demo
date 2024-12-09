@@ -334,7 +334,9 @@ export function computeFinalDistribution(prefs: UserPreferences): Typology {
   };
 }
 
-export function calculateCostsByYearAndTypology(strategies: YearlyStrategy[]): CostByYearAndTypology {
+export function calculateCostsByYearAndTypology(
+  strategies: YearlyStrategy[],
+): CostByYearAndTypology {
   const costsByYearAndTypology: CostByYearAndTypology = {};
 
   strategies.forEach((strategy) => {
@@ -374,8 +376,7 @@ export function calculateCostsByYearAndRegion(strategies: YearlyStrategy[]): Cos
           financingDetails.regions.forEach((regionPurchase) => {
             const { region, cost } = regionPurchase;
 
-            costsByYearAndRegion[year][region] =
-              (costsByYearAndRegion[year][region] || 0) + cost;
+            costsByYearAndRegion[year][region] = (costsByYearAndRegion[year][region] || 0) + cost;
           });
         }
       });
@@ -385,7 +386,9 @@ export function calculateCostsByYearAndRegion(strategies: YearlyStrategy[]): Cos
   return costsByYearAndRegion;
 }
 
-export function calculateCostsByYearAndFinancing(strategies: YearlyStrategy[]): CostByYearAndFinancing {
+export function calculateCostsByYearAndFinancing(
+  strategies: YearlyStrategy[],
+): CostByYearAndFinancing {
   const costsByYearAndFinancing: CostByYearAndFinancing = {};
 
   strategies.forEach((strategy) => {

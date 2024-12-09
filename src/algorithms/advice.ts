@@ -36,19 +36,6 @@ export const adviceFinancing = (financing: Financing): Advice => {
   return { change: false, advice: '' };
 };
 
-export const adviceTimeline = (timeConstraints: TimeConstraint): Advice => {
-  if (timeConstraints === TimeConstraint.Yearly || timeConstraints === TimeConstraint.FiveYear) {
-    // Re-Run algorithm with new flexible constraint and check budget? output delta
-    // advice might be different for different algorithms
-    return {
-      change: true,
-      advice: 'You should consider a more flexible timeframe.',
-    };
-  }
-
-  return { change: false, advice: '' };
-};
-
 export const adviceTypo = (typology: Typology, typoCosts: CostByTypology): Advice => {
   // TODO: Update advice considering non used pct.
   let totalCost =

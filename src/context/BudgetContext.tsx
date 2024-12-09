@@ -73,9 +73,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         optimizeFinancing,
         optimizeRegion,
       };
-      let results: BudgetOutputData | null =  await runBudgetAlgo(input);
-      if (results){
-        
+      let results: BudgetOutputData | null = await runBudgetAlgo(input);
+      if (results) {
       }
       const computedAdvice = await computeBudgetAdvice(input, results);
 

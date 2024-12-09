@@ -40,12 +40,21 @@ export const adviceBudgetTimeline = async (
       return {
         change: true,
         adviceType: 'timeline',
-        tipPhrase: 'A fully flexible timeline can help identify the ideal investment strategy without yearly constraints. While less realistic, it highlights the optimal scenario for comparison.',
+        tipPhrase:
+          'A fully flexible timeline can help identify the ideal investment strategy without yearly constraints. While less realistic, it highlights the optimal scenario for comparison.',
         actionText: 'Try Flexible',
         budgetDelta: deltaFlexible,
         tip: TimeConstraint.NoConstraint,
       };
     }
+  } else if (input.timeConstraints === TimeConstraint.NoConstraint) {
+    return {
+      change: false,
+      adviceType: 'timeline',
+      tipPhrase:
+        'You are already using the most optimal investment timeline. This strategy serves as a benchmark for evaluating other constraints and ensuring they are close to the ideal scenario.',
+      tip: TimeConstraint.NoConstraint,
+    };
   }
 
   return { change: false };
@@ -379,4 +388,4 @@ export const computeBudgetAdvice = async (
 // TODO: implement general optimization algorithm
 type Algo = (input: BudgetAlgorithmInput) => BudgetOutputData;
 type ScoreFunction = (output: BudgetOutputData) => number;
-const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => { };
+const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => {};

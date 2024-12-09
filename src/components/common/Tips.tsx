@@ -23,7 +23,7 @@ export const TipsComponent: React.FC<TipsProps> = ({
     return null;
   }
 
-  if (!advice.change) {
+  if (!advice.change && !advice.tipPhrase) {
     advice = {
       change: true,
       tipPhrase: 'Great job! This is a good strategy.',
