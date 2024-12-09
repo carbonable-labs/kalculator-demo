@@ -14,28 +14,6 @@ export interface Advice {
   advice: string;
 }
 
-// export interface AdviceFinancing {
-//     exPost: number;
-//     exAnte: number;
-//     advicePhrase: string;
-// }
-
-export const adviceFinancing = (financing: Financing): Advice => {
-  if (financing.exPost > 0.2) {
-    return {
-      change: true,
-      advice: 'You should consider reducing ex-post financing.',
-      // advice: {
-      //     exPost: financing.exPost - 0.1,
-      //     exAnte: financing.exAnte + 0.1,
-      //     advice_phrase: "You should consider reducing ex-post financing."
-      // }
-    };
-  }
-
-  return { change: false, advice: '' };
-};
-
 export const adviceTypo = (typology: Typology, typoCosts: CostByTypology): Advice => {
   // TODO: Update advice considering non used pct.
   let totalCost =

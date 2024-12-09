@@ -29,8 +29,8 @@ export const adviceBudgetTimeline = async (
       return {
         change: true,
         adviceType: 'timeline',
-        tipPhrase: 'Consider a more flexible timeline by making fewer but larger investments.',
-        actionText: 'Switch to Five-Year Plan',
+        tipPhrase: 'Consider adopting a more flexible timeline with fewer but larger investments, such as making purchases in batches every 5 years.',
+        actionText: 'Test that plan',
         budgetDelta: deltaFiveYear,
         tip: TimeConstraint.FiveYear,
       };
@@ -64,23 +64,40 @@ export const adviceBudgetFinancing = async (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
 ): Promise<Advice> => {
-  if (input.financing.exAnte <= 0.88) {
-    let newFinancing: Financing = { exAnte: 0.88, exPost: 0.12 };
-    let newOutput: BudgetOutputData = await runBudgetAlgo({ ...input, financing: newFinancing });
-    let delta = output.total_cost_medium - newOutput.total_cost_medium;
-    const minProfit = output.total_cost_medium * 0.005; // 0.5% profit margin
-    if (delta > minProfit) {
-      return {
-        change: true,
-        adviceType: 'financing',
-        tipPhrase: 'You should increase Forward financing.',
-        actionText: 'Go Forward',
-        budgetDelta: delta,
-        tip: newFinancing,
-      };
-    }
+  if (input.optimizeFinancing) {
+    return {
+      change: false,
+      adviceType: 'financing',
+      tipPhrase:
+        'Carbonable has already optimized your financing strategy, finding the best possible split to minimize costs and maximize efficiency.',
+    };
   }
-  return { change: false };
+
+  const newOutput: BudgetOutputData = await runBudgetAlgo({
+    ...input,
+    optimizeFinancing: true
+  });
+
+  const delta = output.total_cost_medium - newOutput.total_cost_medium;
+  const minProfit = output.total_cost_medium * 0.005; // 0.5% profit margin
+  if (delta > minProfit) {
+    return {
+      change: true,
+      adviceType: 'financingOptimization',
+      tipPhrase:
+        'Consider enabling Carbonable optimization to find the most cost-effective split.',
+      actionText: 'Lets Optimize',
+      budgetDelta: delta,
+      tip: newOutput.financing,
+    };
+  }
+  console.log("delta, minprofit, delta-minProfit", delta, minProfit, delta - minProfit)
+  return {
+    change: false,
+    adviceType: 'financing',
+    tipPhrase:
+      'Your current financing strategy is already well-balanced. No significant improvements were found by adjusting the split',
+  };
 };
 
 export const adviceBudgetTypology = async (
@@ -378,14 +395,14 @@ export const computeBudgetAdvice = async (
   output: BudgetOutputData,
 ): Promise<Array<Advice>> => {
   const computedTimelineTip = await adviceBudgetTimeline(input, output);
-  // const computedFinancingTip = await adviceBudgetFinancing(input, output);
+  const computedFinancingTip = await adviceBudgetFinancing(input, output);
   // const computedTypologyTip = await adviceBudgetTypology(input, output);
   // const computedGeographyTip = await adviceBudgetGeography(input, output);
 
-  return [computedTimelineTip];
+  return [computedTimelineTip, computedFinancingTip];
 };
 
 // TODO: implement general optimization algorithm
 type Algo = (input: BudgetAlgorithmInput) => BudgetOutputData;
 type ScoreFunction = (output: BudgetOutputData) => number;
-const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => {};
+const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => { };

@@ -28,6 +28,8 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
     typology,
     regionAllocation,
     timeConstraints,
+    setOptimizeFinancing,
+    setOptimizeRegion
   } = useBudget();
 
   const [canCalculate, setCanCalculate] = useState(false);
@@ -41,6 +43,10 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
         case 'financing':
           setFinancing(advice.tip as Financing);
           break;
+          case 'financingOptimization':
+            setFinancing(advice.tip as Financing);
+            setOptimizeFinancing(true);
+            break;
         case 'typology':
           if (advice.tip) {
             const tip = advice.tip as Typology[];
