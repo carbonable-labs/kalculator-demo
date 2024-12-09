@@ -13,7 +13,7 @@ export async function executeBudgetAlgorithm(inputData: BudgetAlgorithmInput) {
 
   const options: Options = {
     mode: 'text',
-    pythonPath: '/venv/bin/python3',
+    pythonPath: path.join(process.cwd(), 'venv', 'bin', 'python3'),
     args: [JSON.stringify(inputData)],
   };
 
