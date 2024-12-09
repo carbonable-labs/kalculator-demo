@@ -219,7 +219,7 @@ export interface Advice {
   tipPhrase?: string;
   actionText?: string;
   budgetDelta?: number;
-  tip?: TimeConstraint | Financing | Typology[] | RegionAllocation[];
+  tip?: TimeConstraint | Financing | Typology[] | RegionAllocation;
 }
 
 export interface BudgetPythonResponse {

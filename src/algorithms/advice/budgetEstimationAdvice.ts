@@ -261,133 +261,46 @@ const computeSolutionError = (
   let normalizedErrors = errors.map((x) => x / Math.pow(100 - target, 2));
   return normalizedErrors;
 };
+
 export const adviceBudgetGeography = async (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
 ): Promise<Advice> => {
-  let pctEU = input.regionAllocation.europe;
-  let pctAF = input.regionAllocation.africa;
-  let pctAS = input.regionAllocation.asia;
-  let pctOC = input.regionAllocation.oceania;
-  let pctNA = input.regionAllocation.northAmerica;
-  let pctSA = input.regionAllocation.southAmerica;
-  let allocations = [pctEU, pctAF, pctAS, pctOC, pctNA, pctSA];
+  if (input.optimizeRegion) {
+    return {
+      change: false,
+      adviceType: 'region',
+      tipPhrase:
+        'Carbonable has already optimized your geography repartition strategy, finding the best possible repartition to minimize costs.',
+    };
+  }
 
-  let isPresent = (n: number): number => {
-    return n > 0 ? 100 : 0;
+  const newOutput: BudgetOutputData = await runBudgetAlgo({
+    ...input,
+    optimizeRegion: true
+  });
+
+  const delta = output.total_cost_medium - newOutput.total_cost_medium;
+  const minProfit = output.total_cost_medium * 0.005; // 0.5% profit margin
+  if (delta > minProfit) {
+    return {
+      change: true,
+      adviceType: 'regionOptimization',
+      tipPhrase:
+        'Consider enabling Carbonable optimization to find the most cost-effective repartition.',
+      actionText: 'Lets Optimize',
+      budgetDelta: delta,
+      tip: newOutput.regions,
+    };
+  }
+  return {
+    change: false,
+    adviceType: 'region',
+    tipPhrase:
+      'Your current region strategy is already well-balanced. No significant improvements were found by adjusting it',
   };
-  let targetCoeff = 1 / allocations.map(isPresent).reduce((a, b) => a + b);
-  targetCoeff = targetCoeff * 100;
-
-  // 0: EU, 1: AF, 2: AS, 3: OC, 4: NA, 5: SA
-  const regionDistribution = allocations.map((x) => Math.round(x * 100));
-  let prevRegionDistribution = [...regionDistribution];
-  let newRegionDistribution = [...regionDistribution];
-
-  let prevCosts = [
-    output.cost_europe,
-    output.cost_africa,
-    output.cost_asia,
-    output.cost_oceania,
-    output.cost_north_america,
-    output.cost_south_america,
-  ];
-  let newCosts = [...prevCosts];
-
-  let step = Math.round(getMinStep(regionDistribution) / 2);
-
-  let newOutput: BudgetOutputData = output;
-  let newRegions = input.regionAllocation;
-  let numLoops: number = 0;
-
-  while (step > 0 && numLoops < 155) {
-    numLoops++;
-    let errors = computeSolutionError(prevRegionDistribution, prevCosts, targetCoeff);
-    let totalCost =
-      prevCosts.reduce((a, b) => a + b) *
-      (newOutput.financing.exPost + newOutput.financing.exAnte * deltaExAnte);
-    let costCoeffs = prevCosts.map((x) => x / totalCost);
-
-    let maxErrorIndex = errors.indexOf(Math.max(...errors));
-    let sign = Math.sign(targetCoeff - costCoeffs[maxErrorIndex]);
-    newRegionDistribution[maxErrorIndex] = prevRegionDistribution[maxErrorIndex] + sign * step;
-
-    // Find change that lowers error the most
-    let currentError = errors.reduce((a, b) => a + b);
-    let errorDiff = 0;
-    let maxRegionDistribution = [...prevRegionDistribution];
-    let newErrors: Array<number> = errors;
-    newCosts = prevCosts;
-    // todo: remove typology with 0% allocation
-    // for each with filetered typology?
-    let allocationSupport = regionDistribution
-      .map((x, i) => (x == 0 || x == maxErrorIndex ? [0, i] : [1, i]))
-      .filter((x) => x[0] == 1)
-      .map((x) => x[1]);
-    allocationSupport.forEach(async (i) => {
-      let tmpDistribution = [...newRegionDistribution];
-      tmpDistribution[i] = newRegionDistribution[i] - sign * step;
-      let tmpRegions = {
-        europe: tmpDistribution[0] / 100,
-        africa: tmpDistribution[1] / 100,
-        asia: tmpDistribution[2] / 100,
-        oceania: tmpDistribution[3] / 100,
-        northAmerica: tmpDistribution[4] / 100,
-        southAmerica: tmpDistribution[5] / 100,
-      };
-      let tmpOutput = await runBudgetAlgo({ ...input, regionAllocation: tmpRegions });
-      let tmpCosts = [
-        tmpOutput.cost_europe,
-        tmpOutput.cost_africa,
-        tmpOutput.cost_asia,
-        tmpOutput.cost_oceania,
-        tmpOutput.cost_north_america,
-        tmpOutput.cost_south_america,
-      ];
-
-      let tmpErrors = computeSolutionError(tmpDistribution, tmpCosts, targetCoeff);
-      let tmpError = tmpErrors.reduce((a, b) => a + b);
-      let tmpErrorDiff = currentError - tmpError;
-      if (tmpErrorDiff > 0 && tmpErrorDiff > errorDiff) {
-        errorDiff = tmpErrorDiff;
-        maxRegionDistribution = [...tmpDistribution];
-        newOutput = { ...tmpOutput };
-        newErrors = [...tmpErrors];
-        newCosts = [...tmpCosts];
-        newRegions = { ...tmpRegions };
-      }
-    });
-
-    newRegionDistribution = [...maxRegionDistribution];
-
-    if (errorDiff <= 0) {
-      step = Math.round((step - 0.5) / 2);
-      step = Math.min(step, Math.round(getMinStep(newRegionDistribution) / 2));
-    } else {
-      prevRegionDistribution = [...newRegionDistribution];
-      errors = [...newErrors];
-      prevCosts = [...newCosts];
-    }
-  }
-
-  let minProfit = output.total_cost_medium * 0.005;
-  let deltaOptimal = output.total_cost_medium - newOutput.total_cost_medium;
-  // todo adjust off by one if necessary
-
-  if (deltaOptimal > minProfit) {
-    if (newRegionDistribution != regionDistribution) {
-      return {
-        change: true,
-        adviceType: 'geography',
-        tipPhrase: 'You should modify region allocations.',
-        actionText: 'Change Geography',
-        budgetDelta: deltaOptimal,
-        tip: [newRegions],
-      };
-    }
-  }
-  return { change: false };
 };
+
 
 export const computeBudgetAdvice = async (
   input: BudgetAlgorithmInput,
@@ -395,10 +308,10 @@ export const computeBudgetAdvice = async (
 ): Promise<Array<Advice>> => {
   const computedTimelineTip = await adviceBudgetTimeline(input, output);
   const computedFinancingTip = await adviceBudgetFinancing(input, output);
-  // const computedTypologyTip = await adviceBudgetTypology(input, output);
-  // const computedGeographyTip = await adviceBudgetGeography(input, output);
+  const computedTypologyTip = await adviceBudgetTypology(input, output);
+  const computedGeographyTip = await adviceBudgetGeography(input, output);
 
-  return [computedTimelineTip, computedFinancingTip];
+  return [computedTimelineTip, computedFinancingTip, computedGeographyTip];
 };
 
 // TODO: implement general optimization algorithm

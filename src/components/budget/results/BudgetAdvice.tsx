@@ -43,10 +43,10 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
         case 'financing':
           setFinancing(advice.tip as Financing);
           break;
-          case 'financingOptimization':
-            setFinancing(advice.tip as Financing);
-            setOptimizeFinancing(true);
-            break;
+        case 'financingOptimization':
+          setFinancing(advice.tip as Financing);
+          setOptimizeFinancing(true);
+          break;
         case 'typology':
           if (advice.tip) {
             const tip = advice.tip as Typology[];
@@ -55,12 +55,17 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
             }
           }
           break;
-        case 'geography':
+        case 'region':
           if (advice.tip) {
-            const tip = advice.tip as RegionAllocation[];
-            if (tip.length > 0) {
-              setRegionAllocation(tip[0]);
-            }
+            const tip = advice.tip as RegionAllocation;
+            setRegionAllocation(tip);
+          }
+          break;
+        case 'regionOptimization':
+          if (advice.tip) {
+            const tip = advice.tip as RegionAllocation;
+            setRegionAllocation(tip);
+            setOptimizeRegion(true);
           }
           break;
         default:
