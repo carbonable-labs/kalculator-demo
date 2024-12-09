@@ -153,6 +153,44 @@ export interface CostByTypology {
   costRenewableEnergy: number;
 }
 
+export interface CostByYearAndTypology {
+  [year: number]: {
+    [typology: string]: number;
+  };
+}
+
+export interface CostByYearAndRegion {
+  [year: number]: {
+    [region: string]: number;
+  };
+}
+
+export interface CostByYearAndFinancing {
+  [year: number]: {
+    exAnte: number;
+    exPost: number;
+  };
+}
+
+export interface StockByYear {
+  [year: number]: {
+    [typology: string]: number;
+  };
+}
+
+export interface StockByRegion {
+  [year: number]: {
+    [region: string]: number;
+  };
+}
+
+export interface StockByFinancing {
+  [year: number]: {
+    exAnte: number;
+    exPost: number;
+  };
+}
+
 export interface YearlyStrategy {
   year: number;
   quantity_purchased: number; // todo: totalQuantityPurchased

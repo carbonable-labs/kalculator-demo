@@ -12,8 +12,8 @@ import {
   CostByTypology,
 } from '@/types/types';
 import {
-  getCostPerTypes,
-  getCostPerRegions,
+  getTotalCostPerTypes,
+  getTotalCostPerRegions,
   calculateTotalQuantitiesFinancing,
   calculateTotalCostsFinancing,
   assertTypologySum,
@@ -76,8 +76,8 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
     strategies,
     optimizeRegion,
   );
-  const costByTypology: CostByTypology = getCostPerTypes(strategies);
-  const costByRegion: CostByRegion = getCostPerRegions(strategies);
+  const costByTypology: CostByTypology = getTotalCostPerTypes(strategies);
+  const costByRegion: CostByRegion = getTotalCostPerRegions(strategies);
   const { totalCostExAnte, totalCostExPost } = calculateTotalCostsFinancing(strategies);
 
   const algoRes: BudgetOutputData = {

@@ -6,9 +6,12 @@ import {
   Typology,
   UserPreferences,
   typologyMapping,
+  CostByYearAndTypology,
+  CostByYearAndRegion,
+  CostByYearAndFinancing,
 } from '@/types/types';
 
-export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
+export const getTotalCostPerTypes = (strategies: YearlyStrategy[]) => {
   let costNbsRemoval = 0;
   let costNbsAvoidance = 0;
   let costBiochar = 0;
@@ -52,7 +55,7 @@ export const getCostPerTypes = (strategies: YearlyStrategy[]) => {
   };
 };
 
-export const getCostPerRegions = (strategies: YearlyStrategy[]) => {
+export const getTotalCostPerRegions = (strategies: YearlyStrategy[]) => {
   let costNorthAmerica = 0;
   let costSouthAmerica = 0;
   let costEurope = 0;
@@ -329,4 +332,81 @@ export function computeFinalDistribution(prefs: UserPreferences): Typology {
     dac: distribution.dac || 0,
     renewableEnergy: distribution.renewableEnergy || 0,
   };
+}
+
+export function calculateCostsByYearAndTypology(strategies: YearlyStrategy[]): CostByYearAndTypology {
+  const costsByYearAndTypology: CostByYearAndTypology = {};
+
+  strategies.forEach((strategy) => {
+    const year = strategy.year;
+
+    if (!costsByYearAndTypology[year]) {
+      costsByYearAndTypology[year] = {};
+    }
+
+    strategy.types_purchased.forEach((typeBreakdown) => {
+      const { typology, exAnte, exPost } = typeBreakdown;
+
+      const totalCost = (exAnte?.cost || 0) + (exPost?.cost || 0);
+      costsByYearAndTypology[year][typology] =
+        (costsByYearAndTypology[year][typology] || 0) + totalCost;
+    });
+  });
+
+  return costsByYearAndTypology;
+}
+
+export function calculateCostsByYearAndRegion(strategies: YearlyStrategy[]): CostByYearAndRegion {
+  const costsByYearAndRegion: CostByYearAndRegion = {};
+
+  strategies.forEach((strategy) => {
+    const year = strategy.year;
+
+    if (!costsByYearAndRegion[year]) {
+      costsByYearAndRegion[year] = {};
+    }
+
+    strategy.types_purchased.forEach((typeBreakdown) => {
+      const { exAnte, exPost } = typeBreakdown;
+
+      [exAnte, exPost].forEach((financingDetails) => {
+        if (financingDetails?.regions) {
+          financingDetails.regions.forEach((regionPurchase) => {
+            const { region, cost } = regionPurchase;
+
+            costsByYearAndRegion[year][region] =
+              (costsByYearAndRegion[year][region] || 0) + cost;
+          });
+        }
+      });
+    });
+  });
+
+  return costsByYearAndRegion;
+}
+
+export function calculateCostsByYearAndFinancing(strategies: YearlyStrategy[]): CostByYearAndFinancing {
+  const costsByYearAndFinancing: CostByYearAndFinancing = {};
+
+  strategies.forEach((strategy) => {
+    const year = strategy.year;
+
+    if (!costsByYearAndFinancing[year]) {
+      costsByYearAndFinancing[year] = { exAnte: 0, exPost: 0 };
+    }
+
+    strategy.types_purchased.forEach((typeBreakdown) => {
+      const { exAnte, exPost } = typeBreakdown;
+
+      if (exAnte) {
+        costsByYearAndFinancing[year].exAnte += exAnte.cost || 0;
+      }
+
+      if (exPost) {
+        costsByYearAndFinancing[year].exPost += exPost.cost || 0;
+      }
+    });
+  });
+
+  return costsByYearAndFinancing;
 }

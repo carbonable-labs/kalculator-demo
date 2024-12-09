@@ -10,7 +10,7 @@
 //   Typology,
 //   CostByTypology,
 // } from '@/types/types';
-// import { getCostPerRegions, getCostPerTypes } from '@/utils/calculations';
+// import { getTotalCostPerRegions, getTotalCostPerTypes } from '@/utils/calculations';
 // import { currentYear, targetYear, duration } from '@/constants/time';
 // import { deltaExAnte } from '@/constants/forecasts';
 // import { carbonToOffset } from '@/constants/user';
@@ -93,8 +93,8 @@
 //     if (checkBudget(totalBudgetMedium, budget)) {
 //       budget_not_compatible = false;
 
-//       const typologyCosts: CostByTypology = getCostPerTypes(strategies);
-//       const CostByRegion: CostByRegion = getCostPerRegions(strategies);
+//       const typologyCosts: CostByTypology = getTotalCostPerTypes(strategies);
+//       const CostByRegion: CostByRegion = getTotalCostPerRegions(strategies);
 
 //       let financingData: Financing = {
 //         exAnte: financing.exAnte,

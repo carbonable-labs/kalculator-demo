@@ -1,23 +1,4 @@
-import { YearlyStrategy } from '@/types/types';
-
-interface StockByYear {
-  [year: number]: {
-    [typology: string]: number;
-  };
-}
-
-interface StockByRegion {
-  [year: number]: {
-    [region: string]: number;
-  };
-}
-
-interface StockByFinancing {
-  [year: number]: {
-    exAnte: number;
-    exPost: number;
-  };
-}
+import { StockByFinancing, StockByRegion, StockByYear, YearlyStrategy } from '@/types/types';
 
 const coefficients = {
   nbsRemoval: [
@@ -42,10 +23,8 @@ export function calculateStockByTypology(yearlyStrategies: YearlyStrategy[]): St
       const isNbsRemoval = typology === 'nbsRemoval';
       const coeff = isNbsRemoval ? coefficients.nbsRemoval : coefficients.other_types;
 
-      // Calcul du total des coefficients pour normaliser
       const totalCoeff = coeff.reduce((sum, c) => sum + c, 0);
 
-      // Process ex-post credits (direct addition)
       if (typeBreakdown.exPost?.regions) {
         typeBreakdown.exPost.regions.forEach((region) => {
           if (!stockByYear[year]) stockByYear[year] = {};
@@ -53,7 +32,6 @@ export function calculateStockByTypology(yearlyStrategies: YearlyStrategy[]): St
         });
       }
 
-      // Process ex-ante credits (forward financing)
       if (typeBreakdown.exAnte?.regions) {
         typeBreakdown.exAnte.regions.forEach((region) => {
           const totalQuantity = region.quantity;
@@ -83,10 +61,8 @@ export function calculateStockByRegion(yearlyStrategies: YearlyStrategy[]): Stoc
       const isNbsRemoval = typeBreakdown.typology === 'nbsRemoval';
       const coeff = isNbsRemoval ? coefficients.nbsRemoval : coefficients.other_types;
 
-      // Calcul du total des coefficients pour normaliser
       const totalCoeff = coeff.reduce((sum, c) => sum + c, 0);
 
-      // Process ex-post credits (direct addition)
       if (typeBreakdown.exPost?.regions) {
         typeBreakdown.exPost.regions.forEach((region) => {
           if (!stockByYear[year]) stockByYear[year] = {};
@@ -95,7 +71,6 @@ export function calculateStockByRegion(yearlyStrategies: YearlyStrategy[]): Stoc
         });
       }
 
-      // Process ex-ante credits (forward financing)
       if (typeBreakdown.exAnte?.regions) {
         typeBreakdown.exAnte.regions.forEach((region) => {
           const totalQuantity = region.quantity;
@@ -125,10 +100,8 @@ export function calculateStockByFinancing(yearlyStrategies: YearlyStrategy[]): S
       const isNbsRemoval = typeBreakdown.typology === 'nbsRemoval';
       const coeff = isNbsRemoval ? coefficients.nbsRemoval : coefficients.other_types;
 
-      // Calcul du total des coefficients pour normaliser
       const totalCoeff = coeff.reduce((sum, c) => sum + c, 0);
 
-      // Process ex-post credits (direct addition)
       if (typeBreakdown.exPost?.regions) {
         typeBreakdown.exPost.regions.forEach((region) => {
           if (!stockByYear[year]) stockByYear[year] = { exAnte: 0, exPost: 0 };
@@ -136,7 +109,6 @@ export function calculateStockByFinancing(yearlyStrategies: YearlyStrategy[]): S
         });
       }
 
-      // Process ex-ante credits (forward financing)
       if (typeBreakdown.exAnte?.regions) {
         typeBreakdown.exAnte.regions.forEach((region) => {
           const totalQuantity = region.quantity;
