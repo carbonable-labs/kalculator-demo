@@ -19,4 +19,5 @@ export const displayedMethodology: Record<string, string> = {
   dac: 'Removal',
   nbsRemoval: 'Removal',
   biochar: 'Removal',
+  renewableEnergy: 'Avoidance',
 };

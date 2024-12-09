@@ -11,6 +11,7 @@ interface RecoData {
   carbonUnits: number;
   typology: string;
   mecanism: string;
+  financing: string;
   region: string;
   totalPurchased: number;
   price: number;
@@ -22,6 +23,7 @@ export default function PurchaseRecoTable() {
     'Carbon Units (t)',
     'Typology',
     'Mechanism',
+    'Financing',
     'Region',
     'Total Purchased ($)',
     'Price/t ($)',
@@ -46,6 +48,7 @@ export default function PurchaseRecoTable() {
                 carbonUnits: region.quantity,
                 typology: displayedNames[typeBreakdown.typology] || typeBreakdown.typology,
                 mecanism: displayedMethodology[typeBreakdown.typology] || '',
+                financing: financingType === 'exAnte' ? 'Ex-Ante' : 'Ex-Post',
                 region: displayedNames[region.region] || region.region,
                 totalPurchased: region.cost,
                 price: financingDetails.price_per_ton,
@@ -77,6 +80,7 @@ export default function PurchaseRecoTable() {
           carbonUnits: totals.totalCarbonUnits,
           typology: '',
           mecanism: '',
+          financing: '',
           region: '',
           totalPurchased: totals.totalPurchased,
           price: averagePrice,
@@ -84,10 +88,6 @@ export default function PurchaseRecoTable() {
       ]);
     }
   }, [budgetResults]);
-
-  if (budgetResults === null) {
-    return null;
-  }
 
   return (
     <div>
