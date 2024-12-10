@@ -1,4 +1,10 @@
-import { StockByFinancing, StockByRegion, StockByYear, YearlyStrategy } from '@/types/types';
+import {
+  StockByFinancing,
+  StockByRegion,
+  StockByYear,
+  YearlyStock,
+  YearlyStrategy,
+} from '@/types/types';
 
 const coefficients = {
   nbsRemoval: [
@@ -127,10 +133,7 @@ export function calculateStockByFinancing(yearlyStrategies: YearlyStrategy[]): S
   return stockByYear;
 }
 
-export function calculateTotalAndCumulativeStock(yearlyStrategies: YearlyStrategy[]): {
-  newStockByYear: { [year: number]: number };
-  cumulativeStockByYear: { [year: number]: number };
-} {
+export function calculateTotalAndCumulativeStock(yearlyStrategies: YearlyStrategy[]): YearlyStock {
   const stockByTypology = calculateStockByTypology(yearlyStrategies);
   const newStockByYear: { [year: number]: number } = {};
   const cumulativeStockByYear: { [year: number]: number } = {};

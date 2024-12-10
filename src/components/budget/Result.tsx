@@ -12,6 +12,8 @@ import BudgetAdvice from './results/BudgetAdvice';
 import { formatLargeNumber } from '@/utils/output';
 import { title } from 'process';
 import { Advice } from '@/types/types';
+import PurchaseRecoChart from './results/PurchaseRecoChart';
+import PurchaseRecoChartStock from './results/PurchaseRecoChartStock';
 
 export default function BudgetResults() {
   const { budgetResults, history } = useBudget();
@@ -72,6 +74,12 @@ export default function BudgetResults() {
       </div>
       <div className="mt-12">
         <PurchaseRecoTable />
+      </div>
+      <div className="mt-24">
+        <PurchaseRecoChart />
+      </div>
+      <div className="mt-24">
+        <PurchaseRecoChartStock />
       </div>
     </>
   );

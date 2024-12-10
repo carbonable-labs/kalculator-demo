@@ -62,7 +62,7 @@ export default function CostChart() {
           barGap={2}
         >
           <XAxis dataKey="year" />
-          <YAxis />
+          <YAxis tickFormatter={(value) => formatLargeNumber(value)} />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }} />
           <Bar dataKey="low" fill="#22c55e" />
           <Bar dataKey="medium" fill="#3b82f6" />

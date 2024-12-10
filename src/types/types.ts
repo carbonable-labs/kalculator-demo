@@ -191,6 +191,11 @@ export interface StockByFinancing {
   };
 }
 
+export interface YearlyStock {
+  newStockByYear: { [year: number]: number };
+  cumulativeStockByYear: { [year: number]: number };
+}
+
 export interface YearlyStrategy {
   year: number;
   quantity_purchased: number; // todo: totalQuantityPurchased
