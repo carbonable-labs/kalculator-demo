@@ -60,10 +60,10 @@ export default function InvestmentStrategy() {
         />
         <div className="flex justify-between text-sm uppercase">
           <div className={`text-primary ${isDontKnowSelected ? 'opacity-50' : ''}`}>
-            {investmentStrategy as number}% Forward
+            {(investmentStrategy as number).toFixed(2)}% Forward
           </div>
           <div className={`text-secondary ${isDontKnowSelected ? 'opacity-50' : ''}`}>
-            {100 - (investmentStrategy as number)}% Spot
+            {(100 - (investmentStrategy as number)).toFixed(2)}% Spot
           </div>
         </div>
         <div className="mt-8 flex items-center">

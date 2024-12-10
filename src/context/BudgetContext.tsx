@@ -82,8 +82,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         ...results,
         advice_timeline: computedAdvice[0],
         advice_financing: computedAdvice[1],
-        // advice_typo: computedAdvice[2],
-        advice_geography: computedAdvice[2],
+        advice_typo: computedAdvice[2],
+        advice_geography: computedAdvice[3],
       };
 
       if (resultsWithAdvice) {

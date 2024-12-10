@@ -1,12 +1,5 @@
-import {
-  TimeConstraint,
-  BudgetAlgorithmInput,
-  BudgetOutputData,
-  Advice,
-  Financing,
-} from '@/types/types';
+import { TimeConstraint, BudgetAlgorithmInput, BudgetOutputData, Advice } from '@/types/types';
 import { runBudgetAlgo } from '@/actions/budget';
-import { deltaExAnte } from '@/constants/forecasts';
 
 export const adviceBudgetTimeline = async (
   input: BudgetAlgorithmInput,
@@ -103,163 +96,42 @@ export const adviceBudgetTypology = async (
   input: BudgetAlgorithmInput,
   output: BudgetOutputData,
 ): Promise<Advice> => {
-  let pctBiochar = input.typology.biochar;
-  let pctDac = input.typology.dac;
-  let pctNbsAvoidance = input.typology.nbsAvoidance;
-  let pctNbsRemoval = input.typology.nbsRemoval;
-
-  let isPresent = (n: number): number => {
-    return n > 0 ? 100 : 0;
-  };
-  let targetCoeff =
-    1 / [pctBiochar, pctDac, pctNbsAvoidance, pctNbsRemoval].map(isPresent).reduce((a, b) => a + b);
-  targetCoeff = targetCoeff * 100;
-
-  // 0: biochar, 1: dac, 2: nbsAvoidance, 3: nbsRemoval
-  const typologyDistribution = [pctBiochar, pctDac, pctNbsAvoidance, pctNbsRemoval].map((x) =>
-    Math.round(x * 100),
-  );
-  let prevTypologyDistribution = [...typologyDistribution];
-  let newTypologyDistribution = [...typologyDistribution];
-
-  let prevCosts = [
-    output.cost_biochar,
-    output.cost_dac,
-    output.cost_nbs_avoidance,
-    output.cost_nbs_removal,
-    output.cost_renewable_energy,
+  const typologies = [
+    { name: 'Biochar', percentage: input.typology.biochar, cost: output.cost_biochar },
+    { name: 'DAC', percentage: input.typology.dac, cost: output.cost_dac },
+    {
+      name: 'NbS - REDD',
+      percentage: input.typology.nbsAvoidance,
+      cost: output.cost_nbs_avoidance,
+    },
+    { name: 'NbS - ARR', percentage: input.typology.nbsRemoval, cost: output.cost_nbs_removal },
+    {
+      name: 'Renewable Energy',
+      percentage: input.typology.renewableEnergy,
+      cost: output.cost_renewable_energy,
+    },
   ];
-  let newCosts = [...prevCosts];
 
-  let step = Math.round(getMinStep(typologyDistribution) / 2);
+  const totalCost = typologies.reduce((sum, t) => sum + t.cost, 0);
 
-  let newOutput: BudgetOutputData = output;
-  let newTypology = input.typology;
-  let numLoops: number = 0;
-  while (step > 0 && numLoops < 155) {
-    numLoops++;
-    let errors = computeSolutionError(prevTypologyDistribution, prevCosts, targetCoeff);
-    let totalCost =
-      prevCosts.reduce((a, b) => a + b) *
-      (output.financing.exPost + output.financing.exAnte * deltaExAnte);
-    let costCoeffs = prevCosts.map((x) => x / totalCost);
+  const highCostTypologies = typologies.filter((typology) => {
+    const relativeCost = typology.cost / totalCost;
+    return relativeCost > typology.percentage * 3; // x3 the quantity
+  });
 
-    let maxErrorIndex = errors.indexOf(Math.max(...errors));
-    let sign = Math.sign(targetCoeff - costCoeffs[maxErrorIndex]);
-    newTypologyDistribution[maxErrorIndex] = prevTypologyDistribution[maxErrorIndex] + sign * step;
+  if (highCostTypologies.length > 0) {
+    const mostExpensiveTypology = highCostTypologies.sort(
+      (a, b) => b.cost / b.percentage - a.cost / a.percentage,
+    )[0];
 
-    // Find change that lowers error the most
-    let currentError = errors.reduce((a, b) => a + b);
-    let errorDiff = 0;
-    let maxTypologyDistribution = [...prevTypologyDistribution];
-    let newErrors: Array<number> = errors;
-    newCosts = prevCosts;
-    // todo: remove typology with 0% allocation
-    // for each with filetered typology?
-    let allocationSupport = typologyDistribution
-      .map((x, i) => (x == 0 || x == maxErrorIndex ? [0, i] : [1, i]))
-      .filter((x) => x[0] == 1)
-      .map((x) => x[1]);
-    allocationSupport.forEach(async (i) => {
-      let tmpDistribution = [...newTypologyDistribution];
-      tmpDistribution[i] = newTypologyDistribution[i] - sign * step;
-      let tmpTypology = {
-        biochar: tmpDistribution[0] / 100,
-        dac: tmpDistribution[1] / 100,
-        nbsAvoidance: tmpDistribution[2] / 100,
-        nbsRemoval: tmpDistribution[3] / 100,
-        renewableEnergy: 0,
-      };
-      let tmpOutput = await runBudgetAlgo({ ...input, typology: tmpTypology });
-      let tmpCosts = [
-        tmpOutput.cost_biochar,
-        tmpOutput.cost_dac,
-        tmpOutput.cost_nbs_avoidance,
-        tmpOutput.cost_nbs_removal,
-        tmpOutput.cost_renewable_energy,
-      ];
-
-      let tmpErrors = computeSolutionError(tmpDistribution, tmpCosts, targetCoeff);
-      let tmpError = tmpErrors.reduce((a, b) => a + b);
-      let tmpErrorDiff = currentError - tmpError;
-      if (tmpErrorDiff > 0 && tmpErrorDiff > errorDiff) {
-        errorDiff = tmpErrorDiff;
-        maxTypologyDistribution = [...tmpDistribution];
-        newOutput = { ...tmpOutput };
-        newErrors = [...tmpErrors];
-        newCosts = [...tmpCosts];
-        newTypology = { ...tmpTypology };
-      }
-    });
-
-    newTypologyDistribution = [...maxTypologyDistribution];
-
-    // console.log(
-    //   numLoops,
-    //   prevTypologyDistribution,
-    //   newTypologyDistribution,
-    //   errors.map((x) => (100 * x).toFixed(3)),
-    //   newErrors.map((x) => (100 * x).toFixed(3)),
-    //   // prevCosts.map((x) => x.toFixed(0)),
-    //   // newCosts.map((x) => x.toFixed(0)),
-    //   sign,
-    //   step,
-    //   errorDiff.toFixed(5),
-    //   costCoeffs.map((x) => x.toFixed(2)),
-    // );
-
-    if (errorDiff <= 0) {
-      step = Math.round((step - 0.5) / 2);
-      step = Math.min(step, Math.round(getMinStep(newTypologyDistribution) / 2));
-    } else {
-      prevTypologyDistribution = [...newTypologyDistribution];
-      errors = [...newErrors];
-      prevCosts = [...newCosts];
-    }
+    return {
+      change: true,
+      adviceType: 'typology',
+      tipPhrase: `The ${mostExpensiveTypology.name} typology represents a disproportionate share of your budget. Reducing its allocation could optimize costs.`,
+    };
   }
 
-  let minProfit = output.total_cost_medium * 0.005;
-  let deltaOptimal = output.total_cost_medium - newOutput.total_cost_medium;
-  // todo adjust off by one if necessary
-
-  if (deltaOptimal > minProfit) {
-    if (newTypologyDistribution != typologyDistribution) {
-      return {
-        change: true,
-        adviceType: 'typology',
-        tipPhrase: 'You should consider changing your typology.',
-        actionText: 'Change Typology',
-        budgetDelta: deltaOptimal,
-        tip: [newTypology],
-      };
-    }
-  }
   return { change: false };
-};
-
-const getMinStep = (values: Array<number>): number => {
-  let nonZeroValues = values.filter((x) => x != 0);
-  let minDecrease = Math.min(...nonZeroValues);
-  let maxIncrease = Math.max(...nonZeroValues.map((x) => 100 - x));
-  return Math.min(minDecrease, maxIncrease);
-};
-
-// TODO: computeSolutionCost and minimize it
-// find cost-based solution: minimize cost, maximize impact, maximize cost efficiency, etc
-const computeSolutionError = (
-  distribution: Array<number>,
-  costs: Array<number>,
-  target: number,
-): Array<number> => {
-  let sumCosts = costs.reduce((a, b) => a + b);
-  let normalizedCosts = costs.map((x) => x * x); // todo: normalize costs based on initial total cost
-  // return normalizedCosts;
-  let errors = costs
-    .map((ci, i) => (distribution[i] == 0 ? target : (100 * ci) / sumCosts)) // Discard typologies with 0% allocation;
-    .map((x) => Math.pow(x - target, 2)); // Compute the squared distance to optimal cost
-  let sumErrors = errors.reduce((a, b) => a + b);
-  let normalizedErrors = errors.map((x) => x / Math.pow(100 - target, 2));
-  return normalizedErrors;
 };
 
 export const adviceBudgetGeography = async (
@@ -310,10 +182,5 @@ export const computeBudgetAdvice = async (
   const computedTypologyTip = await adviceBudgetTypology(input, output);
   const computedGeographyTip = await adviceBudgetGeography(input, output);
 
-  return [computedTimelineTip, computedFinancingTip, computedGeographyTip];
+  return [computedTimelineTip, computedFinancingTip, computedTypologyTip, computedGeographyTip];
 };
-
-// TODO: implement general optimization algorithm
-type Algo = (input: BudgetAlgorithmInput) => BudgetOutputData;
-type ScoreFunction = (output: BudgetOutputData) => number;
-const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => {};
