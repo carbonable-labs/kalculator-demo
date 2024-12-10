@@ -18,6 +18,7 @@ import {
   calculateTotalCostsFinancing,
   assertTypologySum,
   calculateTotalQuantitiesRegionAllocation,
+  normalizeRegionAllocation,
 } from '@/utils/calculations';
 
 async function requestBudgetComputation(
@@ -52,8 +53,8 @@ function getUpdatedRegionAllocation(
   optimizeRegion: boolean,
 ): RegionAllocation {
   if (optimizeRegion) {
-    const updatedRegionAllocation = calculateTotalQuantitiesRegionAllocation(strategies);
-    return updatedRegionAllocation;
+    const totalQuantities = calculateTotalQuantitiesRegionAllocation(strategies);
+    return normalizeRegionAllocation(totalQuantities);
   }
   return regionAllocation;
 }
@@ -83,7 +84,7 @@ export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<Budget
   const algoRes: BudgetOutputData = {
     financing: updatedFinancing,
     typologies: typology,
-    regions: updatedRegionAllocation,
+    regionRepartition: updatedRegionAllocation,
     carbon_offset: carbonToOffset,
     total_cost_low: totalBudgetLow,
     total_cost_medium: totalBudgetMedium,

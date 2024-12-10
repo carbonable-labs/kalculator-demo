@@ -53,7 +53,7 @@ export const TipsComponent: React.FC<TipsProps> = ({
           className={`flex flex-wrap items-center bg-neutral-900 ${isFullWidth ? 'rounded-full py-1 pl-2 pr-4 md:w-fit' : 'mt-2 w-full rounded-lg px-2 py-2'}`}
         >
           <div
-            className={`cursor-pointer border border-greenish-500 px-2 py-1  text-greenish-500 hover:brightness-125 ${isFullWidth ? 'order-1 w-fit rounded-full' : 'order-2 mt-2 w-full rounded-lg text-center'}`}
+            className={`cursor-pointer border border-greenish-500 px-2 py-1 text-greenish-500 hover:brightness-125 ${isFullWidth ? 'order-1 w-fit rounded-full' : 'order-2 mt-2 w-full rounded-lg text-center'}`}
             onClick={onClick}
           >
             {buttonText}

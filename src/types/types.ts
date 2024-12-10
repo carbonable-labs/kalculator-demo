@@ -1,7 +1,17 @@
 import { typologyCostFactors } from '@/constants/forecasts';
 
-// Regional allocation of funds from user input
+// Regional allocation of funds from user input, sum should be 1
 export interface RegionAllocation {
+  northAmerica: number;
+  southAmerica: number;
+  europe: number;
+  africa: number;
+  asia: number;
+  oceania: number;
+}
+
+// CC quantities bought for each region
+export interface RegionQuantities {
   northAmerica: number;
   southAmerica: number;
   europe: number;
@@ -236,7 +246,7 @@ export interface BudgetPythonResponse {
 export interface BudgetOutputData {
   financing: Financing;
   typologies: Typology;
-  regions: RegionAllocation;
+  regionRepartition: RegionAllocation;
   carbon_offset: number;
   total_cost_low: number;
   total_cost_medium: number;

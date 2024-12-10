@@ -29,7 +29,8 @@ export const adviceBudgetTimeline = async (
       return {
         change: true,
         adviceType: 'timeline',
-        tipPhrase: 'Consider adopting a more flexible timeline with fewer but larger investments, such as making purchases in batches every 5 years.',
+        tipPhrase:
+          'Consider adopting a more flexible timeline with fewer but larger investments, such as making purchases in batches every 5 years.',
         actionText: 'Test that plan',
         budgetDelta: deltaFiveYear,
         tip: TimeConstraint.FiveYear,
@@ -75,7 +76,7 @@ export const adviceBudgetFinancing = async (
 
   const newOutput: BudgetOutputData = await runBudgetAlgo({
     ...input,
-    optimizeFinancing: true
+    optimizeFinancing: true,
   });
 
   const delta = output.total_cost_medium - newOutput.total_cost_medium;
@@ -84,8 +85,7 @@ export const adviceBudgetFinancing = async (
     return {
       change: true,
       adviceType: 'financingOptimization',
-      tipPhrase:
-        'Consider enabling Carbonable optimization to find the most cost-effective split.',
+      tipPhrase: 'Consider enabling Carbonable optimization to find the most cost-effective split.',
       actionText: 'Lets Optimize',
       budgetDelta: delta,
       tip: newOutput.financing,
@@ -277,7 +277,7 @@ export const adviceBudgetGeography = async (
 
   const newOutput: BudgetOutputData = await runBudgetAlgo({
     ...input,
-    optimizeRegion: true
+    optimizeRegion: true,
   });
 
   const delta = output.total_cost_medium - newOutput.total_cost_medium;
@@ -290,7 +290,7 @@ export const adviceBudgetGeography = async (
         'Consider enabling Carbonable optimization to find the most cost-effective repartition.',
       actionText: 'Lets Optimize',
       budgetDelta: delta,
-      tip: newOutput.regions,
+      tip: newOutput.regionRepartition,
     };
   }
   return {
@@ -300,7 +300,6 @@ export const adviceBudgetGeography = async (
       'Your current region strategy is already well-balanced. No significant improvements were found by adjusting it',
   };
 };
-
 
 export const computeBudgetAdvice = async (
   input: BudgetAlgorithmInput,
@@ -317,4 +316,4 @@ export const computeBudgetAdvice = async (
 // TODO: implement general optimization algorithm
 type Algo = (input: BudgetAlgorithmInput) => BudgetOutputData;
 type ScoreFunction = (output: BudgetOutputData) => number;
-const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => { };
+const optimize = (allocation: Array<number>, algo: Algo, score: ScoreFunction) => {};

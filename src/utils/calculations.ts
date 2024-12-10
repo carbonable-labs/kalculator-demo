@@ -163,6 +163,40 @@ export const calculateTotalQuantitiesRegionAllocation = (
   };
 };
 
+export function normalizeRegionAllocation(allocation: RegionAllocation): RegionAllocation {
+  const total = Object.values(allocation).reduce((sum, value) => sum + value, 0);
+  if (total === 0) {
+    return {
+      northAmerica: 0,
+      southAmerica: 0,
+      europe: 0,
+      africa: 0,
+      asia: 0,
+      oceania: 0,
+    };
+  }
+
+  const keys = Object.keys(allocation) as (keyof RegionAllocation)[];
+  const normalized: RegionAllocation = {} as RegionAllocation;
+  let cumulativePercentage = 0;
+  let maxKey: keyof RegionAllocation = keys[0];
+  let maxValue = allocation[maxKey];
+
+  keys.forEach((key) => {
+    const percentage = allocation[key] / total;
+    const rounded = Math.round(percentage * 100) / 100;
+    normalized[key] = rounded;
+    cumulativePercentage += rounded;
+    if (allocation[key] > maxValue) {
+      maxValue = allocation[key];
+      maxKey = key;
+    }
+  });
+
+  normalized[maxKey] += Math.round((1 - cumulativePercentage) * 100) / 100;
+  return normalized;
+}
+
 export function calculateTotalQuantitiesFinancing(strategies: YearlyStrategy[]): {
   totalExAnte: number;
   totalExPost: number;

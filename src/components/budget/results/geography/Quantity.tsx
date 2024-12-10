@@ -10,7 +10,7 @@ export default function Quantity() {
 
   const percentages = useMemo(() => {
     if (!budgetResults || !budgetResults.strategies) return null;
-    let quantities: RegionAllocation = budgetResults.regions;
+    let quantities: RegionAllocation = budgetResults.regionRepartition;
 
     const totalQuantity = Object.values(quantities).reduce((sum, quantity) => sum + quantity, 0);
 

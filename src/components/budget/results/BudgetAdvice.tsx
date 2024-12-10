@@ -29,7 +29,7 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
     regionAllocation,
     timeConstraints,
     setOptimizeFinancing,
-    setOptimizeRegion
+    setOptimizeRegion,
   } = useBudget();
 
   const [canCalculate, setCanCalculate] = useState(false);
