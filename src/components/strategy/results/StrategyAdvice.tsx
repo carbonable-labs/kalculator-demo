@@ -43,14 +43,12 @@ const StrategyAdvice: React.FC<strategyAdviceProps> = ({
             }
           }
           break;
-        case 'geography':
-          if (advice.tip) {
-            const tip = advice.tip as RegionAllocation[];
-            if (tip.length > 0) {
-              setRegionAllocation(tip[0]);
+          case 'region':
+            if (advice.tip) {
+              const tip = advice.tip as RegionAllocation;
+              setRegionAllocation(tip);
             }
-          }
-          break;
+            break;
         default:
           console.log('Unknown advice type:', advice.adviceType);
       }
