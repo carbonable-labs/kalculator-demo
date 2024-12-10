@@ -29,11 +29,7 @@ export default function PlanningCycle() {
         subtitle="Is your budget aligned with yearly, multi-year or open timelines?"
       />
       <div className="mt-8">
-        <RadioButtons
-          values={planningCycleOptions}
-          setSelected={setSelected}
-          selected={selected}
-        />
+        <RadioButtons values={planningCycleOptions} setSelected={setSelected} selected={selected} />
       </div>
     </>
   );
