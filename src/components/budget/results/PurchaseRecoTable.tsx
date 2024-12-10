@@ -6,6 +6,8 @@ import { useBudget } from '@/context/BudgetContext';
 import { displayedMethodology, displayedNames } from '@/utils/charts';
 import { TypologyFinancingBreakdown } from '@/types/types';
 import { calculateTotalAndCumulativeStock } from '@/utils/stockCalculator';
+import CSVExportButton from './CSVExportButton';
+import { ChartTitle } from '@/components/form/Title';
 
 interface RecoData {
   date: string;
@@ -92,8 +94,28 @@ export default function PurchaseRecoTable() {
     }
   }, [budgetResults]);
 
+  const getRowData = (row: RecoData) => [
+    row.date,
+    row.carbonUnits,
+    row.typology,
+    row.mecanism,
+    row.financing,
+    row.region,
+    row.totalPurchased,
+    row.price,
+  ];
+
   return (
-    <div>
+    <div className="space-y-4">
+      <div className="flex justify-between">
+        <ChartTitle title="Purchase Recommendations" />
+        <CSVExportButton
+          headers={headers}
+          data={data}
+          filename="purchase_recommendations.csv"
+          getRowData={getRowData}
+        />
+      </div>
       <CustomTable headers={headers} data={data} footer={footerData} />
     </div>
   );

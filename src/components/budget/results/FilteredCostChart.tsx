@@ -221,7 +221,7 @@ const FilteredCostChart: React.FC<FilteredCostChartProps> = ({
             <XAxis dataKey="year" />
             <YAxis tickFormatter={(value) => formatLargeNumber(value)} />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }} />
-            <Legend />
+            <Legend style={{ fontWeight: 300 }} />
             {renderBars()}
           </BarChart>
         </ResponsiveContainer>

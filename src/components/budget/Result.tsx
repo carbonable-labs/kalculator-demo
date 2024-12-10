@@ -72,7 +72,7 @@ export default function BudgetResults() {
       <div className="mt-12">
         <BudgetAdvice advice={advice} isFullWidth={true} isGradient={false} title="Optimizer" />
       </div>
-      <div className="mt-12">
+      <div className="mt-24">
         <PurchaseRecoTable />
       </div>
       <div className="mt-24">
