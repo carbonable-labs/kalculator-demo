@@ -1,31 +1,30 @@
 'use client';
 import PieChartComponent from '@/components/common/charts/PieChart';
 import { ChartTitle } from '@/components/form/Title';
-import { useStrategy } from '@/context/StrategyContext';
-import { continents } from '@/utils/configuration';
+import { useBudget } from '@/context/BudgetContext';
+import { RegionAllocation } from '@/types/types';
 import { useMemo } from 'react';
 
 export default function Quantity() {
-  const { strategyResults } = useStrategy();
+  const { budgetResults } = useBudget();
 
   const percentages = useMemo(() => {
-    if (!strategyResults) return null;
+    if (!budgetResults || !budgetResults.strategies) return null;
+    let quantities: RegionAllocation = budgetResults.regionRepartition;
 
-    const totalCost = continents.reduce(
-      (sum, continent) => sum + (strategyResults.regions as any)[continent],
-      0,
-    );
+    const totalQuantity = Object.values(quantities).reduce((sum, quantity) => sum + quantity, 0);
 
-    const calculatePercentage = (cost: number) => Math.round((cost / totalCost) * 100);
+    const calculatePercentage = (quantity: number) =>
+      totalQuantity > 0 ? Math.round((quantity / totalQuantity) * 100) : 0;
 
-    return continents.reduce(
-      (result, continent) => {
-        result[continent] = calculatePercentage((strategyResults.regions as any)[continent]);
+    return Object.keys(quantities).reduce(
+      (result, region) => {
+        result[region] = calculatePercentage(quantities[region as keyof typeof quantities]);
         return result;
       },
       {} as Record<string, number>,
     );
-  }, [strategyResults]);
+  }, [budgetResults]);
 
   if (!percentages) {
     return null;
