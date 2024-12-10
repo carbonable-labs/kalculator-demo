@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 import { formatLargeNumber } from '@/utils/output';
 import { StockByYear, StockByFinancing, StockByRegion } from '@/types/types';
-import { displayedNames } from '@/utils/charts';
+import { displayedNames, fillMissingYears, getYearRange } from '@/utils/charts';
 
 // Filter type enum
 const FilterTypes = {
@@ -83,40 +83,52 @@ const FilteredStockChart: React.FC<FilteredStockChartProps> = ({
   const prepareGlobalData = (): ChartDataItem[] => {
     if (!stockPerYear?.newStockByYear) return [];
 
-    return Object.entries(stockPerYear.newStockByYear)
+    const { minYear, maxYear } = getYearRange(stockPerYear.newStockByYear);
+    const baseData = Object.entries(stockPerYear.newStockByYear)
       .map(([year, value]) => ({
         year: parseInt(year),
         total: value,
       }))
       .sort((a, b) => a.year - b.year);
+
+    return fillMissingYears(baseData, minYear, maxYear);
   };
 
   const prepareTypologyData = (): ChartDataItem[] => {
     if (!stockPerType) return [];
 
-    return Object.keys(stockPerType).map((year) => ({
+    const { minYear, maxYear } = getYearRange(stockPerType);
+    const baseData = Object.keys(stockPerType).map((year) => ({
       year: parseInt(year),
       ...stockPerType[parseInt(year)],
     }));
+
+    return fillMissingYears(baseData, minYear, maxYear);
   };
 
   const prepareFinancingData = (): ChartDataItem[] => {
     if (!stockPerFinancing) return [];
 
-    return Object.keys(stockPerFinancing).map((year) => ({
+    const { minYear, maxYear } = getYearRange(stockPerFinancing);
+    const baseData = Object.keys(stockPerFinancing).map((year) => ({
       year: parseInt(year),
       exAnte: stockPerFinancing[parseInt(year)].exAnte,
       exPost: stockPerFinancing[parseInt(year)].exPost,
     }));
+
+    return fillMissingYears(baseData, minYear, maxYear);
   };
 
   const prepareRegionData = (): ChartDataItem[] => {
     if (!stockPerGeography) return [];
 
-    return Object.keys(stockPerGeography).map((year) => ({
+    const { minYear, maxYear } = getYearRange(stockPerGeography);
+    const baseData = Object.keys(stockPerGeography).map((year) => ({
       year: parseInt(year),
       ...stockPerGeography[parseInt(year)],
     }));
+
+    return fillMissingYears(baseData, minYear, maxYear);
   };
 
   useEffect(() => {

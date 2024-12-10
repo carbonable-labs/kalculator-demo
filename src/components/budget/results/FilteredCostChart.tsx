@@ -16,7 +16,7 @@ import {
   CostByYearAndRegion,
   CostByYearAndTypology,
 } from '@/types/types';
-import { displayedNames } from '@/utils/charts';
+import { displayedNames, fillMissingYears, getYearRange } from '@/utils/charts';
 
 // Filter type enum
 const FilterTypes = {
@@ -91,40 +91,56 @@ const FilteredCostChart: React.FC<FilteredCostChartProps> = ({
       new Set(budgetResults.strategies.map((s: YearlyStrategy) => s.year)),
     ).sort();
 
-    return years.map((year) => ({
+    const { minYear, maxYear } = {
+      minYear: Math.min(...years),
+      maxYear: Math.max(...years),
+    };
+
+    const baseData = years.map((year) => ({
       year,
       total: budgetResults.strategies
         .filter((s) => s.year === year)
         .reduce((acc, curr) => acc + curr.cost_medium, 0),
     }));
+
+    return fillMissingYears(baseData, minYear, maxYear);
   };
 
   const prepareTypologyData = (): ChartDataItem[] => {
     if (!costPerType) return [];
 
-    return Object.keys(costPerType).map((year) => ({
+    const { minYear, maxYear } = getYearRange(costPerType);
+    const baseData = Object.keys(costPerType).map((year) => ({
       year: parseInt(year),
       ...costPerType[parseInt(year)],
     }));
+
+    return fillMissingYears(baseData, minYear, maxYear);
   };
 
   const prepareFinancingData = (): ChartDataItem[] => {
     if (!costPerFinancing) return [];
 
-    return Object.keys(costPerFinancing).map((year) => ({
+    const { minYear, maxYear } = getYearRange(costPerFinancing);
+    const baseData = Object.keys(costPerFinancing).map((year) => ({
       year: parseInt(year),
       exAnte: costPerFinancing[parseInt(year)].exAnte,
       exPost: costPerFinancing[parseInt(year)].exPost,
     }));
+
+    return fillMissingYears(baseData, minYear, maxYear);
   };
 
   const prepareRegionData = (): ChartDataItem[] => {
     if (!costPerGeography) return [];
 
-    return Object.keys(costPerGeography).map((year) => ({
+    const { minYear, maxYear } = getYearRange(costPerGeography);
+    const baseData = Object.keys(costPerGeography).map((year) => ({
       year: parseInt(year),
       ...costPerGeography[parseInt(year)],
     }));
+
+    return fillMissingYears(baseData, minYear, maxYear);
   };
 
   useEffect(() => {
