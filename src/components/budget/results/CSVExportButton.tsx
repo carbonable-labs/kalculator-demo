@@ -1,5 +1,3 @@
-import { ArrowDownOnSquareIcon } from '@heroicons/react/24/outline';
-
 interface CSVExportButtonProps<T> {
   headers: string[];
   data: T[];
