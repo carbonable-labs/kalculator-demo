@@ -12,18 +12,21 @@ export default function CalculateBudget() {
     timeConstraints,
     typology,
     isCalculating,
+    carbonUnitNeeds,
     calculateBudget,
     setHistory,
   } = useBudget();
 
   useEffect(() => {
-    if (financing && regionAllocation && timeConstraints !== null && typology) {
+    const hasValidCarbonNeeds = carbonUnitNeeds && Object.keys(carbonUnitNeeds).length > 0;
+
+    if (financing && regionAllocation && timeConstraints !== null && typology && hasValidCarbonNeeds) {
       setCanCalculate(true);
       setHistory([]);
     } else {
       setCanCalculate(false);
     }
-  }, [financing, regionAllocation, timeConstraints, typology]);
+  }, [financing, regionAllocation, timeConstraints, typology, carbonUnitNeeds]);
 
   return (
     <GreenButton disabled={!canCalculate} isLoading={isCalculating} onClick={calculateBudget}>

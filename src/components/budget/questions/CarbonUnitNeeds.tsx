@@ -10,7 +10,7 @@ interface CarbonUnit {
 }
 
 export default function CarbonUnitNeeds() {
-  const [units, setUnits] = useState<CarbonUnit[]>([{ year: '2050', amount: '960000' }]);
+  const [units, setUnits] = useState<CarbonUnit[]>([]);
   const { setCarbonUnitNeeds } = useBudget();
 
   const handleInputChange = (index: number, field: keyof CarbonUnit, value: string) => {
@@ -40,6 +40,11 @@ export default function CarbonUnitNeeds() {
     <div className="w-1/2">
       <Title title="1. Carbon Unit Needs" subtitle="Specify the carbon unit needs by year." />
       <div className="mt-8 space-y-4">
+        {units.length === 0 && (
+          <div className="text-sm text-gray-600">
+            Please add at least one constraint to define your carbon unit needs.
+          </div>
+        )}
         {units.map((unit, index) => (
           <div key={index} className="flex items-center gap-4">
             <input

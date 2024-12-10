@@ -44,7 +44,7 @@ interface BudgetContextType {
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
 
 export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [timeConstraints, setTimeConstraints] = useState<number | null>(null);
+  const [timeConstraints, setTimeConstraints] = useState<number | null>(1); // Default to Yearly
   const [financing, setFinancing] = useState<Financing>(DEFAULT_FINANCING);
   const [optimizeFinancing, setOptimizeFinancing] = useState<boolean>(false);
   const [optimizeRegion, setOptimizeRegion] = useState<boolean>(false);
