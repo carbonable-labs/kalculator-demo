@@ -9,11 +9,17 @@ import {
 import { typologyCostFactors } from '@/constants/forecasts';
 
 export async function executeBudgetAlgorithm(inputData: BudgetAlgorithmInput) {
-  const scriptPath = path.join(process.cwd(), 'src/python-scripts', 'algo_budget', 'main.py');
+  const scriptPath =
+    process.env.NODE_ENV === 'production'
+      ? '/usr/src/app/src/python-scripts/algo_budget/main.py' // in prod
+      : path.join(process.cwd(), 'src/python-scripts', 'algo_budget', 'main.py'); // in dev
 
   const options: Options = {
     mode: 'text',
-    pythonPath: path.join(process.cwd(), 'venv', 'bin', 'python3'),
+    pythonPath:
+      process.env.NODE_ENV === 'production'
+        ? '/venv/bin/python3' // in prod
+        : path.join(process.cwd(), 'venv', 'bin', 'python3'), // in dev
     args: [JSON.stringify(inputData)],
   };
 
