@@ -312,10 +312,11 @@ function getWeightedDistribution(scores: [string, number][]): Record<string, num
 
   const nbToSelect = Math.min(scores.length, 4);
   let selected = scores.slice(0, nbToSelect);
-
-  if (selected.length > 3) {
-    selected = selected.slice(0, 3);
+  
+  if (selected.length > 4) {
+    selected = selected.slice(0, 4);
   }
+  
 
   if (selected.length === 0 && scores.length > 0) {
     selected = [scores[0]];
