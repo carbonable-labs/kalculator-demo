@@ -351,12 +351,32 @@ export function computeFinalDistribution(prefs: UserPreferences): Typology | nul
   }
 
   const distribution = getWeightedDistribution(scored);
+
+  let roundedDistribution: Record<string, number> = {};
+  let total = 0;
+  let maxKey: string | null = null;
+  let maxValue = -Infinity;
+
+  Object.entries(distribution).forEach(([key, value]) => {
+    const roundedValue = Math.round(value * 100) / 100;
+    roundedDistribution[key] = roundedValue;
+    total += roundedValue;
+    if (value > maxValue) {
+      maxValue = value;
+      maxKey = key;
+    }
+  });
+
+  if (maxKey !== null) {
+    roundedDistribution[maxKey] += Math.round((1 - total) * 100) / 100;
+  }
+
   return {
-    nbsRemoval: distribution.nbsRemoval || 0,
-    nbsAvoidance: distribution.nbsAvoidance || 0,
-    biochar: distribution.biochar || 0,
-    dac: distribution.dac || 0,
-    renewableEnergy: distribution.renewableEnergy || 0,
+    nbsRemoval: roundedDistribution.nbsRemoval || 0,
+    nbsAvoidance: roundedDistribution.nbsAvoidance || 0,
+    biochar: roundedDistribution.biochar || 0,
+    dac: roundedDistribution.dac || 0,
+    renewableEnergy: roundedDistribution.renewableEnergy || 0,
   };
 }
 
