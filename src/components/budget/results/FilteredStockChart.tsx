@@ -204,7 +204,7 @@ const FilteredStockChart: React.FC<FilteredStockChartProps> = ({
             }`}
           >
             {filterKey === 'GLOBAL'
-              ? 'Global'
+              ? 'Stock'
               : `By ${filterKey.charAt(0) + filterKey.slice(1).toLowerCase()}`}
           </button>
         ))}

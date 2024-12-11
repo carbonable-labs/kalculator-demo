@@ -20,17 +20,7 @@ const RemovalAvoidanceQuestion: React.FC<RemovalAvoidanceQuestionProps> = ({
         {hint && <div className="mt-1 text-xs text-neutral-400">{hint}</div>}
       </div>
       <div className="flex flex-1 items-center justify-end">
-        <label className="flex items-center">
-          <input
-            type="radio"
-            value="removal"
-            checked={value === 'removal'}
-            onChange={() => onChange('removal')}
-            className="form-radio h-4 w-4 text-neutral-500"
-          />
-          <span className="ml-2 text-sm text-neutral-200">Only removal</span>
-        </label>
-        <label className="ml-4 flex items-center">
+      <label className="flex items-center">
           <input
             type="radio"
             value="dontMind"
@@ -39,6 +29,16 @@ const RemovalAvoidanceQuestion: React.FC<RemovalAvoidanceQuestionProps> = ({
             className="form-radio h-4 w-4 text-neutral-500"
           />
           <span className="ml-2 text-sm text-neutral-200">I don’t mind</span>
+        </label>
+        <label className="ml-4 flex items-center">
+          <input
+            type="radio"
+            value="removal"
+            checked={value === 'removal'}
+            onChange={() => onChange('removal')}
+            className="form-radio h-4 w-4 text-neutral-500"
+          />
+          <span className="ml-2 text-sm text-neutral-200">Only removal</span>
         </label>
         <label className="ml-4 flex items-center">
           <input

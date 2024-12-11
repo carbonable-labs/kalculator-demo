@@ -32,7 +32,7 @@ const PreferenceQuestion: React.FC<PreferenceQuestionProps> = ({
             onChange={(e) => onDontMindChange(e.target.checked)}
             className="form-checkbox h-4 w-4 border-neutral-500 bg-neutral-800 text-neutral-500"
           />
-          <span className="ml-2 text-sm text-neutral-200">I don&apos;t mind</span>
+          <span className="ml-2 text-sm text-neutral-200">Skip this criteria</span>
         </div>
 
         <div className="flex w-1/2 items-center">
