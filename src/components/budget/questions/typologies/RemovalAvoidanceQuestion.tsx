@@ -20,7 +20,7 @@ const RemovalAvoidanceQuestion: React.FC<RemovalAvoidanceQuestionProps> = ({
         {hint && <div className="mt-1 text-xs text-neutral-400">{hint}</div>}
       </div>
       <div className="flex flex-1 items-center justify-end">
-      <label className="flex items-center">
+        <label className="flex items-center">
           <input
             type="radio"
             value="dontMind"

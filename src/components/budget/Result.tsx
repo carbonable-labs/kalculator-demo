@@ -57,6 +57,15 @@ export default function BudgetResults() {
       <div className="mt-12">
         <CostChart />
       </div>
+      <div className="mt-24">
+        <PurchaseRecoChart />
+      </div>
+      <div className="mt-24">
+        <PurchaseRecoChartStock />
+      </div>
+      <div className="mt-24">
+        <PurchaseRecoTable />
+      </div>
       <div className="mt-4">
         <BudgetAdvice advice={budgetResults.advice_timeline} isFullWidth={true} isGradient={true} />
       </div>
@@ -71,15 +80,6 @@ export default function BudgetResults() {
       </div>
       <div className="mt-12">
         <BudgetAdvice advice={advice} isFullWidth={true} isGradient={false} title="Optimizer" />
-      </div>
-      <div className="mt-24">
-        <PurchaseRecoTable />
-      </div>
-      <div className="mt-24">
-        <PurchaseRecoChart />
-      </div>
-      <div className="mt-24">
-        <PurchaseRecoChartStock />
       </div>
     </>
   );
