@@ -48,6 +48,10 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
           setOptimizeFinancing(true);
           break;
         case 'typology':
+          if (advice.tip === undefined) {
+            window.scrollTo(0, 580);
+          }
+
           if (advice.tip) {
             const tip = advice.tip as Typology[];
             if (tip.length > 0) {
@@ -72,7 +76,9 @@ const BudgetAdvice: React.FC<budgetAdviceProps> = ({
           console.log('Unknown advice type:', advice.adviceType);
       }
 
-      setCanCalculate(true);
+      if (advice.tip !== undefined) {
+        setCanCalculate(true);
+      }
     },
     [advice],
   );

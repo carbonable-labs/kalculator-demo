@@ -47,7 +47,8 @@ export const adviceBudgetTimeline = async (
       adviceType: 'timeline',
       tipPhrase:
         'You are already using the most optimal investment timeline. This strategy serves as a benchmark for evaluating other constraints and ensuring they are close to the ideal scenario.',
-      tip: TimeConstraint.NoConstraint,
+      tip: TimeConstraint.FiveYear,
+      actionText: 'Back to 5 years',
     };
   }
 
@@ -128,6 +129,7 @@ export const adviceBudgetTypology = async (
       change: true,
       adviceType: 'typology',
       tipPhrase: `The ${mostExpensiveTypology.name} typology represents a disproportionate share of your budget. Reducing its allocation could optimize costs.`,
+      actionText: 'Adjust',
     };
   }
 
