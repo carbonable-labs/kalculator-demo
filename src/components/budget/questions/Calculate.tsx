@@ -19,12 +19,14 @@ export default function CalculateBudget() {
 
   useEffect(() => {
     const hasValidCarbonNeeds = carbonUnitNeeds && Object.keys(carbonUnitNeeds).length > 0;
+    const isTypologyInvalid = typology && Object.values(typology).every((value) => value === 0);
 
     if (
       financing &&
       regionAllocation &&
       timeConstraints !== null &&
       typology &&
+      !isTypologyInvalid &&
       hasValidCarbonNeeds
     ) {
       setCanCalculate(true);

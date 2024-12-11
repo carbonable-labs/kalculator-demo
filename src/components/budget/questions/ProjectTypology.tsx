@@ -21,7 +21,6 @@ export default function ProjectTypology() {
   const [isDontKnowSelected, setIsDontKnowSelected] = useState<boolean>(false);
   const { typology, setTypology } = useBudget();
 
-  // State for each typology percentage
   const [nbsRemoval, setNbsRemoval] = useState<number | number[]>(typology.nbsRemoval * 100);
   const [nbsAvoidance, setNbsAvoidance] = useState<number | number[]>(typology.nbsAvoidance * 100);
   const [dac, setDac] = useState<number | number[]>(typology.dac * 100);
@@ -30,7 +29,6 @@ export default function ProjectTypology() {
     typology.renewableEnergy * 100,
   );
 
-  // State for "I don't mind" checkboxes
   const [dontMindStates, setDontMindStates] = useState({
     biodiversity: false,
     durability: false,
@@ -39,7 +37,6 @@ export default function ProjectTypology() {
     removal: false,
   });
 
-  // State for user preferences
   const [userPreferences, setUserPreferences] = useState<UserPreferences>({
     biodiversity: 3,
     durability: 3,
@@ -47,9 +44,9 @@ export default function ProjectTypology() {
     reputation: 3,
     removal: 0,
   });
-  // Todo after untick I don't mind hint doesn't reappear automatically
 
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [warningMessage, setWarningMessage] = useState<string>(''); // Nouvel état pour le warning
 
   const handlePreferenceChange = (key: keyof UserPreferences, value: number) => {
     setUserPreferences((prev) => ({ ...prev, [key]: value }));
@@ -63,12 +60,36 @@ export default function ProjectTypology() {
   };
 
   const calculateTypologyFromPreferences = () => {
-    const normalized: Typology = computeFinalDistribution(userPreferences);
-    if (!normalized || Object.values(normalized).some((val) => isNaN(val))) {
-      setErrorMessage('No suitable distribution or invalid values in calculation.');
+    const normalized = computeFinalDistribution(userPreferences);
+    if (!normalized) {
+      setErrorMessage('It seems the constraints are too strong. Please revise your preferences.');
+      setWarningMessage(''); // Effacer le message d'avertissement
+      setTypology({
+        biochar: 0,
+        dac: 0,
+        nbsAvoidance: 0,
+        nbsRemoval: 0,
+        renewableEnergy: 0,
+      });
+      setNbsRemoval(0);
+      setNbsAvoidance(0);
+      setDac(0);
+      setBiochar(0);
+      setRenewableEnergy(0);
       return;
     }
-    setErrorMessage('');
+
+    const nonZeroCount = Object.values(normalized).filter((val) => val > 0).length;
+    if (nonZeroCount === 1) {
+      setWarningMessage(
+        'It seems the constraints are too restrictive, resulting in only one typology being selected. Please revise your preferences.',
+      );
+      setErrorMessage(''); // Effacer le message d'erreur
+    } else {
+      setWarningMessage('');
+      setErrorMessage('');
+    }
+
     setTypology(normalized);
     setNbsRemoval(normalized.nbsRemoval * 100 || 0);
     setNbsAvoidance(normalized.nbsAvoidance * 100 || 0);
@@ -77,14 +98,12 @@ export default function ProjectTypology() {
     setRenewableEnergy(normalized.renewableEnergy * 100 || 0);
   };
 
-  // Sync local state with context when "I don't know" is selected
   useEffect(() => {
     if (isDontKnowSelected) {
       calculateTypologyFromPreferences();
     }
   }, [isDontKnowSelected, userPreferences]);
 
-  // Update typology in context when sliders change and "I don't know" is not selected
   useEffect(() => {
     if (!isDontKnowSelected) {
       setTypology({
@@ -97,7 +116,6 @@ export default function ProjectTypology() {
     }
   }, [nbsRemoval, nbsAvoidance, dac, biochar, renewableEnergy]);
 
-  // Ensure the sum of typology percentages is 100%
   useEffect(() => {
     if (!isDontKnowSelected) {
       const total =
@@ -117,9 +135,6 @@ export default function ProjectTypology() {
         title="3. Project Typologies Deep Dive"
         subtitle="Which project typology mix are you aiming for?"
       />
-      {errorMessage && (
-        <div className="mt-4 rounded-lg bg-red-800 px-4 py-2 text-sm">{errorMessage}</div>
-      )}
       <div className="mt-8 w-full">
         <NbSRemoval
           isDontKnowSelected={isDontKnowSelected}
@@ -163,53 +178,59 @@ export default function ProjectTypology() {
         )}
       </div>
       {isDontKnowSelected && (
-        <div className="mt-8 rounded-lg border-2 border-opacityLight-10 px-8 py-6">
-          <h3 className="mb-4 text-lg font-semibold">
-            Please allocate exactly 12 points across these criteria:
-          </h3>
-
-          {Object.keys(userPreferences).map((key) =>
-            key === 'removal' ? (
-              <RemovalAvoidanceQuestion
-                key={key}
-                question="How do you prioritize removal vs. avoidance?"
-                value={
-                  dontMindStates.removal
-                    ? 'dontMind'
-                    : userPreferences.removal === 5
-                      ? 'removal'
-                      : userPreferences.removal === 1
-                        ? 'avoidance'
-                        : 'dontMind'
-                }
-                onChange={(value) => {
-                  setDontMindStates((prev) => ({ ...prev, removal: value === 'dontMind' }));
-                  setUserPreferences((prev) => ({
-                    ...prev,
-                    removal: value === 'removal' ? 5 : value === 'avoidance' ? 1 : 0,
-                  }));
-                }}
-                hint={getHint('removal', userPreferences.removal, dontMindStates.removal)}
-              />
-            ) : (
-              <PreferenceQuestion
-                key={key}
-                question={`How important is ${key} in shaping your portfolio?`}
-                value={userPreferences[key as keyof UserPreferences]}
-                onChange={(value) => handlePreferenceChange(key as keyof UserPreferences, value)}
-                dontMind={dontMindStates[key as keyof UserPreferences]}
-                onDontMindChange={(value) =>
-                  handleDontMindChange(key as keyof UserPreferences, value)
-                }
-                hint={getHint(
-                  key as keyof typeof HINTS,
-                  userPreferences[key as keyof UserPreferences],
-                  dontMindStates[key as keyof UserPreferences],
-                )}
-              />
-            ),
-          )}
-        </div>
+        <>
+          <div className="mt-8 rounded-lg border-2 border-opacityLight-10 px-8 py-6">
+            {Object.keys(userPreferences).map((key) =>
+              key === 'removal' ? (
+                <RemovalAvoidanceQuestion
+                  key={`removal-${key}`}
+                  question="How do you prioritize removal vs. avoidance?"
+                  value={
+                    dontMindStates.removal
+                      ? 'dontMind'
+                      : userPreferences.removal === 5
+                        ? 'removal'
+                        : userPreferences.removal === 1
+                          ? 'avoidance'
+                          : 'dontMind'
+                  }
+                  onChange={(value) => {
+                    setDontMindStates((prev) => ({ ...prev, removal: value === 'dontMind' }));
+                    setUserPreferences((prev) => ({
+                      ...prev,
+                      removal: value === 'removal' ? 5 : value === 'avoidance' ? 1 : 0,
+                    }));
+                  }}
+                  hint={getHint('removal', userPreferences.removal, dontMindStates.removal)}
+                />
+              ) : (
+                <PreferenceQuestion
+                  key={`preference-${key}`}
+                  question={`How important is ${key} in shaping your portfolio?`}
+                  value={userPreferences[key as keyof UserPreferences]}
+                  onChange={(value) => handlePreferenceChange(key as keyof UserPreferences, value)}
+                  dontMind={dontMindStates[key as keyof UserPreferences]}
+                  onDontMindChange={(value) =>
+                    handleDontMindChange(key as keyof UserPreferences, value)
+                  }
+                  hint={getHint(
+                    key as keyof typeof HINTS,
+                    userPreferences[key as keyof UserPreferences],
+                    dontMindStates[key as keyof UserPreferences],
+                  )}
+                />
+              ),
+            )}
+            {errorMessage && (
+              <div className="mt-4 rounded-lg bg-red-800 px-4 py-2 text-sm">{errorMessage}</div>
+            )}
+            {warningMessage && (
+              <div className="mt-4 rounded-lg bg-yellow-700 px-4 py-2 text-sm">
+                {warningMessage}
+              </div>
+            )}
+          </div>
+        </>
       )}
     </>
   );

@@ -341,21 +341,13 @@ function getWeightedDistribution(scores: [string, number][]): Record<string, num
   return distribution;
 }
 
-export function computeFinalDistribution(prefs: UserPreferences): Typology {
+export function computeFinalDistribution(prefs: UserPreferences): Typology | null {
   const filteredTypologies = filterByMaxRequirements(typologyMapping, prefs);
-
   const scored = Object.entries(filteredTypologies).map(([name, attrs]) => {
     return [name, computeScore(attrs, prefs)] as [string, number];
   });
-
   if (scored.length === 0) {
-    return {
-      nbsRemoval: 1,
-      nbsAvoidance: 0,
-      biochar: 0,
-      dac: 0,
-      renewableEnergy: 0,
-    }; // todo
+    return null; // no result possible found
   }
 
   const distribution = getWeightedDistribution(scored);
