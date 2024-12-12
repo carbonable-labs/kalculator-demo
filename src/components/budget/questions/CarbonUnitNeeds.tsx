@@ -71,7 +71,7 @@ export default function CarbonUnitNeeds() {
 
   return (
     <div className="w-1/2">
-      <Title title="1. Carbon Unit Needs" subtitle="Specify the carbon unit needs by year." />
+      <Title title="1. Carbon Unit Needs" subtitle="Specify the carbon unit needs per year." />
       <div className="mt-8 space-y-4">
         {warning && <div className="text-sm text-red-600">{warning}</div>}
         {units.length === 0 && !warning && (

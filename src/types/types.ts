@@ -107,6 +107,7 @@ export interface BudgetAlgorithmInput extends BaseAlgorithmInput {
   carbonUnitNeeds: { [year: string]: number };
   optimizeFinancing: boolean;
   optimizeRegion: boolean;
+  optimizeTypology: boolean;
 }
 
 export interface StratAlgorithmInput extends BaseAlgorithmInput {

@@ -132,6 +132,14 @@ export const adviceBudgetTypology = async (
       actionText: 'Adjust',
     };
   }
+  if (input.optimizeTypology) {
+    return {
+      change: false,
+      adviceType: 'typology',
+      tipPhrase:
+        'Carbonable has already optimized your typology split, considering your input on biodiversity, durability, pricing, reputation, and the balance between removal and avoidance.',
+    };
+  }
 
   return { change: false };
 };

@@ -54,9 +54,9 @@ export default function BudgetResults() {
       <div className="mt-12">
         <CostTable />
       </div>
-      <div className="mt-12">
+      {/* <div className="mt-12">
         <CostChart />
-      </div>
+      </div> */}
       <div className="mt-24">
         <PurchaseRecoChart />
       </div>

@@ -19,7 +19,7 @@ export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);
   const [currentSum, setCurrentSum] = useState(100);
   const [isDontKnowSelected, setIsDontKnowSelected] = useState<boolean>(false);
-  const { typology, setTypology } = useBudget();
+  const { typology, setTypology, optimizeTypology, setOptimizeTypology } = useBudget();
 
   const [nbsRemoval, setNbsRemoval] = useState<number | number[]>(typology.nbsRemoval * 100);
   const [nbsAvoidance, setNbsAvoidance] = useState<number | number[]>(typology.nbsAvoidance * 100);
@@ -172,7 +172,13 @@ export default function ProjectTypology() {
         </div>
       )}
       <div className="ml-2 mt-12 flex items-center">
-        <DontKnowCheckbox isSelected={isDontKnowSelected} setIsSelected={setIsDontKnowSelected} />
+        <DontKnowCheckbox
+          isSelected={isDontKnowSelected}
+          setIsSelected={(value) => {
+            setIsDontKnowSelected(value);
+            setOptimizeTypology(value);
+          }}
+        />
         {isDontKnowSelected && (
           <div className="ml-8 text-sm font-light italic">Let Carbonable guide you</div>
         )}

@@ -39,6 +39,8 @@ interface BudgetContextType {
   setHistory: (value: Array<[number, BudgetAlgorithmInput]>) => void;
   carbonUnitNeeds: { [year: string]: number };
   setCarbonUnitNeeds: (value: { [year: string]: number }) => void;
+  setOptimizeTypology: (value: boolean) => void;
+  optimizeTypology: boolean;
 }
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
@@ -48,6 +50,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [financing, setFinancing] = useState<Financing>(DEFAULT_FINANCING);
   const [optimizeFinancing, setOptimizeFinancing] = useState<boolean>(false);
   const [optimizeRegion, setOptimizeRegion] = useState<boolean>(false);
+  const [optimizeTypology, setOptimizeTypology] = useState<boolean>(false);
   const [typology, setTypology] = useState<Typology>(DEFAULT_TYPOLOGY);
   const [regionAllocation, setRegionAllocation] =
     useState<RegionAllocation>(DEFAULT_GEOGRAPHICAL_AREA);
@@ -72,6 +75,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         carbonUnitNeeds,
         optimizeFinancing,
         optimizeRegion,
+        optimizeTypology
       };
       let results: BudgetOutputData | null = await runBudgetAlgo(input);
       if (results) {
@@ -100,6 +104,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               carbonUnitNeeds,
               optimizeFinancing,
               optimizeRegion,
+              optimizeTypology
             },
           ],
         ]);
@@ -142,6 +147,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setHistory,
       carbonUnitNeeds,
       setCarbonUnitNeeds,
+      setOptimizeTypology,
+      optimizeTypology
     }),
     [
       timeConstraints,
@@ -165,6 +172,8 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setHistory,
       carbonUnitNeeds,
       setCarbonUnitNeeds,
+      optimizeTypology,
+      setOptimizeTypology
     ],
   );
 
