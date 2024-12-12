@@ -107,7 +107,7 @@ export default function PurchaseRecoTable() {
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-        <ChartTitle title="Purchase Recommendations" />
+        <ChartTitle title="Procurement Breakdown" />
         <CSVExportButton
           headers={headers}
           data={data}
