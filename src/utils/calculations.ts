@@ -459,3 +459,18 @@ export function calculateCostsByYearAndFinancing(
 
   return costsByYearAndFinancing;
 }
+export const convertYearlyToCumulative = (yearlyNeeds: { [year: string]: number }): { [year: string]: number } => {
+  const years = Object.keys(yearlyNeeds).sort();
+  const cumulativeNeeds: { [year: string]: number } = {};
+
+  for (let i = 0; i < years.length; i++) {
+    const year = years[i];
+    if (i === 0) {
+      cumulativeNeeds[year] = yearlyNeeds[year];
+    } else {
+      const prevYear = years[i - 1];
+      cumulativeNeeds[year] = cumulativeNeeds[prevYear] + yearlyNeeds[year];
+    }
+  }
+  return cumulativeNeeds;
+};

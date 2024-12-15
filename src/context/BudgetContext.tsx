@@ -10,6 +10,7 @@ import {
   RegionAllocation,
   Typology,
 } from '@/types/types';
+import { convertYearlyToCumulative } from '@/utils/calculations';
 import {
   DEFAULT_FINANCING,
   DEFAULT_GEOGRAPHICAL_AREA,
@@ -67,12 +68,14 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsCalculating(true);
 
     try {
+      const yearlyNeeds = convertYearlyToCumulative(carbonUnitNeeds);
+
       let input: BudgetAlgorithmInput = {
         financing: financing,
         regionAllocation: regionAllocation,
         timeConstraints,
         typology,
-        carbonUnitNeeds,
+        carbonUnitNeeds: yearlyNeeds,
         optimizeFinancing,
         optimizeRegion,
         optimizeTypology
