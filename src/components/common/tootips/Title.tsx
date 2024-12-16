@@ -1,5 +1,4 @@
-import QuestionTooltip from "@/components/form/Tooltip";
-
+import QuestionTooltip from '@/components/form/Tooltip';
 
 interface TitleProps {
   title: string;

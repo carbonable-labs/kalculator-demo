@@ -12,7 +12,6 @@ import NorthAmerica from './geographical-area/NorthAmerica';
 import DontKnowCheckbox from '@/components/form/DontKnowCheckbox';
 import { tooltip } from '@/components/common/tootips/GeographicalAreaTooltip';
 
-
 export default function GeographicalArea() {
   const [isFullGeographicalArea, setIsFullGeographicalArea] = useState(true);
   const [currentSum, setCurrentSum] = useState(100);
