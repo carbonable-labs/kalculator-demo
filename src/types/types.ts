@@ -232,7 +232,7 @@ export interface FinancingPurchaseDetails {
 export interface Advice {
   change: boolean;
   adviceType?: string;
-  tipPhrase?: string;
+  tipPhrase?: string | JSX.Element;
   actionText?: string;
   budgetDelta?: number;
   tip?: TimeConstraint | Financing | Typology[] | RegionAllocation;

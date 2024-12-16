@@ -28,7 +28,7 @@ export default function RootLayout({
           <NextUIProvider>
             <div className="text-center">
               <Title />
-              <div className="mt-12"></div>
+              <div className="mt-8"></div>
             </div>
             <div>{children}</div>
           </NextUIProvider>

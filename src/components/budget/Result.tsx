@@ -50,7 +50,7 @@ export default function BudgetResults() {
 
   return (
     <>
-      <Title title="Results" subtitle="Based on carbon forecasts scenarios" />
+      <div className="text-4xl font-extrabold text-neutral-50">Results</div>
       <div className="mt-12">
         <CostTable />
       </div>

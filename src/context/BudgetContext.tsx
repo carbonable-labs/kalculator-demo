@@ -78,7 +78,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         carbonUnitNeeds: yearlyNeeds,
         optimizeFinancing,
         optimizeRegion,
-        optimizeTypology
+        optimizeTypology,
       };
       let results: BudgetOutputData | null = await runBudgetAlgo(input);
       if (results) {
@@ -107,7 +107,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               carbonUnitNeeds,
               optimizeFinancing,
               optimizeRegion,
-              optimizeTypology
+              optimizeTypology,
             },
           ],
         ]);
@@ -151,7 +151,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       carbonUnitNeeds,
       setCarbonUnitNeeds,
       setOptimizeTypology,
-      optimizeTypology
+      optimizeTypology,
     }),
     [
       timeConstraints,
@@ -176,7 +176,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       carbonUnitNeeds,
       setCarbonUnitNeeds,
       optimizeTypology,
-      setOptimizeTypology
+      setOptimizeTypology,
     ],
   );
 

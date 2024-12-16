@@ -459,7 +459,9 @@ export function calculateCostsByYearAndFinancing(
 
   return costsByYearAndFinancing;
 }
-export const convertYearlyToCumulative = (yearlyNeeds: { [year: string]: number }): { [year: string]: number } => {
+export const convertYearlyToCumulative = (yearlyNeeds: {
+  [year: string]: number;
+}): { [year: string]: number } => {
   const years = Object.keys(yearlyNeeds).sort();
   const cumulativeNeeds: { [year: string]: number } = {};
 
