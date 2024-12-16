@@ -21,7 +21,7 @@ export default function Cost() {
 
   const nbsRemovalPercentage = Math.round((budgetResults.cost_nbs_removal / total) * 100);
 
-  const renewableEnergyPercentage = Math.round((budgetResults.cost_nbs_avoidance / total) * 100);
+  const renewableEnergyPercentage = Math.round((budgetResults.cost_renewable_energy / total) * 100);
 
   const biocharPercentage = Math.round((budgetResults.cost_biochar / total) * 100);
 

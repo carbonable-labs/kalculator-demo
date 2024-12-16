@@ -38,7 +38,6 @@ export default function PurchaseRecoTable() {
 
   useEffect(() => {
     if (budgetResults) {
-      let stock = calculateTotalAndCumulativeStock(budgetResults.strategies);
       const recoData = budgetResults.strategies.flatMap((strategy) =>
         strategy.types_purchased.flatMap((typeBreakdown) =>
           (['exAnte', 'exPost'] as Array<keyof TypologyFinancingBreakdown>).flatMap(
