@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useBudget } from '@/context/BudgetContext';
 import Title from '@/components/form/Title';
 import RadioButtons from '@/components/form/RadioButtons';
+import { tooltip } from '@/components/common/tootips/FinancialPlanningCycleTooltip';
 
 const planningCycleOptions = [
   { value: '1', text: 'Yearly' },
@@ -27,6 +28,7 @@ export default function PlanningCycle() {
       <Title
         title="2. Financial Planning Cycle"
         subtitle="Is your budget aligned with yearly, multi-year or open timelines?"
+        tooltip={tooltip}
       />
       <div className="mt-8">
         <RadioButtons values={planningCycleOptions} setSelected={setSelected} selected={selected} />

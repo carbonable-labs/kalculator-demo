@@ -4,6 +4,8 @@ import SliderWithInput from '@/components/form/SliderWithInput';
 import { useBudget } from '@/context/BudgetContext';
 import { DEFAULT_TYPOLOGY } from '@/utils/configuration';
 import { useEffect, useState } from 'react';
+import { tooltipRenewableEnergy } from '@/components/common/tootips/TypologyRenewableEnergyTooltip';
+import QuestionTooltip from '@/components/form/Tooltip';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
@@ -46,6 +48,7 @@ export default function RenewableEnergy({
       onChange={setRenewableEnergy}
       displayedValue={renewableEnergy as number}
       isDisabled={isDontKnowSelected}
+      tooltip={<QuestionTooltip tooltip={tooltipRenewableEnergy} />}
     />
   );
 }

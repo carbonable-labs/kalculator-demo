@@ -1,4 +1,5 @@
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
+
 import { Tooltip } from '@nextui-org/react';
 
 interface QuestionTooltipProps {
@@ -16,7 +17,7 @@ function QuestionTooltip({ tooltip }: QuestionTooltipProps) {
         content: ['py-4 px-6 shadow-xl'],
       }}
     >
-      <QuestionMarkCircleIcon width={16} />
+      <InformationCircleIcon width={24} />
     </Tooltip>
   );
 }

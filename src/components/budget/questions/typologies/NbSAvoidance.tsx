@@ -3,6 +3,8 @@
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useBudget } from '@/context/BudgetContext';
 import { useEffect } from 'react';
+import { tooltipNbSREDD } from '@/components/common/tootips/TypologyNbsReddTooltip';
+import QuestionTooltip from '@/components/form/Tooltip';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
@@ -41,6 +43,7 @@ export default function NbSAvoidance({ isDontKnowSelected, nbs, setNbs }: NbSPro
       onChange={setNbs}
       displayedValue={nbs as number}
       isDisabled={isDontKnowSelected}
+      tooltip={<QuestionTooltip tooltip={tooltipNbSREDD} />}
     />
   );
 }

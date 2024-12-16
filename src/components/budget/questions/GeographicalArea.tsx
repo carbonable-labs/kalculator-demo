@@ -10,6 +10,8 @@ import LatinAmerica from './geographical-area/LatinAmerica';
 import Oceania from './geographical-area/Oceania';
 import NorthAmerica from './geographical-area/NorthAmerica';
 import DontKnowCheckbox from '@/components/form/DontKnowCheckbox';
+import { tooltip } from '@/components/common/tootips/GeographicalAreaTooltip';
+
 
 export default function GeographicalArea() {
   const [isFullGeographicalArea, setIsFullGeographicalArea] = useState(true);
@@ -82,7 +84,7 @@ export default function GeographicalArea() {
 
   return (
     <>
-      <Title title="4. Preferred Geographical Area" />
+      <Title title="4. Preferred Geographical Area" tooltip={tooltip} />
       <div className="mt-8 w-full">
         <Africa isDisabled={optimizeRegion} value={africa} setValue={setAfrica} />
       </div>

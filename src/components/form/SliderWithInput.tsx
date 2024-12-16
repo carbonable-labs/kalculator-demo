@@ -12,6 +12,7 @@ interface SliderWithInputProps {
   isDisabled?: boolean;
   displayedValue: number;
   onChange: (value: number | number[]) => void;
+  tooltip?: React.ReactNode;
 }
 
 export default function SliderWithInput({
@@ -26,13 +27,15 @@ export default function SliderWithInput({
   isDisabled,
   displayedValue,
   onChange,
+  tooltip,
 }: SliderWithInputProps) {
   return (
     <div className="flex items-center justify-center">
       <div
-        className={`w-3/12 rounded-lg border border-neutral-100 px-4 py-2 text-sm ${isDisabled ? 'opacity-50' : ''}`}
+        className={`flex w-3/12 items-center justify-between rounded-lg border border-neutral-100 px-4 py-2 text-sm ${isDisabled ? 'opacity-50' : ''}`}
       >
-        {inputLabel}
+        <span>{inputLabel}</span>
+        {tooltip && <div className="ml-2">{tooltip}</div>}
       </div>
       <div className="w-8/12 px-6">
         <SliderComponent

@@ -14,6 +14,7 @@ import { UserPreferences, Typology } from '@/types/types';
 import { computeFinalDistribution } from '@/utils/calculations';
 import { getHint, HINTS } from '@/constants/hint';
 import RemovalAvoidanceQuestion from './typologies/RemovalAvoidanceQuestion';
+import { tooltip } from '@/components/common/tootips/TypologiesQuestionTooltip';
 
 export default function ProjectTypology() {
   const [isTypologyFull, setIsTypologyFull] = useState(true);
@@ -134,6 +135,7 @@ export default function ProjectTypology() {
       <Title
         title="3. Project Typologies Deep Dive"
         subtitle="Which project typology mix are you aiming for?"
+        tooltip={tooltip}
       />
       <div className="mt-8 w-full">
         <NbSRemoval

@@ -66,10 +66,13 @@ export default function BudgetResults() {
       <div className="mt-24">
         <PurchaseRecoTable />
       </div>
-      <div className="mt-4">
+
+        <div className="mt-24 text-3xl font-extrabold text-neutral-50">Optimization</div>
+      <div className="mt-6">
+
         <BudgetAdvice advice={budgetResults.advice_timeline} isFullWidth={true} isGradient={true} />
       </div>
-      <div className="mt-12">
+      <div className="mt-6">
         <Financing />
       </div>
       <div className="mt-12">

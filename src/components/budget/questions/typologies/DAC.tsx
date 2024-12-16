@@ -3,6 +3,8 @@
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useBudget } from '@/context/BudgetContext';
 import { useEffect } from 'react';
+import { tooltipDAC } from '@/components/common/tootips/TypologyDacTooltip';
+import QuestionTooltip from '@/components/form/Tooltip';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
@@ -42,6 +44,7 @@ export default function DAC({ isDontKnowSelected, dac, setDac }: NbSProps) {
       onChange={setDac}
       displayedValue={dac as number}
       isDisabled={isDontKnowSelected}
+      tooltip={<QuestionTooltip tooltip={tooltipDAC} />}
     />
   );
 }

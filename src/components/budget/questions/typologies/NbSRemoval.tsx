@@ -1,8 +1,10 @@
 'use client';
 
 import SliderWithInput from '@/components/form/SliderWithInput';
+import QuestionTooltip from '@/components/form/Tooltip';
 import { useBudget } from '@/context/BudgetContext';
 import { useEffect } from 'react';
+import { tooltip } from '@/components/common/tootips/TypologyNbsArrTooltip';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
@@ -41,6 +43,7 @@ export default function NbSRemoval({ isDontKnowSelected, nbs, setNbs }: NbSProps
       onChange={setNbs}
       displayedValue={nbs as number}
       isDisabled={isDontKnowSelected}
+      tooltip={<QuestionTooltip tooltip={tooltip} />}
     />
   );
 }

@@ -3,6 +3,8 @@
 import SliderWithInput from '@/components/form/SliderWithInput';
 import { useBudget } from '@/context/BudgetContext';
 import { useEffect } from 'react';
+import { tooltipBiochar } from '@/components/common/tootips/TypologyBiocharTooltip';
+import QuestionTooltip from '@/components/form/Tooltip';
 
 interface NbSProps {
   isDontKnowSelected: boolean;
@@ -42,6 +44,7 @@ export default function Biochar({ isDontKnowSelected, biochar, setBiochar }: NbS
       onChange={setBiochar}
       displayedValue={biochar as number}
       isDisabled={isDontKnowSelected}
+      tooltip={<QuestionTooltip tooltip={tooltipBiochar} />}
     />
   );
 }
