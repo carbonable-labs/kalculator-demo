@@ -9,17 +9,9 @@ import { TipsComponent } from '../common/Tip_alt';
 export default function BudgetQuestions() {
   const staticAdvice = {
     change: false,
-    tipPhrase: (
-      <>
-        This tool combines advanced algorithms with over 3,000 data points to provide intelligent,
-        tailored insights for your contribution strategy. It is designed to optimize complex
-        scenarios and evolves continuously with enhanced granularity and new features.
-        <br />
-        <br />
-        If you have specific needs or would like deeper clarity, our team is here to guide you and
-        help you make the most of its potential.
-      </>
-    ),
+    tipPhrase: `This tool combines advanced algorithms with over 3,000 data points to provide intelligent, tailored insights for your contribution strategy. It is designed to optimize complex scenarios and evolves continuously with enhanced granularity and new features.
+    
+If you have specific needs or would like deeper clarity, our team is here to guide you and help you make the most of its potential.`,
   };
 
   return (
@@ -29,7 +21,7 @@ export default function BudgetQuestions() {
           advice={staticAdvice}
           isFullWidth={true}
           isGradient={true}
-          title="Did You Know?"
+          title="Please Note"
           onAdviceApply={() => {}}
           shouldRender={true}
         />

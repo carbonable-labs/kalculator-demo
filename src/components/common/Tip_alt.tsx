@@ -40,7 +40,7 @@ export const TipsComponent: React.FC<TipsProps> = ({
   if (!buttonText) {
     return (
       <TipsBackground isFullWidth={isFullWidth} isGradient={isGradient} title={title}>
-        <div className="text-sm text-opacity-80">{text}</div>
+        <p className="text-sm text-opacity-80">{text}</p>
       </TipsBackground>
     );
   }
@@ -48,7 +48,7 @@ export const TipsComponent: React.FC<TipsProps> = ({
   return (
     <TipsBackground isFullWidth={isFullWidth} isGradient={isGradient} title={title}>
       <div className="flex flex-wrap items-center justify-between">
-        <div className={`${isFullWidth ? 'md:w-8/12' : 'w-full'}`}>{text}</div>
+        <div className="text-sm text-opacity-80">{text}</div>
         <div
           className={`flex flex-wrap items-center bg-neutral-900 ${isFullWidth ? 'rounded-full py-1 pl-2 pr-4 md:w-fit' : 'mt-2 w-full rounded-lg px-2 py-2'}`}
         >
