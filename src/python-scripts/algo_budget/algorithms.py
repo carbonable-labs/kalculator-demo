@@ -31,7 +31,7 @@ def yearlyAlgo(
 
     Example:
         financing = {
-        "exPost": 0.4, "exAnte": 0.6
+        "exPost": 0.4, "exAnte": 0.last_year_index_div_5 + 1
         }
         typology = {
             "nbsRemoval": 0.5,
@@ -62,6 +62,9 @@ def yearlyAlgo(
     # variables
     #############
 
+    last_year = max(int(year) for year in carbon_needs.keys())
+    last_year_index = last_year - 2025
+
     # Geographic Regions
     regions = ["northAmerica", "southAmerica",
                "europe", "africa", "asia", "oceania"]
@@ -79,18 +82,18 @@ def yearlyAlgo(
     x_vars = {}  # Ex-post purchases
     y_vars = {}  # Ex-ante purchases
 
-    # Dynamic creation of variables for years from 1 to 26
+    # Dynamic creation of variables for years from 1 to last_year_index + 1
     for project, code in projects.items():
         x_vars[project] = {
             region: [
                 p.LpVariable(f"x{code}_{region}_{year}", lowBound=0)
-                for year in range(1, 27)
+                for year in range(1, last_year_index + 2)
             ] for region in regions
         }
         y_vars[project] = {
             region: [
                 p.LpVariable(f"y{code}_{region}_{year}", lowBound=0)
-                for year in range(1, 27)
+                for year in range(1, last_year_index + 2)
             ] for region in regions
         }
 
@@ -114,12 +117,12 @@ def yearlyAlgo(
         [x_vars[project][region][year]
          for project in x_vars
          for region in x_vars[project]
-         for year in range(26)] +  # Ex-post variables
+         for year in range(last_year_index + 1)] +  # Ex-post variables
 
         [y_vars[project][region][year]
          for project in y_vars
          for region in y_vars[project]
-         for year in range(26)]  # Ex-ante variables
+         for year in range(last_year_index + 1)]  # Ex-ante variables
     )
 
     #####################
@@ -151,13 +154,13 @@ def yearlyAlgo(
             regional_coefficients["x"]["nbsRemoval"][region][year] *
             x_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["nbsRemoval"][region][year] *
             y_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # nbsAvoidance
@@ -165,13 +168,13 @@ def yearlyAlgo(
             regional_coefficients["x"]["nbsAvoidance"][region][year] *
             x_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["nbsAvoidance"][region][year] *
             y_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # biochar
@@ -179,13 +182,13 @@ def yearlyAlgo(
             regional_coefficients["x"]["biochar"][region][year] *
             x_vars["biochar"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["biochar"][region][year] *
             y_vars["biochar"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # dac
@@ -193,13 +196,13 @@ def yearlyAlgo(
             regional_coefficients["x"]["dac"][region][year] *
             x_vars["dac"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["dac"][region][year] *
             y_vars["dac"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # renewableEnergy
@@ -207,13 +210,13 @@ def yearlyAlgo(
             regional_coefficients["x"]["renewableEnergy"][region][year] *
             x_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["renewableEnergy"][region][year] *
             y_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         )
     )
 
@@ -223,72 +226,71 @@ def yearlyAlgo(
 
     ## Constraint : Yearly budget timeline##
 
-    last_year = max(int(year) for year in carbon_needs.keys())
-    last_year_index = last_year - 2025
+    
     
     Lp_prob += z_min >= 0.015 * (
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] * regional_coefficients["x"]["nbsRemoval"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             y_vars["nbsRemoval"][region][year] * regional_coefficients["y"]["nbsRemoval"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
 
         # nbsAvoidance
         lpSum(
             x_vars["nbsAvoidance"][region][year] * regional_coefficients["x"]["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             y_vars["nbsAvoidance"][region][year] * regional_coefficients["y"]["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
 
         # biochar
         lpSum(
             x_vars["biochar"][region][year] * regional_coefficients["x"]["biochar"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             y_vars["biochar"][region][year] * regional_coefficients["y"]["biochar"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
 
         # dac
         lpSum(
             x_vars["dac"][region][year] * regional_coefficients["x"]["dac"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             y_vars["dac"][region][year] * regional_coefficients["y"]["dac"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
 
         # renewableEnergy
         lpSum(
             x_vars["renewableEnergy"][region][year] * regional_coefficients["x"]["renewableEnergy"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             y_vars["renewableEnergy"][region][year] * regional_coefficients["y"]["renewableEnergy"][region][year]
             for region in regions
-            for year in range(last_year_index)
+            for year in range(last_year_index + 1)
         )
     )
 
-    for year in range(last_year_index):
+    for year in range(last_year_index + 1):
         Lp_prob += (
             # NbS-ARR
             lpSum(
@@ -338,64 +340,64 @@ def yearlyAlgo(
     lpSum(
         x_vars["nbsRemoval"][region][year] * regional_coefficients["x"]["nbsRemoval"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
     lpSum(
         y_vars["nbsRemoval"][region][year] * regional_coefficients["y"]["nbsRemoval"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
 
     # nbsAvoidance
     lpSum(
         x_vars["nbsAvoidance"][region][year] * regional_coefficients["x"]["nbsAvoidance"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
     lpSum(
         y_vars["nbsAvoidance"][region][year] * regional_coefficients["y"]["nbsAvoidance"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
 
     # biochar
     lpSum(
         x_vars["biochar"][region][year] * regional_coefficients["x"]["biochar"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
     lpSum(
         y_vars["biochar"][region][year] * regional_coefficients["y"]["biochar"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
 
     # dac
     lpSum(
         x_vars["dac"][region][year] * regional_coefficients["x"]["dac"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
     lpSum(
         y_vars["dac"][region][year] * regional_coefficients["y"]["dac"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
 
     # renewableEnergy
     lpSum(
         x_vars["renewableEnergy"][region][year] * regional_coefficients["x"]["renewableEnergy"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     ) +
     lpSum(
         y_vars["renewableEnergy"][region][year] * regional_coefficients["y"]["renewableEnergy"][region][year]
         for region in regions
-        for year in range(last_year_index)
+        for year in range(last_year_index + 1)
     )
 )
 
-    for year in range(last_year_index):
+    for year in range(last_year_index + 1):
         Lp_prob += (
             # NbS-ARR
             lpSum(
@@ -440,56 +442,61 @@ def yearlyAlgo(
         lpSum(
             x_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         # nbsAvoidance
         lpSum(
             x_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         # biochar
         lpSum(
             x_vars["biochar"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         # dac
         lpSum(
             x_vars["dac"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         # renewableEnergy
         lpSum(
             x_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         )
     )
 
@@ -499,35 +506,35 @@ def yearlyAlgo(
             lpSum(
                 x_vars["nbsRemoval"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
                 x_vars["nbsAvoidance"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # biochar
             lpSum(
                 x_vars["biochar"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # dac
             lpSum(
                 x_vars["dac"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # renewableEnergy
             lpSum(
                 x_vars["renewableEnergy"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             )
             == financing["exPost"] * total_purch_for_on_spot_fwd
         )
@@ -535,37 +542,42 @@ def yearlyAlgo(
         Lp_prob += (
             # NbS-ARR
             lpSum(
-                y_vars["nbsRemoval"][region][year]
+                y_vars["nbsRemoval"][region][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
-                y_vars["nbsAvoidance"][region][year]
+                y_vars["nbsAvoidance"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # biochar
             lpSum(
-                y_vars["biochar"][region][year]
+                y_vars["biochar"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # dac
             lpSum(
-                y_vars["dac"][region][year]
+                y_vars["dac"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # renewableEnergy
             lpSum(
-                y_vars["renewableEnergy"][region][year]
+                y_vars["renewableEnergy"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             )
 
             == financing["exAnte"] * total_purch_for_on_spot_fwd
@@ -578,41 +590,46 @@ def yearlyAlgo(
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # nbsAvoidance
         lpSum(
             x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # biochar
         lpSum(
             x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # dac
         lpSum(
             x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # renewableEnergy
         lpSum(
             x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         )
     )
 
@@ -620,9 +637,10 @@ def yearlyAlgo(
     Lp_prob += (
         lpSum(
             x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["nbsRemoval"] * total_purch_for_typo_distrib
     )
 
@@ -630,9 +648,10 @@ def yearlyAlgo(
     Lp_prob += (
         lpSum(
             x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["nbsAvoidance"] * total_purch_for_typo_distrib
     )
 
@@ -640,9 +659,10 @@ def yearlyAlgo(
     Lp_prob += (
         lpSum(
             x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["dac"] * total_purch_for_typo_distrib
     )
 
@@ -650,9 +670,10 @@ def yearlyAlgo(
     Lp_prob += (
         lpSum(
             x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["biochar"] * total_purch_for_typo_distrib
     )
 
@@ -660,9 +681,10 @@ def yearlyAlgo(
     Lp_prob += (
         lpSum(
             x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
@@ -679,41 +701,46 @@ def yearlyAlgo(
             # NbS-ARR
             lpSum(
                 x_vars["nbsRemoval"][region][year] +
-                y_vars["nbsRemoval"][region][year]
+                y_vars["nbsRemoval"][region][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
                 x_vars["nbsAvoidance"][region][year] +
-                y_vars["nbsAvoidance"][region][year]
+                y_vars["nbsAvoidance"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # biochar
             lpSum(
                 x_vars["biochar"][region][year] +
-                y_vars["biochar"][region][year]
+                y_vars["biochar"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # dac
             lpSum(
                 x_vars["dac"][region][year] +
-                y_vars["dac"][region][year]
+                y_vars["dac"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # renewableEnergy
             lpSum(
                 x_vars["renewableEnergy"][region][year] +
-                y_vars["renewableEnergy"][region][year]
+                y_vars["renewableEnergy"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             )
         )
 
@@ -721,28 +748,33 @@ def yearlyAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["northAmerica"][year] +
-                y_vars["nbsRemoval"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["northAmerica"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["northAmerica"][year] +
-                y_vars["nbsAvoidance"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["northAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["northAmerica"][year] +
-                y_vars["biochar"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["biochar"]["northAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["northAmerica"][year] +
-                y_vars["dac"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["dac"]["northAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["northAmerica"][year] +
-                y_vars["renewableEnergy"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["northAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
         )
@@ -751,28 +783,33 @@ def yearlyAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["southAmerica"][year] +
-                y_vars["nbsRemoval"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["southAmerica"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["southAmerica"][year] +
-                y_vars["nbsAvoidance"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["southAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["southAmerica"][year] +
-                y_vars["biochar"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["biochar"]["southAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["southAmerica"][year] +
-                y_vars["dac"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["dac"]["southAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["southAmerica"][year] +
-                y_vars["renewableEnergy"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["southAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
         )
@@ -781,28 +818,33 @@ def yearlyAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["europe"][year] +
-                y_vars["nbsRemoval"]["europe"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["europe"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["europe"][year] +
-                y_vars["nbsAvoidance"]["europe"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["europe"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["europe"][year] +
-                y_vars["biochar"]["europe"][year]
-                for year in range(26)
+                y_vars["biochar"]["europe"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["europe"][year] +
-                y_vars["dac"]["europe"][year]
-                for year in range(26)
+                y_vars["dac"]["europe"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["europe"][year] +
-                y_vars["renewableEnergy"]["europe"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["europe"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["europe"] * total_purch_for_typo_distrib
         )
@@ -811,28 +853,33 @@ def yearlyAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["africa"][year] +
-                y_vars["nbsRemoval"]["africa"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["africa"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["africa"][year] +
-                y_vars["nbsAvoidance"]["africa"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["africa"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["africa"][year] +
-                y_vars["biochar"]["africa"][year]
-                for year in range(26)
+                y_vars["biochar"]["africa"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["africa"][year] +
-                y_vars["dac"]["africa"][year]
-                for year in range(26)
+                y_vars["dac"]["africa"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["africa"][year] +
-                y_vars["renewableEnergy"]["africa"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["africa"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["africa"] * total_purch_for_typo_distrib
         )
@@ -841,28 +888,33 @@ def yearlyAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["asia"][year] +
-                y_vars["nbsRemoval"]["asia"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["asia"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["asia"][year] +
-                y_vars["nbsAvoidance"]["asia"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["asia"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["asia"][year] +
-                y_vars["biochar"]["asia"][year]
-                for year in range(26)
+                y_vars["biochar"]["asia"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["asia"][year] +
-                y_vars["dac"]["asia"][year]
-                for year in range(26)
+                y_vars["dac"]["asia"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["asia"][year] +
-                y_vars["renewableEnergy"]["asia"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["asia"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["asia"] * total_purch_for_typo_distrib
         )
@@ -871,28 +923,33 @@ def yearlyAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["oceania"][year] +
-                y_vars["nbsRemoval"]["oceania"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["oceania"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["oceania"][year] +
-                y_vars["nbsAvoidance"]["oceania"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["oceania"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["oceania"][year] +
-                y_vars["biochar"]["oceania"][year]
-                for year in range(26)
+                y_vars["biochar"]["oceania"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["oceania"][year] +
-                y_vars["dac"]["oceania"][year]
-                for year in range(26)
+                y_vars["dac"]["oceania"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["oceania"][year] +
-                y_vars["renewableEnergy"]["oceania"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["oceania"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["oceania"] * total_purch_for_typo_distrib
         )
@@ -962,15 +1019,15 @@ def yearlyAlgo(
         )
         Lp_prob += constraint_expr >= need
 
-    # Ensuite, on interdit tout achat après la dernière année ayant un besoin.
-    for y in range(last_year_index, 26):
-        Lp_prob += (
-            lpSum(
-                x_vars[proj][reg][y] + y_vars[proj][reg][y]
-                for proj in projects
-                for reg in regions
-            ) == 0
-        )
+    ## Ensuite, on interdit tout achat après la dernière année ayant un besoin.
+    #for y in range(last_year_index, last_year_index + 1):
+    #    Lp_prob += (
+    #        lpSum(
+    #            x_vars[proj][reg][y] + y_vars[proj][reg][y]
+    #            for proj in projects
+    #            for reg in regions
+    #        ) == 0
+    #    )
 
     #################
     # Solving
@@ -982,7 +1039,7 @@ def yearlyAlgo(
 
     for project, code in projects.items():
         for region in regions:
-            for i, year in enumerate(range(1, 27)):
+            for i, year in enumerate(range(1, last_year_index + 2)):
                 x_var = x_vars[project][region][i]
                 x_value = x_var.value()
                 if x_value > 0:
@@ -1011,7 +1068,6 @@ def yearlyAlgo(
         "results": results,
         "total_price": Lp_prob.objective.value()
     }
-
 
 def fiveYearAlgo(
     financing: Financing,
@@ -1064,6 +1120,11 @@ def fiveYearAlgo(
     # Variables
     ##################
 
+    last_year = max(int(year) for year in carbon_needs.keys())
+    last_year_index = last_year - 2025
+    
+    last_year_index_div_5 = last_year_index // 5
+
     # Geographic Regions
     regions = ["northAmerica", "southAmerica",
                "europe", "africa", "asia", "oceania"]
@@ -1081,18 +1142,18 @@ def fiveYearAlgo(
     x_vars = {}  # Ex-post purchases
     y_vars = {}  # Ex-ante purchases
 
-    # Dynamic creation of variables for years from 1 to 26 (step of 5)
+    # Dynamic creation of variables for years from 1 to last_year_index + 1 (step of 5)
     for project, code in projects.items():
         x_vars[project] = {
             region: [
                 p.LpVariable(f"x{code}_{region}_{year}", lowBound=0)
-                for year in range(1, 27, 5)
+                for year in range(1, last_year_index + 2, 5)
             ] for region in regions
         }
         y_vars[project] = {
             region: [
                 p.LpVariable(f"y{code}_{region}_{year}", lowBound=0)
-                for year in range(1, 27, 5)
+                for year in range(1, last_year_index + 2, 5)
             ] for region in regions
         }
 
@@ -1116,12 +1177,12 @@ def fiveYearAlgo(
         [x_vars[project][region][year]
          for project in x_vars
          for region in x_vars[project]
-         for year in range(6)] +  # Ex-post variables
+         for year in range(last_year_index_div_5 + 1)] +  # Ex-post variables
 
         [y_vars[project][region][year]
          for project in y_vars
          for region in y_vars[project]
-         for year in range(6)]  # Ex-ante variables
+         for year in range(last_year_index_div_5 + 1)]  # Ex-ante variables
     )
 
     ########################
@@ -1162,13 +1223,13 @@ def fiveYearAlgo(
             regional_coefficients["x"]["nbsRemoval"][region][year] *
             x_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["nbsRemoval"][region][year] *
             y_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # nbsAvoidance
@@ -1176,13 +1237,13 @@ def fiveYearAlgo(
             regional_coefficients["x"]["nbsAvoidance"][region][year] *
             x_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["nbsAvoidance"][region][year] *
             y_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # biochar
@@ -1190,13 +1251,13 @@ def fiveYearAlgo(
             regional_coefficients["x"]["biochar"][region][year] *
             x_vars["biochar"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["biochar"][region][year] *
             y_vars["biochar"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # dac
@@ -1204,13 +1265,13 @@ def fiveYearAlgo(
             regional_coefficients["x"]["dac"][region][year] *
             x_vars["dac"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["dac"][region][year] *
             y_vars["dac"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # renewableEnergy
@@ -1218,19 +1279,27 @@ def fiveYearAlgo(
             regional_coefficients["x"]["renewableEnergy"][region][year] *
             x_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["renewableEnergy"][region][year] *
             y_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         )
     )
 
     ###############################
     # Constraints
     ############################
+
+        # Definition of exAnte coefficients for each category
+    coefficients = {
+
+        "nbsRemoval": [0.99592, 0.97068, 0.81757, 0.07585, 0.01098, 0],
+
+        "other_types": [1, 0.834, 0.667, 0.334, 0.167, 0],
+    }
 
     ## Constraint : 5 years budget timeline##
 
@@ -1240,13 +1309,13 @@ def fiveYearAlgo(
             x_vars["nbsRemoval"][region][year] * \
             regional_coefficients["x"]["nbsRemoval"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["nbsRemoval"][region][year] * \
             regional_coefficients["y"]["nbsRemoval"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # nbsAvoidance
@@ -1254,13 +1323,13 @@ def fiveYearAlgo(
             x_vars["nbsAvoidance"][region][year] * \
             regional_coefficients["x"]["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["nbsAvoidance"][region][year] * \
             regional_coefficients["y"]["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # biochar
@@ -1268,13 +1337,13 @@ def fiveYearAlgo(
             x_vars["biochar"][region][year] * \
             regional_coefficients["x"]["biochar"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["biochar"][region][year] * \
             regional_coefficients["y"]["biochar"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # dac
@@ -1282,13 +1351,13 @@ def fiveYearAlgo(
             x_vars["dac"][region][year] * \
             regional_coefficients["x"]["dac"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["dac"][region][year] * \
             regional_coefficients["y"]["dac"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # renewableEnergy
@@ -1296,17 +1365,17 @@ def fiveYearAlgo(
             x_vars["renewableEnergy"][region][year] * \
             regional_coefficients["x"]["renewableEnergy"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["renewableEnergy"][region][year] * \
             regional_coefficients["y"]["renewableEnergy"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         )
     )
 
-    for year in range(6):
+    for year in range(last_year_index_div_5 + 1):
         Lp_prob += (
             # NbS-ARR
             lpSum(
@@ -1357,13 +1426,13 @@ def fiveYearAlgo(
             x_vars["nbsRemoval"][region][year] * \
             regional_coefficients["x"]["nbsRemoval"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["nbsRemoval"][region][year] * \
             regional_coefficients["y"]["nbsRemoval"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # nbsAvoidance
@@ -1371,13 +1440,13 @@ def fiveYearAlgo(
             x_vars["nbsAvoidance"][region][year] * \
             regional_coefficients["x"]["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["nbsAvoidance"][region][year] * \
             regional_coefficients["y"]["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # biochar
@@ -1385,13 +1454,13 @@ def fiveYearAlgo(
             x_vars["biochar"][region][year] * \
             regional_coefficients["x"]["biochar"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["biochar"][region][year] * \
             regional_coefficients["y"]["biochar"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # dac
@@ -1399,13 +1468,13 @@ def fiveYearAlgo(
             x_vars["dac"][region][year] * \
             regional_coefficients["x"]["dac"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["dac"][region][year] * \
             regional_coefficients["y"]["dac"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # renewableEnergy
@@ -1413,17 +1482,17 @@ def fiveYearAlgo(
             x_vars["renewableEnergy"][region][year] * \
             regional_coefficients["x"]["renewableEnergy"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
             y_vars["renewableEnergy"][region][year] * \
             regional_coefficients["y"]["renewableEnergy"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         )
     )
 
-    for year in range(6):
+    for year in range(last_year_index_div_5 + 1):
         Lp_prob += (
             # NbS-ARR
             lpSum(
@@ -1474,60 +1543,65 @@ def fiveYearAlgo(
         lpSum(
             x_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # nbsAvoidance
         lpSum(
             x_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # biochar
         lpSum(
             x_vars["biochar"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # dac
         lpSum(
             x_vars["dac"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # renewableEnergy
         lpSum(
             x_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
         lpSum(
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         )
     )
 
@@ -1537,35 +1611,35 @@ def fiveYearAlgo(
             lpSum(
                 x_vars["nbsRemoval"][region][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
                 x_vars["nbsAvoidance"][region][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # biochar
             lpSum(
                 x_vars["biochar"][region][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # dac
             lpSum(
                 x_vars["dac"][region][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # renewableEnergy
             lpSum(
                 x_vars["renewableEnergy"][region][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             )
             == financing["exPost"] * total_purch_for_on_spot_fwd
         )
@@ -1573,37 +1647,42 @@ def fiveYearAlgo(
         Lp_prob += (
             # NbS-ARR
             lpSum(
-                y_vars["nbsRemoval"][region][year]
+                y_vars["nbsRemoval"][region][year] *
+                coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
-                y_vars["nbsAvoidance"][region][year]
+                y_vars["nbsAvoidance"][region][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # biochar
             lpSum(
-                y_vars["biochar"][region][year]
+                y_vars["biochar"][region][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # dac
             lpSum(
-                y_vars["dac"][region][year]
+                y_vars["dac"][region][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # renewableEnergy
             lpSum(
-                y_vars["renewableEnergy"][region][year]
+                y_vars["renewableEnergy"][region][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             )
 
             == financing["exAnte"] * total_purch_for_on_spot_fwd
@@ -1616,41 +1695,46 @@ def fiveYearAlgo(
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # nbsAvoidance
         lpSum(
             x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # biochar
         lpSum(
             x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # dac
         lpSum(
             x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) +
 
         # renewableEnergy
         lpSum(
             x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         )
     )
 
@@ -1658,9 +1742,10 @@ def fiveYearAlgo(
     Lp_prob += (
         lpSum(
             x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) == typology["nbsRemoval"] * total_purch_for_typo_distrib
     )
 
@@ -1668,9 +1753,10 @@ def fiveYearAlgo(
     Lp_prob += (
         lpSum(
             x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) == typology["nbsAvoidance"] * total_purch_for_typo_distrib
     )
 
@@ -1678,9 +1764,10 @@ def fiveYearAlgo(
     Lp_prob += (
         lpSum(
             x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) == typology["dac"] * total_purch_for_typo_distrib
     )
 
@@ -1688,9 +1775,10 @@ def fiveYearAlgo(
     Lp_prob += (
         lpSum(
             x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) == typology["biochar"] * total_purch_for_typo_distrib
     )
 
@@ -1698,9 +1786,10 @@ def fiveYearAlgo(
     Lp_prob += (
         lpSum(
             x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(5 - last_year_index_div_5):][year]
             for region in regions
-            for year in range(6)
+            for year in range(last_year_index_div_5 + 1)
         ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
@@ -1717,41 +1806,46 @@ def fiveYearAlgo(
             # NbS-ARR
             lpSum(
                 x_vars["nbsRemoval"][region][year] +
-                y_vars["nbsRemoval"][region][year]
+                y_vars["nbsRemoval"][region][year] *
+                coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
                 x_vars["nbsAvoidance"][region][year] +
-                y_vars["nbsAvoidance"][region][year]
+                y_vars["nbsAvoidance"][region][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # biochar
             lpSum(
                 x_vars["biochar"][region][year] +
-                y_vars["biochar"][region][year]
+                y_vars["biochar"][region][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # dac
             lpSum(
                 x_vars["dac"][region][year] +
-                y_vars["dac"][region][year]
+                y_vars["dac"][region][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
 
             # renewableEnergy
             lpSum(
                 x_vars["renewableEnergy"][region][year] +
-                y_vars["renewableEnergy"][region][year]
+                y_vars["renewableEnergy"][region][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
                 for region in regions
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             )
         )
 
@@ -1759,28 +1853,33 @@ def fiveYearAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["northAmerica"][year] +
-                y_vars["nbsRemoval"]["northAmerica"][year]
-                for year in range(6)
+                y_vars["nbsRemoval"]["northAmerica"][year] *
+                coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["northAmerica"][year] +
-                y_vars["nbsAvoidance"]["northAmerica"][year]
-                for year in range(6)
+                y_vars["nbsAvoidance"]["northAmerica"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["northAmerica"][year] +
-                y_vars["biochar"]["northAmerica"][year]
-                for year in range(6)
+                y_vars["biochar"]["northAmerica"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["dac"]["northAmerica"][year] +
-                y_vars["dac"]["northAmerica"][year]
-                for year in range(6)
+                y_vars["dac"]["northAmerica"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["northAmerica"][year] +
-                y_vars["renewableEnergy"]["northAmerica"][year]
-                for year in range(6)
+                y_vars["renewableEnergy"]["northAmerica"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             )
         ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
         )
@@ -1789,28 +1888,33 @@ def fiveYearAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["southAmerica"][year] +
-                y_vars["nbsRemoval"]["southAmerica"][year]
-                for year in range(6)
+                y_vars["nbsRemoval"]["southAmerica"][year] *
+                coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["southAmerica"][year] +
-                y_vars["nbsAvoidance"]["southAmerica"][year]
-                for year in range(6)
+                y_vars["nbsAvoidance"]["southAmerica"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["southAmerica"][year] +
-                y_vars["biochar"]["southAmerica"][year]
-                for year in range(6)
+                y_vars["biochar"]["southAmerica"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["dac"]["southAmerica"][year] +
-                y_vars["dac"]["southAmerica"][year]
-                for year in range(6)
+                y_vars["dac"]["southAmerica"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["southAmerica"][year] +
-                y_vars["renewableEnergy"]["southAmerica"][year]
-                for year in range(6)
+                y_vars["renewableEnergy"]["southAmerica"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             )
         ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
         )
@@ -1819,28 +1923,33 @@ def fiveYearAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["europe"][year] +
-                y_vars["nbsRemoval"]["europe"][year]
-                for year in range(6)
+                y_vars["nbsRemoval"]["europe"][year] *
+                coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["europe"][year] +
-                y_vars["nbsAvoidance"]["europe"][year]
-                for year in range(6)
+                y_vars["nbsAvoidance"]["europe"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["europe"][year] +
-                y_vars["biochar"]["europe"][year]
-                for year in range(6)
+                y_vars["biochar"]["europe"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["dac"]["europe"][year] +
-                y_vars["dac"]["europe"][year]
-                for year in range(6)
+                y_vars["dac"]["europe"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["europe"][year] +
-                y_vars["renewableEnergy"]["europe"][year]
-                for year in range(6)
+                y_vars["renewableEnergy"]["europe"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             )
         ) == region_allocation["europe"] * total_purch_for_typo_distrib
         )
@@ -1849,28 +1958,33 @@ def fiveYearAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["africa"][year] +
-                y_vars["nbsRemoval"]["africa"][year]
-                for year in range(6)
+                y_vars["nbsRemoval"]["africa"][year] *
+                coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["africa"][year] +
-                y_vars["nbsAvoidance"]["africa"][year]
-                for year in range(6)
+                y_vars["nbsAvoidance"]["africa"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["africa"][year] +
-                y_vars["biochar"]["africa"][year]
-                for year in range(6)
+                y_vars["biochar"]["africa"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["dac"]["africa"][year] +
-                y_vars["dac"]["africa"][year]
-                for year in range(6)
+                y_vars["dac"]["africa"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["africa"][year] +
-                y_vars["renewableEnergy"]["africa"][year]
-                for year in range(6)
+                y_vars["renewableEnergy"]["africa"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             )
         ) == region_allocation["africa"] * total_purch_for_typo_distrib
         )
@@ -1879,28 +1993,32 @@ def fiveYearAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["asia"][year] +
-                y_vars["nbsRemoval"]["asia"][year]
-                for year in range(6)
+                y_vars["nbsRemoval"]["asia"][year] *
+                coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["asia"][year] +
                 y_vars["nbsAvoidance"]["asia"][year]
-                for year in range(6)
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["asia"][year] +
-                y_vars["biochar"]["asia"][year]
-                for year in range(6)
+                y_vars["biochar"]["asia"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["dac"]["asia"][year] +
-                y_vars["dac"]["asia"][year]
-                for year in range(6)
+                y_vars["dac"]["asia"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["asia"][year] +
-                y_vars["renewableEnergy"]["asia"][year]
-                for year in range(6)
+                y_vars["renewableEnergy"]["asia"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             )
         ) == region_allocation["asia"] * total_purch_for_typo_distrib
         )
@@ -1909,39 +2027,38 @@ def fiveYearAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["oceania"][year] +
-                y_vars["nbsRemoval"]["oceania"][year]
-                for year in range(6)
+                y_vars["nbsRemoval"]["oceania"][year] *
+                coefficients["nbsRemoval"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["oceania"][year] +
-                y_vars["nbsAvoidance"]["oceania"][year]
-                for year in range(6)
+                y_vars["nbsAvoidance"]["oceania"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["oceania"][year] +
-                y_vars["biochar"]["oceania"][year]
-                for year in range(6)
+                y_vars["biochar"]["oceania"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["dac"]["oceania"][year] +
-                y_vars["dac"]["oceania"][year]
-                for year in range(6)
+                y_vars["dac"]["oceania"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["oceania"][year] +
-                y_vars["renewableEnergy"]["oceania"][year]
-                for year in range(6)
+                y_vars["renewableEnergy"]["oceania"][year] *
+                coefficients["other_types"][(5 - last_year_index_div_5):][year]
+                for year in range(last_year_index_div_5 + 1)
             )
         ) == region_allocation["oceania"] * total_purch_for_typo_distrib
         )
 
-    # Definition of exAnte coefficients for each category
-    coefficients = {
 
-        "nbsRemoval": [0.99592, 0.97068, 0.81757, 0.07585, 0.01098, 0],
-
-        "other_types": [1, 0.834, 0.667, 0.334, 0.167, 0],
-    }
 
     for year, need in carbon_needs.items():
         year = int(year)
@@ -2015,7 +2132,7 @@ def fiveYearAlgo(
 
     for project, code in projects.items():
         for region in regions:
-            for i, year in enumerate(range(1, 27, 5)):
+            for i, year in enumerate(range(1, last_year_index + 2, 5)):
                 x_var = x_vars[project][region][i]
                 x_value = x_var.value()
                 if x_value > 0:
@@ -2095,6 +2212,9 @@ def flexibleAlgo(
     # variables
     #############
 
+    last_year = max(int(year) for year in carbon_needs.keys())
+    last_year_index = last_year - 2025
+
     # Geographic Regions
     regions = ["northAmerica", "southAmerica",
                "europe", "africa", "asia", "oceania"]
@@ -2112,18 +2232,18 @@ def flexibleAlgo(
     x_vars = {}  # Ex-post purchases
     y_vars = {}  # Ex-ante purchases
 
-    # Dynamic creation of variables for years from 1 to 26
+    # Dynamic creation of variables for years from 1 to last_year_index + 1
     for project, code in projects.items():
         x_vars[project] = {
             region: [
                 p.LpVariable(f"x{code}_{region}_{year}", lowBound=0)
-                for year in range(1, 27)
+                for year in range(1, last_year_index + 2)
             ] for region in regions
         }
         y_vars[project] = {
             region: [
                 p.LpVariable(f"y{code}_{region}_{year}", lowBound=0)
-                for year in range(1, 27)
+                for year in range(1, last_year_index + 2)
             ] for region in regions
         }
 
@@ -2144,12 +2264,12 @@ def flexibleAlgo(
         [x_vars[project][region][year]
          for project in x_vars
          for region in x_vars[project]
-         for year in range(26)] +  # Ex-post variables
+         for year in range(last_year_index + 1)] +  # Ex-post variables
 
         [y_vars[project][region][year]
          for project in y_vars
          for region in y_vars[project]
-         for year in range(26)]  # Ex-ante variables
+         for year in range(last_year_index + 1)]  # Ex-ante variables
     )
 
     #####################
@@ -2181,13 +2301,13 @@ def flexibleAlgo(
             regional_coefficients["x"]["nbsRemoval"][region][year] *
             x_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["nbsRemoval"][region][year] *
             y_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # nbsAvoidance
@@ -2195,13 +2315,13 @@ def flexibleAlgo(
             regional_coefficients["x"]["nbsAvoidance"][region][year] *
             x_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["nbsAvoidance"][region][year] *
             y_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # biochar
@@ -2209,13 +2329,13 @@ def flexibleAlgo(
             regional_coefficients["x"]["biochar"][region][year] *
             x_vars["biochar"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["biochar"][region][year] *
             y_vars["biochar"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # dac
@@ -2223,13 +2343,13 @@ def flexibleAlgo(
             regional_coefficients["x"]["dac"][region][year] *
             x_vars["dac"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["dac"][region][year] *
             y_vars["dac"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # renewableEnergy
@@ -2237,13 +2357,13 @@ def flexibleAlgo(
             regional_coefficients["x"]["renewableEnergy"][region][year] *
             x_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
             regional_coefficients["y"]["renewableEnergy"][region][year] *
             y_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         )
     )
 
@@ -2259,13 +2379,13 @@ def flexibleAlgo(
     #         x_vars["nbsRemoval"][region][year] * \
     #         regional_coefficients["x"]["nbsRemoval"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
     #     lpSum(
     #         y_vars["nbsRemoval"][region][year] * \
     #         regional_coefficients["y"]["nbsRemoval"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
 
     #     # nbsAvoidance
@@ -2273,13 +2393,13 @@ def flexibleAlgo(
     #         x_vars["nbsAvoidance"][region][year] * \
     #         regional_coefficients["x"]["nbsAvoidance"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
     #     lpSum(
     #         y_vars["nbsAvoidance"][region][year] * \
     #         regional_coefficients["y"]["nbsAvoidance"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
 
     #     # biochar
@@ -2287,13 +2407,13 @@ def flexibleAlgo(
     #         x_vars["biochar"][region][year] * \
     #         regional_coefficients["x"]["biochar"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
     #     lpSum(
     #         y_vars["biochar"][region][year] * \
     #         regional_coefficients["y"]["biochar"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
 
     #     # dac
@@ -2301,13 +2421,13 @@ def flexibleAlgo(
     #         x_vars["dac"][region][year] * \
     #         regional_coefficients["x"]["dac"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
     #     lpSum(
     #         y_vars["dac"][region][year] * \
     #         regional_coefficients["y"]["dac"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
 
     #     # renewableEnergy
@@ -2315,17 +2435,17 @@ def flexibleAlgo(
     #         x_vars["renewableEnergy"][region][year] * \
     #         regional_coefficients["x"]["renewableEnergy"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     ) +
     #     lpSum(
     #         y_vars["renewableEnergy"][region][year] * \
     #         regional_coefficients["y"]["renewableEnergy"][region][year]
     #         for region in regions
-    #         for year in range(26)
+    #         for year in range(last_year_index + 1)
     #     )
     # )
 
-    # for year in range(26):
+    # for year in range(last_year_index + 1):
     #     Lp_prob += (
     #         # NbS-ARR
     #         lpSum(
@@ -2376,60 +2496,65 @@ def flexibleAlgo(
         lpSum(
             x_vars["nbsRemoval"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # nbsAvoidance
         lpSum(
             x_vars["nbsAvoidance"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # biochar
         lpSum(
             x_vars["biochar"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # dac
         lpSum(
             x_vars["dac"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # renewableEnergy
         lpSum(
             x_vars["renewableEnergy"][region][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
         lpSum(
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         )
     )
     if not optimizeFinancing:
@@ -2438,35 +2563,35 @@ def flexibleAlgo(
             lpSum(
                 x_vars["nbsRemoval"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
                 x_vars["nbsAvoidance"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # biochar
             lpSum(
                 x_vars["biochar"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # dac
             lpSum(
                 x_vars["dac"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # renewableEnergy
             lpSum(
                 x_vars["renewableEnergy"][region][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             )
             == financing["exPost"] * total_purch_for_on_spot_fwd
         )
@@ -2474,37 +2599,42 @@ def flexibleAlgo(
         Lp_prob += (
             # NbS-ARR
             lpSum(
-                y_vars["nbsRemoval"][region][year]
+                y_vars["nbsRemoval"][region][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
-                y_vars["nbsAvoidance"][region][year]
+                y_vars["nbsAvoidance"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # biochar
             lpSum(
-                y_vars["biochar"][region][year]
+                y_vars["biochar"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # dac
             lpSum(
-                y_vars["dac"][region][year]
+                y_vars["dac"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # renewableEnergy
             lpSum(
-                y_vars["renewableEnergy"][region][year]
+                y_vars["renewableEnergy"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             )
 
             == financing["exAnte"] * total_purch_for_on_spot_fwd
@@ -2517,41 +2647,46 @@ def flexibleAlgo(
         # NbS-ARR
         lpSum(
             x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # nbsAvoidance
         lpSum(
             x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # biochar
         lpSum(
             x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # dac
         lpSum(
             x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) +
 
         # renewableEnergy
         lpSum(
             x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         )
     )
 
@@ -2559,9 +2694,10 @@ def flexibleAlgo(
     Lp_prob += (
         lpSum(
             x_vars["nbsRemoval"][region][year] +
-            y_vars["nbsRemoval"][region][year]
+            y_vars["nbsRemoval"][region][year] *
+            coefficients["nbsRemoval"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["nbsRemoval"] * total_purch_for_typo_distrib
     )
 
@@ -2569,9 +2705,10 @@ def flexibleAlgo(
     Lp_prob += (
         lpSum(
             x_vars["nbsAvoidance"][region][year] +
-            y_vars["nbsAvoidance"][region][year]
+            y_vars["nbsAvoidance"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["nbsAvoidance"] * total_purch_for_typo_distrib
     )
 
@@ -2579,9 +2716,10 @@ def flexibleAlgo(
     Lp_prob += (
         lpSum(
             x_vars["dac"][region][year] +
-            y_vars["dac"][region][year]
+            y_vars["dac"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["dac"] * total_purch_for_typo_distrib
     )
 
@@ -2589,9 +2727,10 @@ def flexibleAlgo(
     Lp_prob += (
         lpSum(
             x_vars["biochar"][region][year] +
-            y_vars["biochar"][region][year]
+            y_vars["biochar"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["biochar"] * total_purch_for_typo_distrib
     )
 
@@ -2599,9 +2738,10 @@ def flexibleAlgo(
     Lp_prob += (
         lpSum(
             x_vars["renewableEnergy"][region][year] +
-            y_vars["renewableEnergy"][region][year]
+            y_vars["renewableEnergy"][region][year] *
+            coefficients["other_types"][(25 - last_year_index):][year]
             for region in regions
-            for year in range(26)
+            for year in range(last_year_index + 1)
         ) == typology["renewableEnergy"] * total_purch_for_typo_distrib
     )
 
@@ -2618,41 +2758,46 @@ def flexibleAlgo(
             # NbS-ARR
             lpSum(
                 x_vars["nbsRemoval"][region][year] +
-                y_vars["nbsRemoval"][region][year]
+                y_vars["nbsRemoval"][region][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # nbsAvoidance
             lpSum(
                 x_vars["nbsAvoidance"][region][year] +
-                y_vars["nbsAvoidance"][region][year]
+                y_vars["nbsAvoidance"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # biochar
             lpSum(
                 x_vars["biochar"][region][year] +
-                y_vars["biochar"][region][year]
+                y_vars["biochar"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # dac
             lpSum(
                 x_vars["dac"][region][year] +
-                y_vars["dac"][region][year]
+                y_vars["dac"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             ) +
 
             # renewableEnergy
             lpSum(
                 x_vars["renewableEnergy"][region][year] +
-                y_vars["renewableEnergy"][region][year]
+                y_vars["renewableEnergy"][region][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
                 for region in regions
-                for year in range(26)
+                for year in range(last_year_index + 1)
             )
         )
 
@@ -2660,28 +2805,33 @@ def flexibleAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["northAmerica"][year] +
-                y_vars["nbsRemoval"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["northAmerica"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["northAmerica"][year] +
-                y_vars["nbsAvoidance"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["northAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["northAmerica"][year] +
-                y_vars["biochar"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["biochar"]["northAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["northAmerica"][year] +
-                y_vars["dac"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["dac"]["northAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["northAmerica"][year] +
-                y_vars["renewableEnergy"]["northAmerica"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["northAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["northAmerica"] * total_purch_for_typo_distrib
         )
@@ -2690,28 +2840,33 @@ def flexibleAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["southAmerica"][year] +
-                y_vars["nbsRemoval"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["southAmerica"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["southAmerica"][year] +
-                y_vars["nbsAvoidance"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["southAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["southAmerica"][year] +
-                y_vars["biochar"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["biochar"]["southAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["southAmerica"][year] +
-                y_vars["dac"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["dac"]["southAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["southAmerica"][year] +
-                y_vars["renewableEnergy"]["southAmerica"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["southAmerica"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["southAmerica"] * total_purch_for_typo_distrib
         )
@@ -2720,28 +2875,33 @@ def flexibleAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["europe"][year] +
-                y_vars["nbsRemoval"]["europe"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["europe"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["europe"][year] +
-                y_vars["nbsAvoidance"]["europe"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["europe"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["europe"][year] +
-                y_vars["biochar"]["europe"][year]
-                for year in range(26)
+                y_vars["biochar"]["europe"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["europe"][year] +
-                y_vars["dac"]["europe"][year]
-                for year in range(26)
+                y_vars["dac"]["europe"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["europe"][year] +
-                y_vars["renewableEnergy"]["europe"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["europe"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["europe"] * total_purch_for_typo_distrib
         )
@@ -2750,28 +2910,33 @@ def flexibleAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["africa"][year] +
-                y_vars["nbsRemoval"]["africa"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["africa"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["africa"][year] +
-                y_vars["nbsAvoidance"]["africa"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["africa"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["africa"][year] +
-                y_vars["biochar"]["africa"][year]
-                for year in range(26)
+                y_vars["biochar"]["africa"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["africa"][year] +
-                y_vars["dac"]["africa"][year]
-                for year in range(26)
+                y_vars["dac"]["africa"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["africa"][year] +
-                y_vars["renewableEnergy"]["africa"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["africa"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["africa"] * total_purch_for_typo_distrib
         )
@@ -2780,28 +2945,33 @@ def flexibleAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["asia"][year] +
-                y_vars["nbsRemoval"]["asia"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["asia"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["asia"][year] +
-                y_vars["nbsAvoidance"]["asia"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["asia"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["asia"][year] +
-                y_vars["biochar"]["asia"][year]
-                for year in range(26)
+                y_vars["biochar"]["asia"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["asia"][year] +
-                y_vars["dac"]["asia"][year]
-                for year in range(26)
+                y_vars["dac"]["asia"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["asia"][year] +
-                y_vars["renewableEnergy"]["asia"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["asia"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["asia"] * total_purch_for_typo_distrib
         )
@@ -2810,28 +2980,33 @@ def flexibleAlgo(
         Lp_prob += ((
             lpSum(
                 x_vars["nbsRemoval"]["oceania"][year] +
-                y_vars["nbsRemoval"]["oceania"][year]
-                for year in range(26)
+                y_vars["nbsRemoval"]["oceania"][year] *
+                coefficients["nbsRemoval"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["nbsAvoidance"]["oceania"][year] +
-                y_vars["nbsAvoidance"]["oceania"][year]
-                for year in range(26)
+                y_vars["nbsAvoidance"]["oceania"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["biochar"]["oceania"][year] +
-                y_vars["biochar"]["oceania"][year]
-                for year in range(26)
+                y_vars["biochar"]["oceania"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["dac"]["oceania"][year] +
-                y_vars["dac"]["oceania"][year]
-                for year in range(26)
+                y_vars["dac"]["oceania"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             ) +
             lpSum(
                 x_vars["renewableEnergy"]["oceania"][year] +
-                y_vars["renewableEnergy"]["oceania"][year]
-                for year in range(26)
+                y_vars["renewableEnergy"]["oceania"][year] *
+                coefficients["other_types"][(25 - last_year_index):][year]
+                for year in range(last_year_index + 1)
             )
         ) == region_allocation["oceania"] * total_purch_for_typo_distrib
         )
@@ -2914,7 +3089,7 @@ def flexibleAlgo(
 
     for project, code in projects.items():
         for region in regions:
-            for i, year in enumerate(range(1, 27)):
+            for i, year in enumerate(range(1, last_year_index + 2)):
                 x_var = x_vars[project][region][i]
                 x_value = x_var.value()
                 if x_value > 0:
