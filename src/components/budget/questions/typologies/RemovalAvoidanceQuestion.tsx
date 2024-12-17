@@ -28,7 +28,7 @@ const RemovalAvoidanceQuestion: React.FC<RemovalAvoidanceQuestionProps> = ({
               onChange={() => onChange('dontMind')}
               className="form-radio h-4 w-4 text-neutral-500"
             />
-            <span className="ml-2 text-sm text-neutral-200">I don’t mind</span>
+            <span className="ml-2 text-sm text-neutral-200">I don&apos;t mind</span>
           </label>
           <label className="ml-4 flex items-center">
             <input

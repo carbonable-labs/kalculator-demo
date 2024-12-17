@@ -26,7 +26,7 @@ export const HINTS = {
   reputation: {
     dontMind: 'This criterion is ignored.',
     1: 'Reputation is not a priority in your project selection.',
-    2: 'You consider reputation somewhat, but it’s not a key factor.',
+    2: 'You consider reputation somewhat, but it&apos;s not a key factor.',
     3: 'Reputation is moderately important to your portfolio.',
     4: 'You prioritize reputable projects with solid track records.',
     5: 'Reputation is critical; projects with poor reputation will be excluded.',

@@ -11,8 +11,8 @@ export const tooltip = (
         Each typology experiences unique price variations depending on the geographical area.
       </div>
       <div>
-        If you don’t have specific geographical criteria in mind, let Carbonable optimize the best
-        distribution in terms of price by selecting "I don’t know yet.
+        If you don&apos;t have specific geographical criteria in mind, let Carbonable optimize the
+        best distribution in terms of price by selecting &quot;I don&apos;t know yet&quot;.
       </div>
     </div>
   </div>

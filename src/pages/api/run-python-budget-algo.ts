@@ -9,6 +9,7 @@ import {
 import { typologyCostFactors } from '@/constants/forecasts';
 
 export async function executeBudgetAlgorithm(inputData: BudgetAlgorithmInput) {
+  console.log(inputData)
   const scriptPath =
     process.env.NODE_ENV === 'production'
       ? '/usr/src/app/src/python-scripts/algo_budget/main.py' // in prod

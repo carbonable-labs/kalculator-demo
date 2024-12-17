@@ -11,7 +11,10 @@ export const tooltip = (
           Prices also differ significantly, with some typologies expected to rise sharply over time
           and others to stabilize or decrease.
         </div>
-        <div>If you're unsure, select 'I don't know yet,' and Carbonable will guide you.</div>
+        <div>
+          If you&apos;re unsure, select &apos;I don&apos;t know yet,&apos; and Carbonable will guide
+          you.
+        </div>
       </div>
     </div>
   </div>
