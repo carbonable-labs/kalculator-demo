@@ -42,7 +42,7 @@ If you have specific needs or would like deeper clarity, our team is here to gui
       <div className="mt-16">
         <InvestmentStrategy />
       </div>
-      <div className="mt-24 text-center">
+      <div className="mt-16 text-center">
         <CalculateBudget />
       </div>
     </div>

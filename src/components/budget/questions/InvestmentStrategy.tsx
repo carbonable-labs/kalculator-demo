@@ -11,8 +11,10 @@ export default function InvestmentStrategy() {
   const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(
     DEFAULT_FINANCING.exAnte * 100,
   );
-  const [selectedOption, setSelectedOption] = useState<'optimize' | 'expost' | 'custom'>('optimize');
-  
+  const [selectedOption, setSelectedOption] = useState<'optimize' | 'expost' | 'custom'>(
+    'optimize',
+  );
+
   const { financing, setFinancing, setOptimizeFinancing } = useBudget();
 
   useEffect(() => {
@@ -44,10 +46,10 @@ export default function InvestmentStrategy() {
         subtitle="Please select your investment strategy"
         tooltip={tooltip}
       />
-      
+
       <div className="mt-6">
         <div className="grid grid-cols-3 gap-4">
-          <label className="flex flex-col p-4 rounded-lg border border-transparent hover:border-gray-200 transition-colors h-full">
+          <label className="flex h-full flex-col rounded-lg border border-transparent p-4 transition-colors hover:border-gray-200">
             <div className="flex items-start space-x-3">
               <input
                 type="radio"
@@ -58,15 +60,15 @@ export default function InvestmentStrategy() {
               />
               <div>
                 <div className="font-medium">Let Carbonable optimize the ratio</div>
-                <div className="text-xs text-gray-600 mt-1">(suggested)</div>
+                <div className="mt-1 text-xs text-gray-600">(suggested)</div>
               </div>
             </div>
-            <div className="text-sm text-gray-600 mt-2 pl-6">
+            <div className="mt-2 pl-6 text-sm text-gray-600">
               Our algorithm will find the optimal balance
             </div>
           </label>
 
-          <label className="flex flex-col p-4 rounded-lg border border-transparent hover:border-gray-200 transition-colors h-full">
+          <label className="flex h-full flex-col rounded-lg border border-transparent p-4 transition-colors hover:border-gray-200">
             <div className="flex items-start space-x-3">
               <input
                 type="radio"
@@ -77,15 +79,13 @@ export default function InvestmentStrategy() {
               />
               <div>
                 <div className="font-medium">Ex-Post only</div>
-                <div className="text-xs text-gray-600 mt-1">100% on-spot financing</div>
+                <div className="mt-1 text-xs text-gray-600">100% on-spot financing</div>
               </div>
             </div>
-            <div className="text-sm text-gray-600 mt-2 pl-6">
-              No forward financing
-            </div>
+            <div className="mt-2 pl-6 text-sm text-gray-600">No forward financing</div>
           </label>
 
-          <label className="flex flex-col p-4 rounded-lg border border-transparent hover:border-gray-200 transition-colors h-full opacity-80 hover:opacity-100">
+          <label className="flex h-full flex-col rounded-lg border border-transparent p-4 opacity-80 transition-colors hover:border-gray-200 hover:opacity-100">
             <div className="flex items-start space-x-3">
               <input
                 type="radio"
@@ -96,12 +96,10 @@ export default function InvestmentStrategy() {
               />
               <div>
                 <div className="font-medium">Choose the ratio</div>
-                <div className="text-xs text-gray-600 mt-1">(advanced)</div>
+                <div className="mt-1 text-xs text-gray-600">(advanced)</div>
               </div>
             </div>
-            <div className="text-sm text-gray-600 mt-2 pl-6">
-              Manual balance setting
-            </div>
+            <div className="mt-2 pl-6 text-sm text-gray-600">Manual balance setting</div>
           </label>
         </div>
 
@@ -118,7 +116,7 @@ export default function InvestmentStrategy() {
               isDisabled={selectedOption !== 'custom'}
               displayType="plain"
             />
-            <div className="flex justify-between text-sm uppercase mt-2">
+            <div className="mt-2 flex justify-between text-sm uppercase">
               <div className="text-primary">
                 {Math.round(investmentStrategy as number)}% Forward
               </div>

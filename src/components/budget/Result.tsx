@@ -14,6 +14,8 @@ import { title } from 'process';
 import { Advice } from '@/types/types';
 import PurchaseRecoChart from './results/PurchaseRecoChart';
 import PurchaseRecoChartStock from './results/PurchaseRecoChartStock';
+import { tooltip } from '@/components/common/tootips/ResultTooltip';
+import QuestionTooltip from '../form/Tooltip';
 
 export default function BudgetResults() {
   const { budgetResults, history } = useBudget();
@@ -50,7 +52,13 @@ export default function BudgetResults() {
 
   return (
     <>
-      <div className="text-4xl font-extrabold text-neutral-50">Results</div>
+      <div className="mt-32 flex items-center">
+        <div className="text-4xl font-extrabold text-neutral-50">Results</div>
+        <div className="mb-2 ml-2">
+          <QuestionTooltip tooltip={tooltip} />
+        </div>
+      </div>
+
       <div className="mt-12">
         <CostTable />
       </div>
