@@ -11,10 +11,8 @@ export default function InvestmentStrategy() {
   const [investmentStrategy, setInvestmentStrategy] = useState<number | number[]>(
     DEFAULT_FINANCING.exAnte * 100,
   );
-  const [selectedOption, setSelectedOption] = useState<'optimize' | 'expost' | 'custom'>(
-    'optimize',
-  );
-
+  const [selectedOption, setSelectedOption] = useState<'optimize' | 'expost' | 'custom'>('optimize');
+  
   const { financing, setFinancing, setOptimizeFinancing } = useBudget();
 
   useEffect(() => {
@@ -46,58 +44,69 @@ export default function InvestmentStrategy() {
         subtitle="Please select your investment strategy"
         tooltip={tooltip}
       />
-
-      <div className="mt-8 space-y-4">
-        <label className="flex items-start space-x-3 rounded-lg border border-transparent p-3 transition-colors hover:border-gray-200">
-          <input
-            type="radio"
-            name="investmentStrategy"
-            checked={selectedOption === 'optimize'}
-            onChange={() => setSelectedOption('optimize')}
-            className="mt-1"
-          />
-          <div>
-            <div className="font-medium">Let Carbonable optimize the ratio (suggested)</div>
-            <div className="mt-1 text-sm text-gray-600">
-              Our algorithm will find the optimal balance between ex-post and forward financing
+      
+      <div className="mt-6">
+        <div className="grid grid-cols-3 gap-4">
+          <label className="flex flex-col p-4 rounded-lg border border-transparent hover:border-gray-200 transition-colors h-full">
+            <div className="flex items-start space-x-3">
+              <input
+                type="radio"
+                name="investmentStrategy"
+                checked={selectedOption === 'optimize'}
+                onChange={() => setSelectedOption('optimize')}
+                className="mt-1"
+              />
+              <div>
+                <div className="font-medium">Let Carbonable optimize the ratio</div>
+                <div className="text-xs text-gray-600 mt-1">(suggested)</div>
+              </div>
             </div>
-          </div>
-        </label>
-
-        <label className="flex items-start space-x-3 rounded-lg border border-transparent p-3 transition-colors hover:border-gray-200">
-          <input
-            type="radio"
-            name="investmentStrategy"
-            checked={selectedOption === 'expost'}
-            onChange={() => setSelectedOption('expost')}
-            className="mt-1"
-          />
-          <div>
-            <div className="font-medium">Ex-Post only</div>
-            <div className="mt-1 text-sm text-gray-600">
-              100% on-spot financing, no forward financing
+            <div className="text-sm text-gray-600 mt-2 pl-6">
+              Our algorithm will find the optimal balance
             </div>
-          </div>
-        </label>
+          </label>
 
-        <label className="flex items-start space-x-3 rounded-lg border border-transparent p-3 opacity-80 transition-colors hover:border-gray-200 hover:opacity-100">
-          <input
-            type="radio"
-            name="investmentStrategy"
-            checked={selectedOption === 'custom'}
-            onChange={() => setSelectedOption('custom')}
-            className="mt-1"
-          />
-          <div>
-            <div className="font-medium">Choose the ratio (advanced)</div>
-            <div className="mt-1 text-sm text-gray-600">
-              Manually set the balance between ex-post and forward financing
+          <label className="flex flex-col p-4 rounded-lg border border-transparent hover:border-gray-200 transition-colors h-full">
+            <div className="flex items-start space-x-3">
+              <input
+                type="radio"
+                name="investmentStrategy"
+                checked={selectedOption === 'expost'}
+                onChange={() => setSelectedOption('expost')}
+                className="mt-1"
+              />
+              <div>
+                <div className="font-medium">Ex-Post only</div>
+                <div className="text-xs text-gray-600 mt-1">100% on-spot financing</div>
+              </div>
             </div>
-          </div>
-        </label>
+            <div className="text-sm text-gray-600 mt-2 pl-6">
+              No forward financing
+            </div>
+          </label>
+
+          <label className="flex flex-col p-4 rounded-lg border border-transparent hover:border-gray-200 transition-colors h-full opacity-80 hover:opacity-100">
+            <div className="flex items-start space-x-3">
+              <input
+                type="radio"
+                name="investmentStrategy"
+                checked={selectedOption === 'custom'}
+                onChange={() => setSelectedOption('custom')}
+                className="mt-1"
+              />
+              <div>
+                <div className="font-medium">Choose the ratio</div>
+                <div className="text-xs text-gray-600 mt-1">(advanced)</div>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600 mt-2 pl-6">
+              Manual balance setting
+            </div>
+          </label>
+        </div>
 
         {selectedOption === 'custom' && (
-          <div className="mt-6 pl-8">
+          <div className="mt-6 px-4">
             <SliderComponent
               value={investmentStrategy as number}
               label="Investment Strategy"
@@ -109,7 +118,7 @@ export default function InvestmentStrategy() {
               isDisabled={selectedOption !== 'custom'}
               displayType="plain"
             />
-            <div className="mt-2 flex justify-between text-sm uppercase">
+            <div className="flex justify-between text-sm uppercase mt-2">
               <div className="text-primary">
                 {Math.round(investmentStrategy as number)}% Forward
               </div>
