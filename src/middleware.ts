@@ -8,10 +8,6 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   const subdomain = hostname.split('.')[0];
 
-  console.log('🚀 Middleware executed!');
-  console.log('🌐 Full hostname:', hostname);
-  console.log('🏠 Detected subdomain:', subdomain);
-
   // Skip check for localhost
   if (hostname.startsWith('localhost')) {
     console.log('✅ Localhost detected - skipping check');
