@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useBudget } from '@/context/BudgetContext';
 import Title from '@/components/form/Title';
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import { demoNetzeroNeeds } from '@/constants/netZeroPlanning';
 
 interface CarbonUnit {
   year: string;
@@ -42,6 +43,14 @@ export default function CarbonUnitNeeds() {
 
   const addNewRow = () => {
     setUnits([...units, { year: '', amount: '' }]);
+  };
+
+  const loadFromNetZeroPlanning = () => {
+    const preFilledUnits = demoNetzeroNeeds.map((entry) => ({
+      year: entry.year.toString(),
+      amount: entry.gap.toString(),
+    }));
+    setUnits(preFilledUnits);
   };
 
   const removeRow = (index: number) => {
@@ -113,12 +122,20 @@ export default function CarbonUnitNeeds() {
             </button>
           </div>
         ))}
-        <button
-          onClick={addNewRow}
-          className="mt-4 w-1/2 rounded-lg border border-gray-300 bg-gray-300 p-2 text-gray-600 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400"
-        >
-          Add
-        </button>
+        <div className="mt-4 flex w-full gap-2">
+          <button
+            onClick={addNewRow}
+            className="w-1/2 rounded-lg border border-gray-300 bg-gray-300 p-2 text-gray-600 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400"
+          >
+            Add
+          </button>
+          <button
+            onClick={loadFromNetZeroPlanning}
+            className="w-1/2 rounded-lg border border-gray-300 bg-gray-300 p-2 text-gray-600 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400"
+          >
+            Load from Net Zero Planning
+          </button>
+        </div>
       </div>
     </div>
   );
