@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useBudget } from '@/context/BudgetContext';
 import Title from '@/components/form/Title';
 import { XMarkIcon } from '@heroicons/react/24/solid';
@@ -9,35 +9,32 @@ import { demoNetzeroNeeds } from '@/constants/netZeroPlanning';
 interface CarbonUnit {
   year: string;
   amount: string;
+  fromPlanning?: boolean;
 }
 
 export default function CarbonUnitNeeds() {
   const [units, setUnits] = useState<CarbonUnit[]>([]);
   const [warning, setWarning] = useState<string | null>(null);
+  const [planningLoaded, setPlanningLoaded] = useState(false);
   const { setCarbonUnitNeeds } = useBudget();
 
-  const validateUnits = () => {
-    const years = units.map((unit) => unit.year);
+  const validateUnits = useCallback(() => {
+    if (units.length === 0) return null;
+
+    const years = units.map((u) => u.year);
     const invalidYear = units.find(
-      (unit) =>
-        parseInt(unit.year, 10) < 2025 || parseInt(unit.year, 10) > 2050 || unit.year === '',
+      (u) => parseInt(u.year, 10) < 2025 || parseInt(u.year, 10) > 2050 || u.year === '',
     );
     const hasDuplicateYears = new Set(years).size !== years.length;
 
-    if (invalidYear) {
-      return 'Years must be between 2025 and 2050.';
-    }
-
-    if (hasDuplicateYears) {
-      return 'Each year must be unique.';
-    }
-
+    if (invalidYear) return 'Years must be between 2025 and 2050.';
+    if (hasDuplicateYears) return 'Each year must be unique.';
     return null;
-  };
+  }, [units]);
 
   const handleInputChange = (index: number, field: keyof CarbonUnit, value: string) => {
     const updatedUnits = [...units];
-    updatedUnits[index][field] = value;
+    updatedUnits[index] = { ...updatedUnits[index], [field]: value, fromPlanning: false };
     setUnits(updatedUnits);
   };
 
@@ -46,16 +43,26 @@ export default function CarbonUnitNeeds() {
   };
 
   const loadFromNetZeroPlanning = () => {
-    const preFilledUnits = demoNetzeroNeeds.map((entry) => ({
+    const preFilledUnits: CarbonUnit[] = demoNetzeroNeeds.map((entry) => ({
       year: entry.year.toString(),
       amount: entry.gap.toString(),
+      fromPlanning: true,
     }));
     setUnits(preFilledUnits);
+    setPlanningLoaded(true);
+  };
+
+  const resetPlanning = () => {
+    setUnits([]);
+    setPlanningLoaded(false);
   };
 
   const removeRow = (index: number) => {
     const updatedUnits = units.filter((_, i) => i !== index);
     setUnits(updatedUnits);
+    if (updatedUnits.every((u) => !u.fromPlanning)) {
+      setPlanningLoaded(false);
+    }
   };
 
   useEffect(() => {
@@ -76,7 +83,7 @@ export default function CarbonUnitNeeds() {
       );
 
     setCarbonUnitNeeds(validUnits);
-  }, [units, setCarbonUnitNeeds]);
+  }, [units, setCarbonUnitNeeds, validateUnits]);
 
   return (
     <div className="w-1/2">
@@ -86,6 +93,11 @@ export default function CarbonUnitNeeds() {
         {units.length === 0 && !warning && (
           <div className="text-sm text-gray-600">
             Please add at least one constraint to define your carbon unit needs.
+          </div>
+        )}
+        {planningLoaded && units.length > 0 && (
+          <div className="flex items-center gap-2 rounded-lg border border-green-700/30 bg-green-900/20 px-3 py-2 text-sm text-green-400">
+            <span>✓ Loaded from Net Zero Planning (SBTi-aligned trajectory)</span>
           </div>
         )}
         {units.map((unit, index) => (
@@ -98,7 +110,9 @@ export default function CarbonUnitNeeds() {
               className={`w-1/2 rounded-lg border ${
                 warning && (parseInt(unit.year, 10) < 2025 || parseInt(unit.year, 10) > 2050)
                   ? 'border-red-600'
-                  : 'border-gray-400'
+                  : unit.fromPlanning
+                    ? 'border-green-700/50'
+                    : 'border-gray-400'
               } p-2 shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-400`}
             />
             <div className="flex w-1/2 items-center">
@@ -107,7 +121,9 @@ export default function CarbonUnitNeeds() {
                 placeholder="Amount"
                 value={unit.amount}
                 onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                className="flex-grow rounded-l-lg border border-gray-400 p-2 shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                className={`flex-grow rounded-l-lg border ${
+                  unit.fromPlanning ? 'border-green-700/50' : 'border-gray-400'
+                } p-2 shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-400`}
               />
               <span className="rounded-r-lg border border-gray-400 bg-gray-800 px-4 py-2 text-gray-500">
                 t
@@ -129,12 +145,21 @@ export default function CarbonUnitNeeds() {
           >
             Add
           </button>
-          <button
-            onClick={loadFromNetZeroPlanning}
-            className="w-1/2 rounded-lg border border-gray-300 bg-gray-300 p-2 text-gray-600 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400"
-          >
-            Load from Net Zero Planning
-          </button>
+          {!planningLoaded ? (
+            <button
+              onClick={loadFromNetZeroPlanning}
+              className="w-1/2 rounded-lg border border-green-700 bg-green-900/40 p-2 text-green-400 shadow-sm hover:bg-green-900/60 focus:outline-none focus:ring-1 focus:ring-green-600"
+            >
+              Load from Net Zero Planning
+            </button>
+          ) : (
+            <button
+              onClick={resetPlanning}
+              className="w-1/2 rounded-lg border border-gray-500 bg-gray-700 p-2 text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400"
+            >
+              Reset
+            </button>
+          )}
         </div>
       </div>
     </div>
