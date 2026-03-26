@@ -16,7 +16,14 @@ export default function CarbonUnitNeeds() {
   const [units, setUnits] = useState<CarbonUnit[]>([]);
   const [warning, setWarning] = useState<string | null>(null);
   const [planningLoaded, setPlanningLoaded] = useState(false);
+  const [trajectoryData, setTrajectoryData] = useState<Array<{ year: number; gap: number }> | null>(null);
+  const [pendingTrajectoryLoad, setPendingTrajectoryLoad] = useState(false);
+  const [isEmbedded, setIsEmbedded] = useState(false);
   const { setCarbonUnitNeeds } = useBudget();
+
+  useEffect(() => {
+    setIsEmbedded(window !== window.parent);
+  }, []);
 
   const validateUnits = useCallback(() => {
     if (units.length === 0) return null;
@@ -70,17 +77,40 @@ export default function CarbonUnitNeeds() {
       if (event.data?.type !== 'net-zero-planning-data') return;
       const payload = event.data.payload as Array<{ year: number; gap: number }>;
       if (!Array.isArray(payload)) return;
-      const preFilledUnits: CarbonUnit[] = payload.map((entry) => ({
-        year: entry.year.toString(),
-        amount: entry.gap.toString(),
-        fromPlanning: true,
-      }));
-      setUnits(preFilledUnits);
-      setPlanningLoaded(true);
+      setTrajectoryData(payload);
     };
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  // Auto-load when trajectory data arrives and user requested it (or on pending)
+  useEffect(() => {
+    if (trajectoryData && pendingTrajectoryLoad) {
+      loadFromTrajectory(trajectoryData);
+      setPendingTrajectoryLoad(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trajectoryData, pendingTrajectoryLoad]);
+
+  const loadFromTrajectory = (data: Array<{ year: number; gap: number }>) => {
+    const preFilledUnits: CarbonUnit[] = data.map((entry) => ({
+      year: entry.year.toString(),
+      amount: entry.gap.toString(),
+      fromPlanning: true,
+    }));
+    setUnits(preFilledUnits);
+    setPlanningLoaded(true);
+  };
+
+  const requestTrajectoryData = () => {
+    if (trajectoryData) {
+      loadFromTrajectory(trajectoryData);
+    } else {
+      // Ask parent for data
+      window.parent.postMessage({ type: 'request-net-zero-planning' }, '*');
+      setPendingTrajectoryLoad(true);
+    }
+  };
 
   useEffect(() => {
     const validationMessage = validateUnits();
@@ -114,7 +144,7 @@ export default function CarbonUnitNeeds() {
         )}
         {planningLoaded && units.length > 0 && (
           <div className="flex items-center gap-2 rounded-lg border border-green-700/30 bg-green-900/20 px-3 py-2 text-sm text-green-400">
-            <span>✓ Loaded from Net Zero Planning (SBTi-aligned trajectory)</span>
+            <span>✓ {trajectoryData && units[0]?.fromPlanning ? 'Loaded from organization trajectory' : 'Loaded from demo data (SBTi-aligned)'}</span>
           </div>
         )}
         {units.map((unit, index) => (
@@ -158,21 +188,32 @@ export default function CarbonUnitNeeds() {
         <div className="mt-4 flex w-full gap-2">
           <button
             onClick={addNewRow}
-            className="w-1/2 rounded-lg border border-gray-300 bg-gray-300 p-2 text-gray-600 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400"
+            className="w-1/3 rounded-lg border border-gray-300 bg-gray-300 p-2 text-gray-600 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400"
           >
             Add
           </button>
           {!planningLoaded ? (
-            <button
-              onClick={loadFromNetZeroPlanning}
-              className="w-1/2 rounded-lg border border-green-700 bg-green-900/40 p-2 text-green-400 shadow-sm hover:bg-green-900/60 focus:outline-none focus:ring-1 focus:ring-green-600"
-            >
-              Load Demo Data
-            </button>
+            <>
+              {isEmbedded && (
+                <button
+                  onClick={requestTrajectoryData}
+                  disabled={pendingTrajectoryLoad}
+                  className="w-1/3 rounded-lg border border-green-700 bg-green-900/40 p-2 text-green-400 shadow-sm hover:bg-green-900/60 focus:outline-none focus:ring-1 focus:ring-green-600 disabled:opacity-50"
+                >
+                  {pendingTrajectoryLoad ? 'Loading…' : 'Load Trajectory'}
+                </button>
+              )}
+              <button
+                onClick={loadFromNetZeroPlanning}
+                className={`${isEmbedded ? 'w-1/3' : 'w-2/3'} rounded-lg border border-gray-500 bg-gray-700 p-2 text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400`}
+              >
+                Load Demo Data
+              </button>
+            </>
           ) : (
             <button
               onClick={resetPlanning}
-              className="w-1/2 rounded-lg border border-gray-500 bg-gray-700 p-2 text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              className="w-2/3 rounded-lg border border-gray-500 bg-gray-700 p-2 text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400"
             >
               Reset
             </button>
