@@ -19,6 +19,7 @@ export default function CarbonUnitNeeds() {
   const [trajectoryData, setTrajectoryData] = useState<Array<{ year: number; gap: number }> | null>(null);
   const [pendingTrajectoryLoad, setPendingTrajectoryLoad] = useState(false);
   const [isEmbedded, setIsEmbedded] = useState(false);
+  const [loadSource, setLoadSource] = useState<'trajectory' | 'demo' | null>(null);
   const { setCarbonUnitNeeds } = useBudget();
 
   useEffect(() => {
@@ -57,11 +58,13 @@ export default function CarbonUnitNeeds() {
     }));
     setUnits(preFilledUnits);
     setPlanningLoaded(true);
+    setLoadSource('demo');
   };
 
   const resetPlanning = () => {
     setUnits([]);
     setPlanningLoaded(false);
+    setLoadSource(null);
   };
 
   const removeRow = (index: number) => {
@@ -93,13 +96,15 @@ export default function CarbonUnitNeeds() {
   }, [trajectoryData, pendingTrajectoryLoad]);
 
   const loadFromTrajectory = (data: Array<{ year: number; gap: number }>) => {
-    const preFilledUnits: CarbonUnit[] = data.map((entry) => ({
+    const filtered = data.filter((e) => e.year >= 2025 && e.year <= 2050);
+    const preFilledUnits: CarbonUnit[] = filtered.map((entry) => ({
       year: entry.year.toString(),
       amount: entry.gap.toString(),
       fromPlanning: true,
     }));
     setUnits(preFilledUnits);
     setPlanningLoaded(true);
+    setLoadSource('trajectory');
   };
 
   const requestTrajectoryData = () => {
@@ -109,6 +114,13 @@ export default function CarbonUnitNeeds() {
       // Ask parent for data
       window.parent.postMessage({ type: 'request-net-zero-planning' }, '*');
       setPendingTrajectoryLoad(true);
+      // Timeout after 5s if parent never responds
+      setTimeout(() => {
+        setPendingTrajectoryLoad((prev) => {
+          if (prev) console.warn('Trajectory data request timed out');
+          return false;
+        });
+      }, 5000);
     }
   };
 
@@ -144,7 +156,7 @@ export default function CarbonUnitNeeds() {
         )}
         {planningLoaded && units.length > 0 && (
           <div className="flex items-center gap-2 rounded-lg border border-green-700/30 bg-green-900/20 px-3 py-2 text-sm text-green-400">
-            <span>✓ {trajectoryData && units[0]?.fromPlanning ? 'Loaded from organization trajectory' : 'Loaded from demo data (SBTi-aligned)'}</span>
+            <span>✓ {loadSource === 'trajectory' ? 'Loaded from organization trajectory' : 'Loaded from demo data (SBTi-aligned)'}</span>
           </div>
         )}
         {units.map((unit, index) => (
