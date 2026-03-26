@@ -16,7 +16,9 @@ export default function CarbonUnitNeeds() {
   const [units, setUnits] = useState<CarbonUnit[]>([]);
   const [warning, setWarning] = useState<string | null>(null);
   const [planningLoaded, setPlanningLoaded] = useState(false);
-  const [trajectoryData, setTrajectoryData] = useState<Array<{ year: number; gap: number }> | null>(null);
+  const [trajectoryData, setTrajectoryData] = useState<Array<{ year: number; gap: number }> | null>(
+    null,
+  );
   const [pendingTrajectoryLoad, setPendingTrajectoryLoad] = useState(false);
   const [isEmbedded, setIsEmbedded] = useState(false);
   const [loadSource, setLoadSource] = useState<'trajectory' | 'demo' | null>(null);
@@ -156,7 +158,12 @@ export default function CarbonUnitNeeds() {
         )}
         {planningLoaded && units.length > 0 && (
           <div className="flex items-center gap-2 rounded-lg border border-green-700/30 bg-green-900/20 px-3 py-2 text-sm text-green-400">
-            <span>✓ {loadSource === 'trajectory' ? 'Loaded from organization trajectory' : 'Loaded from demo data (SBTi-aligned)'}</span>
+            <span>
+              ✓{' '}
+              {loadSource === 'trajectory'
+                ? 'Loaded from organization trajectory'
+                : 'Loaded from demo data (SBTi-aligned)'}
+            </span>
           </div>
         )}
         {units.map((unit, index) => (
