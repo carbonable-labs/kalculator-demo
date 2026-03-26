@@ -32,7 +32,10 @@ export default function CostChart() {
   };
 
   useEffect(() => {
-    const years = Array.from({ length: 2050 - 2025 + 1 }, (_, i) => 2025 + i);
+    const years = Array.from(
+      { length: Math.max(2050, ...carbonUnitNeeds.map((c) => parseInt(c.year))) - 2025 + 1 },
+      (_, i) => 2025 + i,
+    );
     const data = years.map((year) => {
       const strategy = budgetResults?.strategies.find((s: YearlyStrategy) => s.year === year);
       return {

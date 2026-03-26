@@ -33,11 +33,11 @@ export default function CarbonUnitNeeds() {
 
     const years = units.map((u) => u.year);
     const invalidYear = units.find(
-      (u) => parseInt(u.year, 10) < 2025 || parseInt(u.year, 10) > 2050 || u.year === '',
+      (u) => parseInt(u.year, 10) < 2025 || parseInt(u.year, 10) > 2100 || u.year === '',
     );
     const hasDuplicateYears = new Set(years).size !== years.length;
 
-    if (invalidYear) return 'Years must be between 2025 and 2050.';
+    if (invalidYear) return 'Years must be between 2025 and 2100.';
     if (hasDuplicateYears) return 'Each year must be unique.';
     return null;
   }, [units]);
@@ -98,7 +98,7 @@ export default function CarbonUnitNeeds() {
   }, [trajectoryData, pendingTrajectoryLoad]);
 
   const loadFromTrajectory = (data: Array<{ year: number; gap: number }>) => {
-    const filtered = data.filter((e) => e.year >= 2025 && e.year <= 2050);
+    const filtered = data.filter((e) => e.year >= 2025 && e.year <= 2100);
     const preFilledUnits: CarbonUnit[] = filtered.map((entry) => ({
       year: entry.year.toString(),
       amount: entry.gap.toString(),
@@ -133,7 +133,7 @@ export default function CarbonUnitNeeds() {
     const validUnits = units
       .filter((unit) => {
         const year = parseInt(unit.year, 10);
-        return year >= 2025 && year <= 2050 && unit.amount && !validationMessage;
+        return year >= 2025 && year <= 2100 && unit.amount && !validationMessage;
       })
       .reduce(
         (acc, unit) => {
@@ -174,7 +174,7 @@ export default function CarbonUnitNeeds() {
               value={unit.year}
               onChange={(e) => handleInputChange(index, 'year', e.target.value)}
               className={`w-1/2 rounded-lg border ${
-                warning && (parseInt(unit.year, 10) < 2025 || parseInt(unit.year, 10) > 2050)
+                warning && (parseInt(unit.year, 10) < 2025 || parseInt(unit.year, 10) > 2100)
                   ? 'border-red-600'
                   : unit.fromPlanning
                     ? 'border-green-700/50'
