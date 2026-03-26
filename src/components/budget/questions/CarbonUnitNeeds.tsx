@@ -66,6 +66,23 @@ export default function CarbonUnitNeeds() {
   };
 
   useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type !== 'net-zero-planning-data') return;
+      const payload = event.data.payload as Array<{ year: number; gap: number }>;
+      if (!Array.isArray(payload)) return;
+      const preFilledUnits: CarbonUnit[] = payload.map((entry) => ({
+        year: entry.year.toString(),
+        amount: entry.gap.toString(),
+        fromPlanning: true,
+      }));
+      setUnits(preFilledUnits);
+      setPlanningLoaded(true);
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  useEffect(() => {
     const validationMessage = validateUnits();
     setWarning(validationMessage);
 
@@ -150,7 +167,7 @@ export default function CarbonUnitNeeds() {
               onClick={loadFromNetZeroPlanning}
               className="w-1/2 rounded-lg border border-green-700 bg-green-900/40 p-2 text-green-400 shadow-sm hover:bg-green-900/60 focus:outline-none focus:ring-1 focus:ring-green-600"
             >
-              Load from Net Zero Planning
+              Load Demo Data
             </button>
           ) : (
             <button
