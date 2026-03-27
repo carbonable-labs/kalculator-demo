@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useBudget } from '@/context/BudgetContext';
 import Title from '@/components/form/Title';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-import { demoNetzeroNeeds } from '@/constants/netZeroPlanning';
 
 interface CarbonUnit {
   year: string;
@@ -20,13 +19,7 @@ export default function CarbonUnitNeeds() {
     null,
   );
   const [pendingTrajectoryLoad, setPendingTrajectoryLoad] = useState(false);
-  const [isEmbedded, setIsEmbedded] = useState(false);
-  const [loadSource, setLoadSource] = useState<'trajectory' | 'demo' | null>(null);
   const { setCarbonUnitNeeds } = useBudget();
-
-  useEffect(() => {
-    setIsEmbedded(window !== window.parent);
-  }, []);
 
   const validateUnits = useCallback(() => {
     if (units.length === 0) return null;
@@ -50,23 +43,6 @@ export default function CarbonUnitNeeds() {
 
   const addNewRow = () => {
     setUnits([...units, { year: '', amount: '' }]);
-  };
-
-  const loadFromNetZeroPlanning = () => {
-    const preFilledUnits: CarbonUnit[] = demoNetzeroNeeds.map((entry) => ({
-      year: entry.year.toString(),
-      amount: entry.gap.toString(),
-      fromPlanning: true,
-    }));
-    setUnits(preFilledUnits);
-    setPlanningLoaded(true);
-    setLoadSource('demo');
-  };
-
-  const resetPlanning = () => {
-    setUnits([]);
-    setPlanningLoaded(false);
-    setLoadSource(null);
   };
 
   const removeRow = (index: number) => {
@@ -106,7 +82,6 @@ export default function CarbonUnitNeeds() {
     }));
     setUnits(preFilledUnits);
     setPlanningLoaded(true);
-    setLoadSource('trajectory');
   };
 
   const requestTrajectoryData = () => {
@@ -158,12 +133,7 @@ export default function CarbonUnitNeeds() {
         )}
         {planningLoaded && units.length > 0 && (
           <div className="flex items-center gap-2 rounded-lg border border-green-700/30 bg-green-900/20 px-3 py-2 text-sm text-green-400">
-            <span>
-              ✓{' '}
-              {loadSource === 'trajectory'
-                ? 'Loaded from organization trajectory'
-                : 'Loaded from demo data (SBTi-aligned)'}
-            </span>
+            <span>✓ Loaded from organization trajectory</span>
           </div>
         )}
         {units.map((unit, index) => (
@@ -207,36 +177,17 @@ export default function CarbonUnitNeeds() {
         <div className="mt-4 flex w-full gap-2">
           <button
             onClick={addNewRow}
-            className="w-1/3 rounded-lg border border-gray-300 bg-gray-300 p-2 text-gray-600 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400"
+            className="w-1/2 rounded-lg border border-gray-300 bg-gray-300 p-2 text-gray-600 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-400"
           >
             Add
           </button>
-          {!planningLoaded ? (
-            <>
-              {isEmbedded && (
-                <button
-                  onClick={requestTrajectoryData}
-                  disabled={pendingTrajectoryLoad}
-                  className="w-1/3 rounded-lg border border-green-700 bg-green-900/40 p-2 text-green-400 shadow-sm hover:bg-green-900/60 focus:outline-none focus:ring-1 focus:ring-green-600 disabled:opacity-50"
-                >
-                  {pendingTrajectoryLoad ? 'Loading…' : 'Load Trajectory'}
-                </button>
-              )}
-              <button
-                onClick={loadFromNetZeroPlanning}
-                className={`${isEmbedded ? 'w-1/3' : 'w-2/3'} rounded-lg border border-gray-500 bg-gray-700 p-2 text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400`}
-              >
-                Load Demo Data
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={resetPlanning}
-              className="w-2/3 rounded-lg border border-gray-500 bg-gray-700 p-2 text-gray-300 shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-400"
-            >
-              Reset
-            </button>
-          )}
+          <button
+            onClick={requestTrajectoryData}
+            disabled={pendingTrajectoryLoad}
+            className="w-1/2 rounded-lg border border-green-700 bg-green-900/40 p-2 text-green-400 shadow-sm hover:bg-green-900/60 focus:outline-none focus:ring-1 focus:ring-green-600 disabled:opacity-50"
+          >
+            {pendingTrajectoryLoad ? 'Loading…' : 'Load Trajectory'}
+          </button>
         </div>
       </div>
     </div>
