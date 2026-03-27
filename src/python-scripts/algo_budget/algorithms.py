@@ -1150,7 +1150,8 @@ def fiveYearAlgo(
     ##################
 
     last_year = max(int(year) for year in carbon_needs.keys())
-    last_year_index = last_year - 2025
+    last_year_index = last_year - BASE_YEAR
+    required_length = last_year_index + 1
     
     last_year_index_div_5 = last_year_index // 5
 
@@ -1240,8 +1241,9 @@ def fiveYearAlgo(
     for project, base_coefficients in x_coefficients.items():
         # Obtenir les facteurs régionaux pour le projet
         project_region_factors = regional_factors[project]
+        extended_coefficients = extend_series(base_coefficients, required_length, mode="linear")
         regional_coefficients["x"][project] = {
-            region: [c * factor for c in base_coefficients]
+            region: [c * factor for c in extended_coefficients]
             for region, factor in project_region_factors.items()
         }
         regional_coefficients["y"][project] = {
@@ -2250,7 +2252,8 @@ def flexibleAlgo(
     #############
 
     last_year = max(int(year) for year in carbon_needs.keys())
-    last_year_index = last_year - 2025
+    last_year_index = last_year - BASE_YEAR
+    required_length = last_year_index + 1
 
     # Geographic Regions
     regions = ["northAmerica", "southAmerica",
@@ -2322,8 +2325,9 @@ def flexibleAlgo(
     for project, base_coefficients in x_coefficients.items():
         # Obtenir les facteurs régionaux pour le projet
         project_region_factors = regional_factors[project]
+        extended_coefficients = extend_series(base_coefficients, required_length, mode="linear")
         regional_coefficients["x"][project] = {
-            region: [c * factor for c in base_coefficients]
+            region: [c * factor for c in extended_coefficients]
             for region, factor in project_region_factors.items()
         }
         regional_coefficients["y"][project] = {
