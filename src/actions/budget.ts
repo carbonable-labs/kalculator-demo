@@ -21,6 +21,22 @@ import {
   normalizeRegionAllocation,
 } from '@/utils/calculations';
 
+const MIN_BUDGET_YEAR = 2025;
+
+function sanitizeCarbonNeeds(carbonUnitNeeds: Record<string, number>): Record<string, number> {
+  return Object.fromEntries(
+    Object.entries(carbonUnitNeeds).filter(([year, amount]) => {
+      const parsedYear = Number(year);
+      return (
+        Number.isInteger(parsedYear) &&
+        parsedYear >= MIN_BUDGET_YEAR &&
+        Number.isFinite(amount) &&
+        amount > 0
+      );
+    }),
+  );
+}
+
 async function requestBudgetComputation(
   input: BudgetAlgorithmInput,
 ): Promise<BudgetPythonResponse | null> {
@@ -61,9 +77,18 @@ function getUpdatedRegionAllocation(
 
 export async function runBudgetAlgo(input: BudgetAlgorithmInput): Promise<BudgetOutputData> {
   const { typology, regionAllocation, financing, optimizeFinancing, optimizeRegion } = input;
+  const sanitizedInput: BudgetAlgorithmInput = {
+    ...input,
+    carbonUnitNeeds: sanitizeCarbonNeeds(input.carbonUnitNeeds),
+  };
+
   assertTypologySum(typology);
 
-  const response = await requestBudgetComputation(input);
+  if (Object.keys(sanitizedInput.carbonUnitNeeds).length === 0) {
+    throw new Error('Please provide at least one valid carbon need year from 2025 onward.');
+  }
+
+  const response = await requestBudgetComputation(sanitizedInput);
   if (!response) throw new Error('Failed to fetch budget or strategies data from backend.');
 
   const { totalBudgetLow, totalBudgetMedium, totalBudgetHigh, strategies } = response;

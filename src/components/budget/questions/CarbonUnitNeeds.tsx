@@ -11,6 +11,9 @@ interface CarbonUnit {
   fromPlanning?: boolean;
 }
 
+const MIN_BUDGET_YEAR = 2025;
+const MAX_BUDGET_YEAR = 2100;
+
 export default function CarbonUnitNeeds() {
   const [units, setUnits] = useState<CarbonUnit[]>([]);
   const [warning, setWarning] = useState<string | null>(null);
@@ -26,11 +29,14 @@ export default function CarbonUnitNeeds() {
 
     const years = units.map((u) => u.year);
     const invalidYear = units.find(
-      (u) => parseInt(u.year, 10) < 2025 || parseInt(u.year, 10) > 2100 || u.year === '',
+      (u) =>
+        parseInt(u.year, 10) < MIN_BUDGET_YEAR ||
+        parseInt(u.year, 10) > MAX_BUDGET_YEAR ||
+        u.year === '',
     );
     const hasDuplicateYears = new Set(years).size !== years.length;
 
-    if (invalidYear) return 'Years must be between 2025 and 2100.';
+    if (invalidYear) return `Years must be between ${MIN_BUDGET_YEAR} and ${MAX_BUDGET_YEAR}.`;
     if (hasDuplicateYears) return 'Each year must be unique.';
     return null;
   }, [units]);
@@ -74,7 +80,7 @@ export default function CarbonUnitNeeds() {
   }, [trajectoryData, pendingTrajectoryLoad]);
 
   const loadFromTrajectory = (data: Array<{ year: number; gap: number }>) => {
-    const filtered = data.filter((e) => e.year >= 2025 && e.year <= 2100);
+    const filtered = data.filter((e) => e.year >= MIN_BUDGET_YEAR && e.year <= MAX_BUDGET_YEAR);
     const preFilledUnits: CarbonUnit[] = filtered.map((entry) => ({
       year: entry.year.toString(),
       amount: entry.gap.toString(),
@@ -108,7 +114,7 @@ export default function CarbonUnitNeeds() {
     const validUnits = units
       .filter((unit) => {
         const year = parseInt(unit.year, 10);
-        return year >= 2025 && year <= 2100 && unit.amount && !validationMessage;
+        return year >= MIN_BUDGET_YEAR && year <= MAX_BUDGET_YEAR && unit.amount && !validationMessage;
       })
       .reduce(
         (acc, unit) => {
@@ -144,7 +150,9 @@ export default function CarbonUnitNeeds() {
               value={unit.year}
               onChange={(e) => handleInputChange(index, 'year', e.target.value)}
               className={`w-1/2 rounded-lg border ${
-                warning && (parseInt(unit.year, 10) < 2025 || parseInt(unit.year, 10) > 2100)
+                warning &&
+                  (parseInt(unit.year, 10) < MIN_BUDGET_YEAR ||
+                    parseInt(unit.year, 10) > MAX_BUDGET_YEAR)
                   ? 'border-red-600'
                   : unit.fromPlanning
                     ? 'border-green-700/50'
